@@ -1163,8 +1163,8 @@
     gap: var(--s-4) var(--s-6);
   }
   .mk-hero__stat-sep { display: none; }
-  .mk-hero__cta-row  { flex-direction: column; align-items: flex-start; }
-  .mk-hero__cta-row .mk-btn { width: 100%; justify-content: center; }
+  .mk-hero__cta-row  { flex-direction: column; align-items: stretch; }
+  .mk-hero__cta-row .mk-btn { justify-content: center; }
 
   /* Rate widget — reduce padding, wrap margin row to prevent overflow */
   .mk-rate-widget { padding: var(--s-5); }

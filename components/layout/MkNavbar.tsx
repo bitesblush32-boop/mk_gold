@@ -56,15 +56,16 @@ export function MkNavbar() {
         className={cn('mk-navbar', hidden && 'mk-navbar--hidden')}
         aria-label="Main navigation"
       >
-        <div className="mk-navbar__inner">
+        <div className="mk-navbar__inner" style={{ maxWidth: '100%' }}>
           <a href="/" className="mk-navbar__logo-link" aria-label="MK Gold — Home">
             <Image
               src="/brand/logo_light_eng.png"
               alt="MK Gold — Instant Money, Lasting Trust"
-              height={48}
-              width={217}
+              height={56}
+              width={253}
               priority
               className="mk-navbar__logo-img"
+              style={{ height: '56px', width: 'auto' }}
             />
           </a>
 
