@@ -49,7 +49,7 @@ export function MkTrust() {
         <div className="mk-trust__left">
           <div className="mk-trust__seals reveal">
             <MkSeal variant="en" size="lg" animate />
-            <MkSeal variant="kn" size="md" />
+            <MkSeal variant="kn" size="lg" />
           </div>
 
           <div className="reveal delay-1">

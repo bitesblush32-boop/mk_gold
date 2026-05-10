@@ -25,7 +25,7 @@
 }
 
 .mk-navbar__logo-img {
-  height: 38px;
+  height: 48px;
   width: auto;
   object-fit: contain;
 }
@@ -237,7 +237,7 @@
 }
 
 .mk-navbar__inner {
-  max-width: var(--max-w);
+  max-width: 100%;
   margin: 0 auto;
   padding: 0 var(--pad-x);
   height: 100%;
@@ -332,6 +332,18 @@
   will-change: transform;
 }
 
+/* Hamburger → X when menu is open */
+.mk-hamburger--open .mk-hamburger__bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.mk-hamburger--open .mk-hamburger__bar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.mk-hamburger--open .mk-hamburger__bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
 /* Mobile menu panel */
 .mk-mobile-menu {
   position: fixed;
@@ -379,6 +391,12 @@
 @media (max-width: 768px) {
   .mk-navbar__nav    { display: none; }
   .mk-hamburger      { display: flex; }
+}
+
+/* Very small screens — hide CTA button, shrink logo */
+@media (max-width: 420px) {
+  .mk-navbar__actions .mk-btn { display: none; }
+  .mk-navbar__logo-img        { height: 30px; }
 }
 
 
@@ -761,7 +779,6 @@
 
 /* ─── Footer ─────────────────────────────────────────────────── */
 .mk-footer {
-  background: var(--plum-deep);
   border-top: 1px solid rgba(223, 193, 96, 0.12);
 }
 
@@ -987,15 +1004,9 @@
   isolation: isolate;
 }
 
-/* Atmospheric purple glow — two soft radial gradients, no hard edges */
+/* Glow removed — hero background is solid #3B1848 */
 .mk-hero__glow {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    radial-gradient(ellipse 75% 65% at 75% 35%, rgba(123, 44, 145, 0.30) 0%, transparent 70%),
-    radial-gradient(ellipse 45% 45% at 18% 85%, rgba(81, 37, 97, 0.22) 0%, transparent 60%);
+  display: none;
 }
 
 /* Inner grid — 60/40 split on desktop */
@@ -1134,6 +1145,37 @@
   .mk-hero__widget > * {
     max-width: 100%;
     width: 100%;
+  }
+}
+
+/* Small mobile — tighter padding, stats go 2-col grid, rate widget wraps */
+@media (max-width: 480px) {
+  .mk-hero__inner {
+    padding-block: var(--s-10) var(--s-8);
+    gap: var(--s-8);
+  }
+  .mk-hero__copy {
+    gap: var(--s-5);
+  }
+  .mk-hero__meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--s-4) var(--s-6);
+  }
+  .mk-hero__stat-sep { display: none; }
+  .mk-hero__cta-row  { flex-direction: column; align-items: flex-start; }
+  .mk-hero__cta-row .mk-btn { width: 100%; justify-content: center; }
+
+  /* Rate widget — reduce padding, wrap margin row to prevent overflow */
+  .mk-rate-widget { padding: var(--s-5); }
+  .mk-rate-widget__margin-row {
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-3);
+  }
+  .mk-rate-widget__margin-sep { display: none; }
+  .mk-rate-widget__margin-pill {
+    width: 100%;
+    text-align: center;
   }
 }
 

@@ -61,8 +61,8 @@ export function MkNavbar() {
             <Image
               src="/brand/logo_light_eng.png"
               alt="MK Gold — Instant Money, Lasting Trust"
-              height={38}
-              width={172}
+              height={48}
+              width={217}
               priority
               className="mk-navbar__logo-img"
             />
