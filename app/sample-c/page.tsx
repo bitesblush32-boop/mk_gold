@@ -1291,12 +1291,38 @@ export default function SampleCPage() {
           background-image: none !important;
         }
 
+        /* ── Reviews glass header ─────────────────────────── */
+        .sc-reviews-glass {
+          display: inline-block;
+          background: rgba(223, 193, 96, 0.18);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(201, 169, 64, 0.50);
+          border-radius: 16px;
+          padding: 2rem 2.5rem 1.5rem;
+          margin-bottom: 2rem;
+          box-shadow: 0 8px 32px rgba(201,169,64,0.15), inset 0 1px 0 rgba(255,255,255,0.30);
+        }
+
         /* ── CTA band — graff-5 photo bg ──────────────────── */
         .sc-no-gap > .mk-cta-band {
           background-color: #3B1848 !important;
           background-image: url(/graff-3.jpg) !important;
           background-size: cover !important;
           background-position: center !important;
+          position: relative !important;
+        }
+        .sc-no-gap > .mk-cta-band::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: rgba(36, 8, 56, 0.68);
+          pointer-events: none;
+          z-index: 0;
+        }
+        .sc-no-gap > .mk-cta-band .mk-cta-band__inner {
+          position: relative;
+          z-index: 1;
         }
 
         /* ── Hero coin — 70/30 overlap, static 3D ─────────── */
@@ -1674,13 +1700,15 @@ export default function SampleCPage() {
         style={{ backgroundImage: 'url(/graff-2.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
       >
         <div className="mk-container">
-          <p className="mk-section-overline reveal" style={{ color: 'var(--plum)' }}>Google Reviews</p>
-          <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', marginBottom: '0.75rem' }}>
-            4.9 Stars Across All Branches
-          </h2>
-          <p className="reveal delay-2" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', marginBottom: '2.5rem', maxWidth: '540px' }}>
-            Real reviews from real customers — pulled live from Google.
-          </p>
+          <div className="sc-reviews-glass">
+            <p className="mk-section-overline reveal" style={{ color: 'var(--plum)' }}>Google Reviews</p>
+            <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--plum)', marginBottom: '0.75rem' }}>
+              4.9 Stars Across All Branches
+            </h2>
+            <p className="reveal delay-2" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', marginBottom: 0, maxWidth: '540px' }}>
+              Real reviews from real customers — pulled live from Google.
+            </p>
+          </div>
         </div>
 
         {/* Carousel — full bleed, no container constraint */}

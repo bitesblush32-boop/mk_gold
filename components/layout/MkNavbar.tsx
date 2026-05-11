@@ -7,16 +7,17 @@ import { MkButton } from '@/components/ui/MkButton';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
-  { href: '/sell-gold',            label: 'Sell Gold' },
-  { href: '/release-pledged-gold', label: 'Pledged Gold' },
-  { href: '/gold-rate-today',      label: 'Gold Rate' },
-  { href: '/about',                label: 'About' },
-  { href: '/contact',              label: 'Branches' },
+  { href: '/sell-gold', label: 'Sell Gold' },
+  { href: '/release-pledged-gold', label: 'Release Pledged Gold' },
+  { href: '/gold-rate-today', label: 'Gold Rate' },
+  { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Branches' },
+  { href: '/blog', label: 'Blog' },
 ];
 
 export function MkNavbar() {
-  const pathname   = usePathname();
-  const [hidden, setHidden]   = useState(false);
+  const pathname = usePathname();
+  const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const lastScrollY = useRef(0);
 
@@ -88,7 +89,7 @@ export function MkNavbar() {
 
           <div className="mk-navbar__actions">
             <MkButton variant="gold" size="sm" href="/sell-gold">
-              Sell Gold Today
+              Buy Gold Today
             </MkButton>
 
             {/* Hamburger */}
@@ -138,7 +139,7 @@ export function MkNavbar() {
             style={{ width: '100%' }}
             tabIndex={menuOpen ? 0 : -1}
           >
-            Sell Gold Today
+            Buy Gold Today
           </MkButton>
           <MkButton
             variant="whatsapp"
