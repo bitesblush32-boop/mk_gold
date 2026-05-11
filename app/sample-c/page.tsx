@@ -11,7 +11,7 @@ import { MkRateWidget } from '@/components/features/MkRateWidget';
 import { MkCalculator } from '@/components/features/MkCalculator';
 import { MkSeal } from '@/components/ui/MkSeal';
 import { MkButton } from '@/components/ui/MkButton';
-import { BRANCHES } from '@/lib/branch-router';
+import { BRANCHES, type Branch } from '@/lib/branch-router';
 
 /* ─── Hero slides ─────────────────────────────────────────────── */
 
@@ -117,6 +117,90 @@ const TESTIMONIALS = [
 const CITIES = ['Bangalore', 'Mysore', 'Mangalore', 'Davangere'] as const;
 type City = typeof CITIES[number];
 
+/* ─── City SVG map definitions ─────────────────────────────────── */
+
+interface CityMapDef {
+  bbox: { minLat: number; maxLat: number; minLng: number; maxLng: number };
+  vw: number; vh: number;
+  roads: { d: string; type: 'highway' | 'major' | 'minor' }[];
+  landmarks: { x: number; y: number; label: string }[];
+}
+
+const CITY_MAPS: Record<City, CityMapDef> = {
+  Bangalore: {
+    bbox: { minLat: 12.88, maxLat: 13.05, minLng: 77.49, maxLng: 77.78 },
+    vw: 500, vh: 320,
+    roads: [
+      { d: 'M 140,20 C 250,6 420,58 448,148 C 468,228 408,304 278,318 C 178,328 55,298 25,228 C 0,168 20,72 82,42 C 106,28 124,20 140,20 Z', type: 'highway' },
+      { d: 'M 100,130 L 40,18', type: 'major' },
+      { d: 'M 138,128 L 128,0', type: 'major' },
+      { d: 'M 0,148 L 500,148', type: 'major' },
+      { d: 'M 220,148 L 248,320', type: 'major' },
+      { d: 'M 178,215 L 178,320', type: 'major' },
+      { d: 'M 200,130 L 500,55', type: 'major' },
+      { d: 'M 138,148 L 0,268', type: 'major' },
+      { d: 'M 100,80 L 100,230', type: 'minor' },
+      { d: 'M 265,220 L 390,310', type: 'minor' },
+      { d: 'M 262,95 L 262,220', type: 'minor' },
+      { d: 'M 390,135 L 500,135', type: 'minor' },
+    ],
+    landmarks: [
+      { x: 145, y: 154, label: 'Majestic' },
+      { x: 265, y: 142, label: 'Indiranagar' },
+      { x: 463, y: 160, label: 'Whitefield' },
+    ],
+  },
+  Mysore: {
+    bbox: { minLat: 12.27, maxLat: 12.37, minLng: 76.59, maxLng: 76.67 },
+    vw: 400, vh: 340,
+    roads: [
+      { d: 'M 152,58 C 248,28 358,80 374,178 C 388,260 322,322 224,334 C 138,342 46,298 26,220 C 8,152 38,76 92,52 C 116,44 136,54 152,58 Z', type: 'highway' },
+      { d: 'M 248,28 L 248,340', type: 'major' },
+      { d: 'M 20,228 L 395,228', type: 'major' },
+      { d: 'M 248,228 L 26,154', type: 'major' },
+      { d: 'M 248,228 L 400,175', type: 'major' },
+      { d: 'M 166,165 L 248,228', type: 'minor' },
+      { d: 'M 108,102 L 248,228', type: 'minor' },
+    ],
+    landmarks: [
+      { x: 258, y: 245, label: 'Palace' },
+      { x: 175, y: 178, label: 'Gokulam' },
+    ],
+  },
+  Mangalore: {
+    bbox: { minLat: 12.84, maxLat: 12.91, minLng: 74.81, maxLng: 74.88 },
+    vw: 400, vh: 340,
+    roads: [
+      { d: 'M 194,20 L 194,320', type: 'highway' },
+      { d: 'M 20,200 L 380,200', type: 'major' },
+      { d: 'M 20,220 L 380,220', type: 'major' },
+      { d: 'M 194,130 L 320,60', type: 'major' },
+      { d: 'M 210,100 L 395,38', type: 'minor' },
+      { d: 'M 60,182 L 380,182', type: 'minor' },
+      { d: 'M 100,140 L 300,140', type: 'minor' },
+    ],
+    landmarks: [
+      { x: 200, y: 210, label: 'Hampankatta' },
+      { x: 208, y: 128, label: 'Kadri' },
+    ],
+  },
+  Davangere: {
+    bbox: { minLat: 14.44, maxLat: 14.50, minLng: 75.89, maxLng: 75.96 },
+    vw: 400, vh: 300,
+    roads: [
+      { d: 'M 0,182 L 400,182', type: 'highway' },
+      { d: 'M 182,20 L 182,300', type: 'major' },
+      { d: 'M 0,142 L 400,142', type: 'major' },
+      { d: 'M 182,150 L 390,58', type: 'minor' },
+      { d: 'M 182,195 L 95,300', type: 'minor' },
+      { d: 'M 95,160 L 295,160', type: 'minor' },
+    ],
+    landmarks: [
+      { x: 195, y: 175, label: 'PJ Extension' },
+    ],
+  },
+};
+
 /* ─── SVG Area Chart ───────────────────────────────────────────── */
 
 function GoldRateChart() {
@@ -182,69 +266,69 @@ function GoldRateChart() {
 
       {/* SVG chart — fills remaining card height */}
       <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        preserveAspectRatio="none"
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', overflow: 'visible' }}
-        aria-label="Gold price history chart"
-      >
-        <defs>
-          <linearGradient id="sc-area-grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#DFC160" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#DFC160" stopOpacity="0.02" />
-          </linearGradient>
-        </defs>
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          preserveAspectRatio="none"
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', overflow: 'visible' }}
+          aria-label="Gold price history chart"
+        >
+          <defs>
+            <linearGradient id="sc-area-grad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#DFC160" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#DFC160" stopOpacity="0.02" />
+            </linearGradient>
+          </defs>
 
-        {yTickVals.map((v, i) => (
-          <g key={i}>
-            <line x1={PAD.left} y1={py(v)} x2={PAD.left + chartW} y2={py(v)} stroke="rgba(223,193,96,0.12)" strokeWidth="1" />
-            <text x={PAD.left - 8} y={py(v) + 4} textAnchor="end"
-              style={{ fontFamily: 'Poppins,sans-serif', fontSize: '10px', fill: 'rgba(223,193,96,0.55)' }}>
-              {(v / 1000).toFixed(0)}K
-            </text>
-          </g>
-        ))}
+          {yTickVals.map((v, i) => (
+            <g key={i}>
+              <line x1={PAD.left} y1={py(v)} x2={PAD.left + chartW} y2={py(v)} stroke="rgba(223,193,96,0.12)" strokeWidth="1" />
+              <text x={PAD.left - 8} y={py(v) + 4} textAnchor="end"
+                style={{ fontFamily: 'Poppins,sans-serif', fontSize: '10px', fill: 'rgba(223,193,96,0.55)' }}>
+                {(v / 1000).toFixed(0)}K
+              </text>
+            </g>
+          ))}
 
-        <path d={areaPath} fill="url(#sc-area-grad)" />
-        <path d={linePath} fill="none" stroke="#DFC160" strokeWidth="2" strokeLinejoin="round" />
+          <path d={areaPath} fill="url(#sc-area-grad)" />
+          <path d={linePath} fill="none" stroke="#DFC160" strokeWidth="2" strokeLinejoin="round" />
 
-        {filtered.map((d, i) => {
-          const skip = filtered.length > 8 ? i % 2 !== 0 : false;
-          return !skip ? (
-            <text key={d.year} x={px(i)} y={H - 6} textAnchor="middle"
-              style={{ fontFamily: 'Poppins,sans-serif', fontSize: '10px', fill: 'rgba(223,193,96,0.55)' }}>
-              {d.year}
-            </text>
-          ) : null;
-        })}
+          {filtered.map((d, i) => {
+            const skip = filtered.length > 8 ? i % 2 !== 0 : false;
+            return !skip ? (
+              <text key={d.year} x={px(i)} y={H - 6} textAnchor="middle"
+                style={{ fontFamily: 'Poppins,sans-serif', fontSize: '10px', fill: 'rgba(223,193,96,0.55)' }}>
+                {d.year}
+              </text>
+            ) : null;
+          })}
 
-        {filtered.map((d, i) => (
-          <g key={d.year}>
-            <circle
-              cx={px(i)} cy={py(d.price)} r={hoveredIdx === i ? 5 : 3}
-              fill={hoveredIdx === i ? '#DFC160' : '#7B2C91'}
-              stroke="#DFC160" strokeWidth="1.5"
-              style={{ cursor: 'pointer', transition: 'r var(--t-fast)' }}
-              onMouseEnter={() => setHoveredIdx(i)}
-              onMouseLeave={() => setHoveredIdx(null)}
-            />
-            {hoveredIdx === i && (
-              <g>
-                <rect x={px(i) - 44} y={py(d.price) - 38} width="88" height="28"
-                  rx="6" fill="#3B1848" stroke="rgba(223,193,96,0.4)" strokeWidth="1" />
-                <text x={px(i)} y={py(d.price) - 20} textAnchor="middle"
-                  style={{ fontFamily: 'Poppins,sans-serif', fontSize: '11px', fontWeight: '600', fill: '#DFC160' }}>
-                  ₹{d.price.toLocaleString('en-IN')}/10g
-                </text>
-                <text x={px(i)} y={py(d.price) - 8} textAnchor="middle"
-                  style={{ fontFamily: 'Poppins,sans-serif', fontSize: '9px', fill: 'rgba(255,255,255,0.6)' }}>
-                  {d.year}
-                </text>
-              </g>
-            )}
-          </g>
-        ))}
-      </svg>
+          {filtered.map((d, i) => (
+            <g key={d.year}>
+              <circle
+                cx={px(i)} cy={py(d.price)} r={hoveredIdx === i ? 5 : 3}
+                fill={hoveredIdx === i ? '#DFC160' : '#7B2C91'}
+                stroke="#DFC160" strokeWidth="1.5"
+                style={{ cursor: 'pointer', transition: 'r var(--t-fast)' }}
+                onMouseEnter={() => setHoveredIdx(i)}
+                onMouseLeave={() => setHoveredIdx(null)}
+              />
+              {hoveredIdx === i && (
+                <g>
+                  <rect x={px(i) - 44} y={py(d.price) - 38} width="88" height="28"
+                    rx="6" fill="#3B1848" stroke="rgba(223,193,96,0.4)" strokeWidth="1" />
+                  <text x={px(i)} y={py(d.price) - 20} textAnchor="middle"
+                    style={{ fontFamily: 'Poppins,sans-serif', fontSize: '11px', fontWeight: '600', fill: '#DFC160' }}>
+                    ₹{d.price.toLocaleString('en-IN')}/10g
+                  </text>
+                  <text x={px(i)} y={py(d.price) - 8} textAnchor="middle"
+                    style={{ fontFamily: 'Poppins,sans-serif', fontSize: '9px', fill: 'rgba(255,255,255,0.6)' }}>
+                    {d.year}
+                  </text>
+                </g>
+              )}
+            </g>
+          ))}
+        </svg>
       </div>
     </div>
   );
@@ -351,15 +435,200 @@ function CallbackForm() {
   );
 }
 
+/* ─── Google Maps — SDK loader (runs once per page) ─────────────── */
+
+let _mapsReady: Promise<void> | null = null;
+
+function loadMapsSDK(): Promise<void> {
+  if (typeof window === 'undefined') return Promise.reject(new Error('SSR'));
+  if (_mapsReady) return _mapsReady;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((window as any).google?.maps) { _mapsReady = Promise.resolve(); return _mapsReady; }
+  _mapsReady = new Promise<void>((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}`;
+    s.async = true;
+    s.defer = true;
+    s.onload = () => resolve();
+    s.onerror = () => { _mapsReady = null; reject(new Error('Maps SDK failed to load')); };
+    document.head.appendChild(s);
+  });
+  return _mapsReady;
+}
+
+/* ─── Map style — Gallery light + gold highways + plum labels ────── */
+
+const MAP_STYLES = [
+  { elementType: 'geometry', stylers: [{ color: '#f0efef' }] },
+  { elementType: 'labels.text.fill', stylers: [{ color: '#3d2250' }] },
+  { elementType: 'labels.text.stroke', stylers: [{ color: '#f5f4f4' }] },
+  { featureType: 'administrative', elementType: 'geometry', stylers: [{ visibility: 'off' }] },
+  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+  { featureType: 'road', elementType: 'geometry.fill', stylers: [{ color: '#dddcdc' }] },
+  { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#c8c7c7' }] },
+  { featureType: 'road.arterial', elementType: 'geometry.fill', stylers: [{ color: '#e4e3e3' }] },
+  { featureType: 'road.highway', elementType: 'geometry.fill', stylers: [{ color: '#e8d98a' }] },
+  { featureType: 'road.highway', elementType: 'geometry.stroke', stylers: [{ color: '#c9a940' }] },
+  { featureType: 'road.local', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+  { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#bfb0d0' }] },
+  { featureType: 'water', elementType: 'labels', stylers: [{ visibility: 'off' }] },
+  { featureType: 'landscape.natural', elementType: 'geometry', stylers: [{ color: '#e8e6e6' }] },
+];
+
+/* ─── City centre + zoom per city ───────────────────────────────── */
+
+const CITY_CENTERS: Record<City, { lat: number; lng: number; zoom: number }> = {
+  Bangalore: { lat: 12.9400, lng: 77.6100, zoom: 12 },
+  Mysore: { lat: 12.3100, lng: 76.6400, zoom: 13 },
+  Mangalore: { lat: 12.8765, lng: 74.8444, zoom: 14 },
+  Davangere: { lat: 14.4644, lng: 75.9218, zoom: 14 },
+};
+
+/* ─── Branch marker icon factory ────────────────────────────────── */
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function markerIcon(isActive: boolean): any {
+  return {
+    path: 0, // google.maps.SymbolPath.CIRCLE
+    scale: isActive ? 11 : 8,
+    fillColor: isActive ? '#DFC160' : '#512561',
+    fillOpacity: 1,
+    strokeColor: isActive ? '#C9A940' : '#ffffff',
+    strokeWeight: 2,
+  };
+}
+
+/* ─── Google Maps city panel ────────────────────────────────────── */
+
+function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
+  city: City;
+  activeBranch: Branch | null;
+  setActiveBranch: (b: Branch | null) => void;
+}) {
+  const mapDivRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const markersRef = useRef<{ branch: Branch; marker: any }[]>([]);
+  const activeBranchRef = useRef(activeBranch);
+  const [mapError, setMapError] = useState(false);
+
+  // Keep ref in sync so marker click handlers always see latest value
+  useEffect(() => { activeBranchRef.current = activeBranch; }, [activeBranch]);
+
+  // Initialize / re-initialize map when city changes
+  useEffect(() => {
+    if (!mapDivRef.current) return;
+    const cityBranches = BRANCHES.filter(b => b.city === city);
+    const center = CITY_CENTERS[city];
+
+    loadMapsSDK()
+      .then(() => {
+        if (!mapDivRef.current) return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const g = (window as any).google.maps;
+
+        // Clear old markers
+        markersRef.current.forEach(({ marker }) => marker.setMap(null));
+        markersRef.current = [];
+
+        const map = new g.Map(mapDivRef.current, {
+          center: { lat: center.lat, lng: center.lng },
+          zoom: center.zoom,
+          styles: MAP_STYLES,
+          disableDefaultUI: true,
+          zoomControl: true,
+          gestureHandling: 'cooperative',
+          clickableIcons: false,
+        });
+
+        markersRef.current = cityBranches.map(branch => {
+          const marker = new g.Marker({
+            position: { lat: branch.coordinates.lat, lng: branch.coordinates.lng },
+            map,
+            title: branch.name,
+            icon: markerIcon(activeBranchRef.current?.slug === branch.slug),
+            cursor: 'pointer',
+          });
+
+          marker.addListener('click', () => {
+            const cur = activeBranchRef.current;
+            setActiveBranch(cur?.slug === branch.slug ? null : branch);
+          });
+
+          return { branch, marker };
+        });
+      })
+      .catch(() => setMapError(true));
+
+    return () => {
+      markersRef.current.forEach(({ marker }) => marker.setMap(null));
+      markersRef.current = [];
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [city]);
+
+  // Update marker icon colours when activeBranch changes (no map re-init)
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(window as any).google?.maps) return;
+    markersRef.current.forEach(({ branch, marker }) => {
+      marker.setIcon(markerIcon(activeBranch?.slug === branch.slug));
+    });
+  }, [activeBranch]);
+
+  return (
+    <div className="sc-city-panel reveal delay-3">
+      <div className="sc-city-panel__inner">
+
+        {/* LEFT: Google Map */}
+        <div className="sc-gmap-container" ref={mapDivRef} aria-label={`${city} branch map`}>
+          {mapError && (
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              height: '100%', fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-sm)', color: 'var(--mist)'
+            }}>
+              Map could not be loaded. Please check your connection.
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT: Branch detail card or hint */}
+        <div className="sc-branch-detail">
+          {activeBranch ? (
+            <div className="sc-branch-detail__card" key={activeBranch.slug}>
+              <div className="sc-branch-detail__header">
+                <span className="sc-branch-detail__name">{activeBranch.name}</span>
+                <button className="sc-branch-detail__close"
+                  onClick={() => setActiveBranch(null)} aria-label="Close">×</button>
+              </div>
+              <p className="sc-branch-detail__addr">{activeBranch.address}</p>
+              <p className="sc-branch-detail__hours">
+                {activeBranch.openHours.days}&nbsp;·&nbsp;{activeBranch.openHours.time}
+              </p>
+              <div className="sc-branch-actions">
+                <a href={`tel:${activeBranch.phone}`} className="sc-branch-action">Call Now</a>
+                <a href={`https://wa.me/${activeBranch.whatsapp.replace('+', '')}?text=${encodeURIComponent('Hi, I want to sell my gold. Can you help?')}`}
+                  target="_blank" rel="noopener noreferrer" className="sc-branch-action">WhatsApp</a>
+                <a href={`/${activeBranch.slug}`} className="sc-branch-action">View Branch</a>
+              </div>
+            </div>
+          ) : (
+            <div className="sc-branch-detail__hint">
+              <p>Tap a branch<br />on the map<br />to see details</p>
+            </div>
+          )}
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 /* ─── Branch Finder ────────────────────────────────────────────── */
 
 function BranchFinder() {
   const [activeCity, setActiveCity] = useState<City>('Bangalore');
-  const [expanded, setExpanded] = useState<string | null>(null);
-
-  const cityBranches = BRANCHES.filter(b =>
-    b.city.toLowerCase() === activeCity.toLowerCase()
-  );
+  const [activeBranch, setActiveBranch] = useState<Branch | null>(null);
 
   const cityArt: Record<City, React.ReactNode> = {
     Bangalore: (
@@ -467,31 +736,30 @@ function BranchFinder() {
   return (
     <section className="mk-bg-light section" id="branches" aria-label="Branch finder">
       <style>{`
-        .sc-city-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2.5rem; }
+        .sc-city-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; }
         @media (max-width: 640px) { .sc-city-grid { grid-template-columns: repeat(2,1fr); } }
-        .sc-city-card {
-          border: 1.5px solid var(--gallery-dk);
-          border-radius: 12px;
-          padding: 1rem;
-          cursor: pointer;
-          background: var(--white);
-          transition: border-color var(--t-base), background var(--t-base), transform var(--t-fast);
-          text-align: center;
-        }
+        .sc-city-card { border: 1.5px solid var(--gallery-dk); border-radius: 12px; padding: 1rem; cursor: pointer; background: var(--white); transition: border-color var(--t-base), background var(--t-base), transform var(--t-fast); text-align: center; }
         .sc-city-card:hover { transform: translateY(-2px); }
         .sc-city-card--active { border-color: var(--plum); background: rgba(81,37,97,0.06); }
         .sc-city-name { font-family: 'Tanker', serif; font-size: var(--t-h4); color: var(--plum); margin: 0.5rem 0 0.25rem; }
         .sc-city-count { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); color: var(--ink-mid); }
-        .sc-branch-list { display: flex; flex-direction: column; gap: 0.75rem; }
-        .sc-branch-item { border: 1px solid var(--gallery-dk); border-radius: 10px; overflow: hidden; transition: border-color var(--t-fast); }
-        .sc-branch-item:hover { border-color: var(--plum); }
-        .sc-branch-header { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1rem; cursor: pointer; background: var(--gallery); }
-        .sc-branch-name { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: var(--t-base); color: var(--ink); }
-        .sc-branch-toggle { font-family: 'Tanker', serif; font-size: 1.25rem; color: var(--plum); line-height: 1; transform-origin: center; transition: transform var(--t-fast); display: inline-block; }
-        .sc-branch-toggle--open { transform: rotate(45deg); }
-        .sc-branch-body { padding: 0 1rem 1rem; background: rgba(240,239,239,0.6); display: flex; flex-direction: column; gap: 0.5rem; }
-        .sc-branch-addr { font-family: 'Poppins', sans-serif; font-size: var(--t-sm); color: var(--ink-mid); line-height: 1.5; }
-        .sc-branch-actions { display: flex; gap: 0.75rem; margin-top: 0.25rem; flex-wrap: wrap; }
+        @keyframes scPanelIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .sc-city-panel { animation: scPanelIn 380ms cubic-bezier(0.34,1.56,0.64,1) both; margin-bottom: 2rem; }
+        .sc-city-panel__inner { display: grid; grid-template-columns: 3fr 2fr; gap: 1.5rem; align-items: start; }
+        @media (max-width: 768px) { .sc-city-panel__inner { grid-template-columns: 1fr; } }
+        .sc-gmap-container { width: 100%; height: 420px; border-radius: 12px; overflow: hidden; border: 1px solid var(--gallery-dk); box-shadow: 0 20px 48px rgba(81,37,97,0.12), 0 4px 12px rgba(0,0,0,0.05); background: var(--gallery); }
+        @media (max-width: 640px) { .sc-gmap-container { height: 300px; } }
+        .sc-branch-detail { min-height: 180px; display: flex; align-items: flex-start; }
+        @keyframes scDetailIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+        .sc-branch-detail__card { width: 100%; background: var(--white); border: 1px solid var(--gallery-dk); border-radius: 12px; padding: 1.25rem; animation: scDetailIn 280ms ease both; }
+        .sc-branch-detail__header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+        .sc-branch-detail__name { font-family: 'Tanker', serif; font-size: var(--t-h4); color: var(--plum); line-height: 1.2; }
+        .sc-branch-detail__close { background: none; border: none; cursor: pointer; font-family: 'Tanker', serif; font-size: 1.5rem; color: var(--mist); line-height: 1; padding: 0; transition: color var(--t-fast); }
+        .sc-branch-detail__close:hover { color: var(--plum); }
+        .sc-branch-detail__addr { font-family: 'Poppins', sans-serif; font-size: var(--t-sm); color: var(--ink-mid); line-height: 1.5; margin-bottom: 0.375rem; }
+        .sc-branch-detail__hours { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); color: var(--mist); font-weight: 500; margin-bottom: 1rem; }
+        .sc-branch-detail__hint { width: 100%; display: flex; align-items: center; justify-content: center; min-height: 160px; border: 1.5px dashed var(--gallery-dk); border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: var(--t-sm); color: var(--mist); text-align: center; padding: 1.5rem; line-height: 1.8; }
+        .sc-branch-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
         .sc-branch-action { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); font-weight: 600; color: var(--plum); text-decoration: none; border: 1px solid rgba(81,37,97,0.3); padding: 0.3rem 0.875rem; border-radius: 9999px; transition: background var(--t-fast), color var(--t-fast); }
         .sc-branch-action:hover { background: var(--plum); color: var(--white); }
       `}</style>
@@ -508,7 +776,7 @@ function BranchFinder() {
             return (
               <button
                 key={city}
-                onClick={() => { setActiveCity(city); setExpanded(null); }}
+                onClick={() => { setActiveCity(city); setActiveBranch(null); }}
                 className={`sc-city-card${activeCity === city ? ' sc-city-card--active' : ''}`}
               >
                 <div style={{ width: '100%', maxWidth: '96px', margin: '0 auto' }}>
@@ -521,36 +789,12 @@ function BranchFinder() {
           })}
         </div>
 
-        <div className="sc-branch-list reveal delay-3">
-          {cityBranches.map((branch) => (
-            <div key={branch.slug} className="sc-branch-item">
-              <div
-                className="sc-branch-header"
-                onClick={() => setExpanded(expanded === branch.slug ? null : branch.slug)}
-                role="button"
-                tabIndex={0}
-                aria-expanded={expanded === branch.slug}
-                onKeyDown={(e) => e.key === 'Enter' && setExpanded(expanded === branch.slug ? null : branch.slug)}
-              >
-                <span className="sc-branch-name">{branch.name}</span>
-                <span className={`sc-branch-toggle${expanded === branch.slug ? ' sc-branch-toggle--open' : ''}`}>+</span>
-              </div>
-              {expanded === branch.slug && (
-                <div className="sc-branch-body">
-                  {branch.address && <p className="sc-branch-addr">{branch.address}</p>}
-                  <div className="sc-branch-actions">
-                    {branch.phone && <a href={`tel:${branch.phone}`} className="sc-branch-action">Call Now</a>}
-                    {branch.phone && (
-                      <a href={`https://wa.me/91${branch.phone}?text=${encodeURIComponent('Hi, I want to sell my gold. Can you help?')}`}
-                        target="_blank" rel="noopener noreferrer" className="sc-branch-action">WhatsApp</a>
-                    )}
-                    <a href={`/sell-gold-${branch.slug}`} className="sc-branch-action">View Branch</a>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+        <GoogleCityMap
+          key={activeCity}
+          city={activeCity}
+          activeBranch={activeBranch}
+          setActiveBranch={setActiveBranch}
+        />
       </div>
     </section>
   );
@@ -649,11 +893,11 @@ function LocalTrustSection({
 /* ─── Steps data + local section ───────────────────────────────── */
 
 const SC_STEPS = [
-  { n: '01', title: 'Book Appointment',  body: 'Call, WhatsApp, or book online in 30 seconds. No documents or paperwork needed at this stage.' },
-  { n: '02', title: 'Visit Any Branch',  body: 'Walk into any of our 16 branches with your gold and a valid government ID. Walk-ins always welcome.' },
-  { n: '03', title: 'Weigh & Assess',    body: 'Your gold is weighed on certified precision scales in front of you. Transparent process, zero hidden deductions.' },
-  { n: '04', title: 'XRF Purity Test',   body: 'Our German XRF spectrometer reads exact gold content in under 2 minutes. No acid test. No scratches.' },
-  { n: '05', title: 'Receive Your Offer',body: 'You get an offer based on live MCX rates. We show you our margin openly, side by side. Zero pressure.' },
+  { n: '01', title: 'Book Appointment', body: 'Call, WhatsApp, or book online in 30 seconds. No documents or paperwork needed at this stage.' },
+  { n: '02', title: 'Visit Any Branch', body: 'Walk into any of our 16 branches with your gold and a valid government ID. Walk-ins always welcome.' },
+  { n: '03', title: 'Weigh & Assess', body: 'Your gold is weighed on certified precision scales in front of you. Transparent process, zero hidden deductions.' },
+  { n: '04', title: 'XRF Purity Test', body: 'Our German XRF spectrometer reads exact gold content in under 2 minutes. No acid test. No scratches.' },
+  { n: '05', title: 'Receive Your Offer', body: 'You get an offer based on live MCX rates. We show you our margin openly, side by side. Zero pressure.' },
   { n: '06', title: 'Get Paid Instantly', body: 'Accept and receive payment in cash, NEFT, or UPI within 45 minutes. Walk in with gold, walk out with money.' },
 ] as const;
 
@@ -707,7 +951,7 @@ export default function SampleCPage() {
       if (!v) return;
       if (i === slide) {
         v.currentTime = 0;
-        v.play().catch(() => {});
+        v.play().catch(() => { });
       } else {
         v.pause();
       }
@@ -748,7 +992,7 @@ export default function SampleCPage() {
           max-width: unset !important;
         }
         .mk-navbar__logo-img {
-          height: 70px !important;
+          height: 85px !important;
         }
         .mk-navbar__link {
           font-size: 0.9375rem !important;
@@ -1298,7 +1542,7 @@ export default function SampleCPage() {
             <p className="sc-hero__sub" key={`sub-${slide}`}>{current.sub}</p>
 
             <div className="sc-hero__cta-row">
-              <MkButton variant="gold" size="lg" href="/sell-gold">Sell Gold Today</MkButton>
+              <MkButton variant="gold" size="lg" href="/sell-gold">Buy Gold Today</MkButton>
               <MkButton variant="outline-light" size="lg" href="/release-pledged-gold">
                 Release Pledged Gold
               </MkButton>
@@ -1308,10 +1552,10 @@ export default function SampleCPage() {
             <div className="sc-hero__stats">
               {([
                 { value: '10,000+', label: 'Customers' },
-                { value: '16',      label: 'Branches' },
-                { value: '11 Yrs',  label: 'Of Trust' },
-                { value: '4.9',     label: 'Rating' },
-                { value: '45 min',  label: 'Payout' },
+                { value: '16', label: 'Branches' },
+                { value: '11 Yrs', label: 'Of Trust' },
+                { value: '4.9', label: 'Rating' },
+                { value: '45 min', label: 'Payout' },
               ] as const).map((s, i, arr) => (
                 <React.Fragment key={s.value}>
                   <div className="sc-hero__stat">
