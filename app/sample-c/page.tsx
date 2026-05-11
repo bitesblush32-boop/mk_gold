@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkTicker } from '@/components/layout/MkTicker';
 import { MkFooter } from '@/components/layout/MkFooter';
@@ -19,31 +19,31 @@ import { BRANCHES } from '@/lib/branch-router';
 
 const SLIDES = [
   {
-    bg: '/858b4896-10-easy-ways-to-know-if-your-gold-jewellery-is-real.jpg',
+    video: '/b1.mp4',
     headline: 'Sell Your Gold Today',
     headlineKn: 'ನಿಮ್ಮ ಚಿನ್ನವನ್ನು ಇಂದೇ ಮಾರಿ',
     sub: 'Live MCX rates · XRF purity test · Payment in 45 minutes',
   },
   {
-    bg: '/bg-2.jpg',
+    video: '/b2.mp4',
     headline: "Karnataka's Most Trusted Gold Buyer",
     headlineKn: 'ಕರ್ನಾಟಕದ ಅತ್ಯಂತ ವಿಶ್ವಾಸಾರ್ಹ ಚಿನ್ನ ಖರೀದಿದಾರ',
     sub: '16 branches · 10,000+ customers · Est. 2014',
   },
   {
-    bg: '/bg3.jpg',
+    video: '/b3.mp4',
     headline: 'Release Pledged Gold Confidentially',
     headlineKn: 'ಗೋಪ್ಯವಾಗಿ ಅಡಮಾನ ಚಿನ್ನ ಬಿಡಿಸಿ',
     sub: 'We pay your lender directly · Discreet · Same-day possible',
   },
   {
-    bg: '/bg-4.jpg',
+    video: '/b4.mp4',
     headline: 'Fair Value. Every Time.',
     headlineKn: 'ನ್ಯಾಯಯುತ ಮೌಲ್ಯ. ಪ್ರತಿ ಬಾರಿ.',
     sub: 'ISO 9001:2015 · German XRF Spectrometer · Transparent pricing',
   },
   {
-    bg: '/bg-5.webp',
+    video: '/b5.mp4',
     headline: 'Instant Money, Lasting Trust',
     headlineKn: 'ತಕ್ಷಣ ಹಣ, ಶಾಶ್ವತ ವಿಶ್ವಾಸ',
     sub: 'Bangalore · Mysore · Mangalore · Davangere',
@@ -652,7 +652,7 @@ export default function SampleCPage() {
   const [sealFlipped, setSealFlipped] = useState(false);
   const [trustFlip1, setTrustFlip1] = useState(false);
   const [slide, setSlide] = useState(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -663,21 +663,20 @@ export default function SampleCPage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const startInterval = useCallback(() => {
-    intervalRef.current = setInterval(() => {
-      setSlide(s => (s + 1) % SLIDES.length);
-    }, 4000);
-  }, []);
-
   useEffect(() => {
-    startInterval();
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [startInterval]);
+    videoRefs.current.forEach((v, i) => {
+      if (!v) return;
+      if (i === slide) {
+        v.currentTime = 0;
+        v.play().catch(() => {});
+      } else {
+        v.pause();
+      }
+    });
+  }, [slide]);
 
   function goToSlide(i: number) {
-    if (intervalRef.current) clearInterval(intervalRef.current);
     setSlide(i);
-    startInterval();
   }
 
   const current = SLIDES[slide];
@@ -748,12 +747,18 @@ export default function SampleCPage() {
           opacity: 0.4;
           pointer-events: none;
         }
-        .sc-hero__slide {
+        .sc-hero__video {
           position: absolute;
           inset: 0;
-          background-size: cover;
-          background-position: center;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: 0;
           transition: opacity 0.8s ease;
+          pointer-events: none;
+        }
+        .sc-hero__video--active {
+          opacity: 1;
         }
         .sc-hero__dots {
           position: absolute;
@@ -1100,10 +1105,19 @@ export default function SampleCPage() {
 
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="sc-hero mk-bg-dark" aria-label="Hero">
-        <div
-          className="sc-hero__slide"
-          style={{ backgroundImage: `url('${current.bg}')` }}
-        />
+        {SLIDES.map((s, i) => (
+          <video
+            key={s.video}
+            ref={el => { videoRefs.current[i] = el; }}
+            src={s.video}
+            className={`sc-hero__video${i === slide ? ' sc-hero__video--active' : ''}`}
+            muted
+            playsInline
+            preload="auto"
+            onEnded={() => setSlide(p => (p + 1) % SLIDES.length)}
+            aria-hidden="true"
+          />
+        ))}
         <div className="sc-hero__overlay" />
         <div className="sc-grain" />
 
