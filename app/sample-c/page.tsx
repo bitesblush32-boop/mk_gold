@@ -1568,7 +1568,7 @@ export default function SampleCPage() {
             <p className="sc-hero__sub" key={`sub-${slide}`}>{current.sub}</p>
 
             <div className="sc-hero__cta-row">
-              <MkButton variant="gold" size="lg" href="/sell-gold">Buy Gold Today</MkButton>
+              <MkButton variant="gold" size="lg" href="/sell-gold">Sell Gold Today</MkButton>
               <MkButton variant="outline-light" size="lg" href="/release-pledged-gold">
                 Release Pledged Gold
               </MkButton>

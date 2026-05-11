@@ -59,7 +59,7 @@ export function MkHero() {
           {/* CTA row */}
           <div className="mk-hero__cta-row reveal delay-4">
             <MkButton variant="gold" size="lg" href="/sell-gold">
-              Buy Gold Today
+              Sell Gold Today
             </MkButton>
             <MkButton variant="outline-light" size="lg" href="/release-pledged-gold">
               Release Pledged Gold
