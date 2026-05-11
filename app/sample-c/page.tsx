@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkTicker } from '@/components/layout/MkTicker';
 import { MkFooter } from '@/components/layout/MkFooter';
-import { MkStatBand } from '@/components/sections/MkStatBand';
-import { MkSteps } from '@/components/sections/MkSteps';
 import { MkFaq } from '@/components/sections/MkFaq';
 import { MkCtaBand } from '@/components/sections/MkCtaBand';
 import { MkWhatsApp } from '@/components/features/MkWhatsApp';
@@ -151,7 +149,7 @@ function GoldRateChart() {
   const yTickVals = Array.from({ length: yTicks + 1 }, (_, i) => minP + (range / yTicks) * i);
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Header row: title left, filter pills right */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-sm)', fontWeight: 600, color: 'rgba(255,255,255,0.80)' }}>
@@ -182,10 +180,12 @@ function GoldRateChart() {
         </div>
       </div>
 
-      {/* SVG chart */}
+      {/* SVG chart — fills remaining card height */}
+      <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
       <svg
         viewBox={`0 0 ${W} ${H}`}
-        style={{ width: '100%', height: 'auto', display: 'block', overflow: 'visible' }}
+        preserveAspectRatio="none"
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', overflow: 'visible' }}
         aria-label="Gold price history chart"
       >
         <defs>
@@ -245,6 +245,7 @@ function GoldRateChart() {
           </g>
         ))}
       </svg>
+      </div>
     </div>
   );
 }
@@ -645,6 +646,44 @@ function LocalTrustSection({
   );
 }
 
+/* ─── Steps data + local section ───────────────────────────────── */
+
+const SC_STEPS = [
+  { n: '01', title: 'Book Appointment',  body: 'Call, WhatsApp, or book online in 30 seconds. No documents or paperwork needed at this stage.' },
+  { n: '02', title: 'Visit Any Branch',  body: 'Walk into any of our 16 branches with your gold and a valid government ID. Walk-ins always welcome.' },
+  { n: '03', title: 'Weigh & Assess',    body: 'Your gold is weighed on certified precision scales in front of you. Transparent process, zero hidden deductions.' },
+  { n: '04', title: 'XRF Purity Test',   body: 'Our German XRF spectrometer reads exact gold content in under 2 minutes. No acid test. No scratches.' },
+  { n: '05', title: 'Receive Your Offer',body: 'You get an offer based on live MCX rates. We show you our margin openly, side by side. Zero pressure.' },
+  { n: '06', title: 'Get Paid Instantly', body: 'Accept and receive payment in cash, NEFT, or UPI within 45 minutes. Walk in with gold, walk out with money.' },
+] as const;
+
+function LocalStepsSection() {
+  return (
+    <section className="mk-bg-light section" id="how-it-works">
+      <div className="mk-container">
+        <div className="reveal" style={{ textAlign: 'center', maxWidth: '42rem', margin: '0 auto 3.5rem' }}>
+          <p className="mk-section-overline">How It Works</p>
+          <h2 style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h1)', color: 'var(--ink)', lineHeight: 1.05, marginBottom: '1rem' }}>
+            Six steps. 45 minutes.<br />That&apos;s all it takes.
+          </h2>
+          <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', lineHeight: 1.65 }}>
+            Sell your gold at fair, transparent rates backed by live MCX prices and certified XRF purity testing.
+          </p>
+        </div>
+        <ol className="sc-steps-grid" aria-label="Steps to sell your gold">
+          {SC_STEPS.map((step, i) => (
+            <li key={step.n} className={`sc-step reveal delay-${(i % 3) + 1}`}>
+              <span className="sc-step__number" aria-hidden="true">{step.n}</span>
+              <h3 className="sc-step__title">{step.title}</h3>
+              <p className="sc-step__body">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
 /* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function SampleCPage() {
@@ -724,7 +763,8 @@ export default function SampleCPage() {
         /* ── Hero ─────────────────────────────────────────── */
         .sc-hero {
           position: relative;
-          min-height: 92vh;
+          height: 100vh;
+          min-height: 680px;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -735,9 +775,9 @@ export default function SampleCPage() {
           inset: 0;
           background: linear-gradient(
             135deg,
-            rgba(59,24,72,0.95) 0%,
-            rgba(81,37,97,0.82) 50%,
-            rgba(59,24,72,0.95) 100%
+            rgba(59,24,72,0.9) 0%,
+            rgba(81,37,97,0.75) 50%,
+            rgba(59,24,72,0.9) 100%
           );
         }
         .sc-grain {
@@ -845,7 +885,7 @@ export default function SampleCPage() {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 3rem;
-          align-items: start;
+          align-items: stretch;
           margin-bottom: 2.5rem;
         }
         @media (max-width: 900px) {
@@ -1020,8 +1060,8 @@ export default function SampleCPage() {
         .sc-hero { overflow: visible !important; z-index: 2; }
         .sc-no-gap { position: relative; z-index: 1; }
 
-        /* Give StatBand breathing room so its text clears the coin */
-        .sc-no-gap > .mk-stat-band { padding-top: 5rem !important; }
+        /* Rate section gets coin clearance now that StatBand is gone */
+        .sc-rate-section { padding-top: 5rem !important; }
 
         /* Anchor: absolute at hero bottom, 30% (66px of 220px) below the edge */
         .sc-coin-anchor {
@@ -1036,8 +1076,15 @@ export default function SampleCPage() {
           gap: 0.4rem;
           pointer-events: auto;
         }
+        .sc-coin-perspective {
+          perspective: 700px;
+          cursor: pointer;
+          position: relative;
+          width: 220px;
+          height: 220px;
+        }
 
-        /* Override MkSeal's inline 120px width/height so coin renders at 220px */
+        /* Override MkSeal's inline 120px width/height so coin renders at full size */
         .sc-coin-anchor img {
           width: 100% !important;
           height: 100% !important;
@@ -1061,7 +1108,129 @@ export default function SampleCPage() {
           white-space: nowrap;
           user-select: none;
         }
-        @media (max-width: 480px) { .sc-coin-hint { display: none; } }
+
+        /* Coin responsive breakpoints */
+        @media (max-width: 1024px) {
+          .sc-coin-anchor { width: 160px; bottom: -48px; }
+          .sc-coin-perspective { width: 160px; height: 160px; }
+        }
+        @media (max-width: 768px) {
+          .sc-coin-anchor { width: 120px; bottom: -36px; left: 4%; }
+          .sc-coin-perspective { width: 120px; height: 120px; }
+        }
+        @media (max-width: 480px) {
+          .sc-coin-anchor { display: none; }
+          .sc-coin-hint { display: none; }
+        }
+
+        /* ── Hero stats row ───────────────────────────────── */
+        .sc-hero__stats {
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+          flex-wrap: wrap;
+          margin-top: 1.75rem;
+          padding-top: 1.5rem;
+          border-top: 1px solid rgba(223,193,96,0.18);
+        }
+        .sc-hero__stat {
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+        }
+        .sc-hero__stat-value {
+          font-family: 'Tanker', serif;
+          font-size: 1.25rem;
+          line-height: 1;
+          color: var(--gold);
+        }
+        .sc-hero__stat-label {
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.6rem;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.45);
+        }
+        .sc-hero__stat-sep {
+          width: 1px;
+          height: 28px;
+          background: rgba(223,193,96,0.2);
+          flex-shrink: 0;
+        }
+        @media (max-width: 480px) {
+          .sc-hero__stats { gap: 0.875rem; }
+          .sc-hero__stat-sep { height: 20px; }
+        }
+
+        /* ── How It Works — dark premium cards ─────────────── */
+        .sc-steps-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 1.25rem;
+          list-style: none;
+          padding: 0; margin: 0;
+        }
+        @media (max-width: 860px) { .sc-steps-grid { grid-template-columns: repeat(2,1fr); } }
+        @media (max-width: 540px) { .sc-steps-grid { grid-template-columns: 1fr; } }
+
+        .sc-step {
+          background: var(--white);
+          border: 1.5px solid var(--gallery-dk);
+          border-radius: 16px;
+          padding: 2rem 1.5rem;
+          position: relative;
+          overflow: hidden;
+          transition: transform 350ms cubic-bezier(0.34,1.56,0.64,1),
+                      border-color 260ms ease,
+                      box-shadow 260ms ease;
+        }
+        .sc-step::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg,
+            rgba(223,193,96,0.06) 0%,
+            rgba(123,44,145,0.05) 100%);
+          opacity: 0;
+          transition: opacity 300ms ease;
+          pointer-events: none;
+        }
+        .sc-step:hover {
+          transform: translateY(-6px);
+          border-color: rgba(223,193,96,0.55);
+          box-shadow: 0 12px 40px rgba(0,0,0,0.1),
+                      0 0 0 1px rgba(223,193,96,0.15);
+        }
+        .sc-step:hover::before { opacity: 1; }
+        .sc-step__number {
+          font-family: 'Tanker', serif;
+          font-size: 3.25rem;
+          line-height: 1;
+          display: block;
+          margin-bottom: 1rem;
+          background: linear-gradient(135deg, #DFC160 0%, rgba(223,193,96,0.4) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          transition: transform 350ms cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .sc-step:hover .sc-step__number { transform: scale(1.08); }
+        .sc-step__title {
+          font-family: 'Poppins', sans-serif;
+          font-size: var(--t-h4);
+          font-weight: 600;
+          color: var(--ink);
+          margin: 0 0 0.625rem;
+          line-height: 1.25;
+        }
+        .sc-step__body {
+          font-family: 'Poppins', sans-serif;
+          font-size: var(--t-sm);
+          color: var(--ink-mid);
+          line-height: 1.65;
+          margin: 0;
+        }
       `}</style>
 
       {/* ── Scroll progress bar ─────────────────────────────────── */}
@@ -1135,6 +1304,25 @@ export default function SampleCPage() {
               </MkButton>
             </div>
 
+            {/* Stats row */}
+            <div className="sc-hero__stats">
+              {([
+                { value: '10,000+', label: 'Customers' },
+                { value: '16',      label: 'Branches' },
+                { value: '11 Yrs',  label: 'Of Trust' },
+                { value: '4.9',     label: 'Rating' },
+                { value: '45 min',  label: 'Payout' },
+              ] as const).map((s, i, arr) => (
+                <React.Fragment key={s.value}>
+                  <div className="sc-hero__stat">
+                    <span className="sc-hero__stat-value">{s.value}</span>
+                    <span className="sc-hero__stat-label">{s.label}</span>
+                  </div>
+                  {i < arr.length - 1 && <span className="sc-hero__stat-sep" aria-hidden="true" />}
+                </React.Fragment>
+              ))}
+            </div>
+
           </div>
         </div>
 
@@ -1149,7 +1337,7 @@ export default function SampleCPage() {
               tabIndex={0}
               aria-label={sealFlipped ? 'Showing Kannada — tap for English' : 'Showing English — tap for Kannada'}
               onKeyDown={(e) => e.key === 'Enter' && setSealFlipped(f => !f)}
-              style={{ width: '220px', height: '220px', perspective: '700px', cursor: 'pointer', position: 'relative' }}
+              className="sc-coin-perspective"
             >
               {/* Inner: EN ↔ KN flip */}
               <div style={{
@@ -1190,9 +1378,8 @@ export default function SampleCPage() {
         </div>
       </section>
 
-      {/* ── Stats band + Rate section — continuous dark bg ─────── */}
+      {/* ── Rate section — continuous dark bg ──────────────────── */}
       <div className="mk-bg-dark sc-no-gap">
-        <MkStatBand />
 
         {/* ── Rate + Calculator + Callback + Chart ────────────────── */}
         <section className="sc-rate-section section" id="gold-rate">
@@ -1211,24 +1398,24 @@ export default function SampleCPage() {
                 <MkCalculator variant="dark" showBookingCTA={false} />
               </div>
 
-              {/* Right: Callback form */}
-              <div className="sc-card-dark reveal delay-3">
-                <h3 className="sc-card-title">Request a Callback</h3>
-                <p className="sc-card-sub">Our team will call you within 30 minutes · Confidential</p>
-                <CallbackForm />
+              {/* Right: Callback + Chart stacked */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', height: '100%' }}>
+                <div className="sc-card-dark reveal delay-3">
+                  <h3 className="sc-card-title">Request a Callback</h3>
+                  <p className="sc-card-sub">Our team will call you within 30 minutes · Confidential</p>
+                  <CallbackForm />
+                </div>
+                <div className="sc-chart-card reveal delay-4" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <GoldRateChart />
+                </div>
               </div>
-            </div>
-
-            {/* Bottom row: Full-width chart */}
-            <div className="sc-chart-card reveal delay-2" style={{ marginTop: 0 }}>
-              <GoldRateChart />
             </div>
           </div>
         </section>
       </div>{/* end continuous dark: StatBand + Rate */}
 
       {/* ── How it works ────────────────────────────────────────── */}
-      <MkSteps />
+      <LocalStepsSection />
 
       {/* ── Trust architecture ──────────────────────────────────── */}
       <LocalTrustSection flip1={trustFlip1} setFlip1={setTrustFlip1} />
