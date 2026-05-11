@@ -1009,6 +1009,54 @@ export default function SampleCPage() {
           background-size: cover !important;
           background-position: center !important;
         }
+
+        /* ── Hero coin — 70/30 overlap, static 3D ─────────── */
+        /* Allow coin to bleed below hero — bg elements are all inset-0 so safe */
+        .sc-hero { overflow: visible !important; z-index: 2; }
+        .sc-no-gap { position: relative; z-index: 1; }
+
+        /* Give StatBand breathing room so its text clears the coin */
+        .sc-no-gap > .mk-stat-band { padding-top: 5rem !important; }
+
+        /* Anchor: absolute at hero bottom, 30% (66px of 220px) below the edge */
+        .sc-coin-anchor {
+          position: absolute;
+          bottom: -66px;
+          left: 6%;
+          z-index: 20;
+          width: 220px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.4rem;
+          pointer-events: auto;
+        }
+
+        /* Override MkSeal's inline 120px width/height so coin renders at 220px */
+        .sc-coin-anchor img {
+          width: 100% !important;
+          height: 100% !important;
+          object-fit: contain !important;
+        }
+
+        /* Static 3D depth — rich drop-shadow, no animation */
+        .sc-coin-wobble {
+          filter: drop-shadow(0 22px 40px rgba(0,0,0,.55))
+                  drop-shadow(0 0 22px rgba(223,193,96,.35));
+        }
+
+        /* Hint label under the coin */
+        .sc-coin-hint {
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.6rem;
+          font-weight: 600;
+          letter-spacing: 0.10em;
+          text-transform: uppercase;
+          color: rgba(223,193,96,0.55);
+          white-space: nowrap;
+          user-select: none;
+        }
+        @media (max-width: 480px) { .sc-coin-hint { display: none; } }
       `}</style>
 
       {/* ── Scroll progress bar ─────────────────────────────────── */}
@@ -1073,44 +1121,44 @@ export default function SampleCPage() {
               </MkButton>
             </div>
 
-            {/* Flippable seal */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem', marginTop: '1.5rem' }}>
-              <div
-                onClick={() => setSealFlipped(f => !f)}
-                role="button"
-                tabIndex={0}
-                aria-label={sealFlipped ? 'Showing Kannada seal — click to see English' : 'Showing English seal — click to see Kannada'}
-                onKeyDown={(e) => e.key === 'Enter' && setSealFlipped(f => !f)}
-                style={{ width: '96px', height: '96px', perspective: '600px', cursor: 'pointer', position: 'relative' }}
-              >
-                <div style={{
-                  width: '100%',
-                  height: '100%',
-                  position: 'relative',
-                  transformStyle: 'preserve-3d',
-                  transition: 'transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-                  transform: sealFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                  willChange: 'transform',
-                }}>
-                  <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
-                    <MkSeal variant="en" size="md" animate={!sealFlipped} />
-                  </div>
-                  <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
-                    <MkSeal variant="kn" size="md" />
-                  </div>
+          </div>
+        </div>
+
+        {/* ── Overlapping coin anchor — 70% hero / 30% below ── */}
+        <div className="sc-coin-anchor">
+          {/* Outer: constant 3D wobble + gold glow */}
+          <div className="sc-coin-wobble">
+            {/* Perspective wrapper */}
+            <div
+              onClick={() => setSealFlipped(f => !f)}
+              role="button"
+              tabIndex={0}
+              aria-label={sealFlipped ? 'Showing Kannada — tap for English' : 'Showing English — tap for Kannada'}
+              onKeyDown={(e) => e.key === 'Enter' && setSealFlipped(f => !f)}
+              style={{ width: '220px', height: '220px', perspective: '700px', cursor: 'pointer', position: 'relative' }}
+            >
+              {/* Inner: EN ↔ KN flip */}
+              <div style={{
+                width: '100%',
+                height: '100%',
+                position: 'relative',
+                transformStyle: 'preserve-3d',
+                transition: 'transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                transform: sealFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                willChange: 'transform',
+              }}>
+                <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <MkSeal variant="en" size="lg" animate={!sealFlipped} />
+                </div>
+                <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', transform: 'rotateY(180deg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <MkSeal variant="kn" size="lg" />
                 </div>
               </div>
-              {!sealFlipped ? (
-                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '0.65rem', color: 'rgba(223,193,96,0.55)', letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: '0.25rem' }}>
-                  Tap to see Kannada
-                </p>
-              ) : (
-                <p style={{ fontFamily: 'Anek Kannada, sans-serif', fontSize: '0.7rem', color: 'rgba(223,193,96,0.7)' }}>
-                  MK ಅಂದರೆ ನಂಬಿಕೆ
-                </p>
-              )}
             </div>
           </div>
+          <span className="sc-coin-hint">
+            {sealFlipped ? 'MK ಅಂದರೆ ನಂಬಿಕೆ' : 'Tap to flip'}
+          </span>
         </div>
 
         {/* Slide dots */}
