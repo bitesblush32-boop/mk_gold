@@ -997,10 +997,17 @@ export default function SampleCPage() {
         /* ── Continuous bg wrappers ───────────────────────── */
         /* Child sections become transparent so wrapper bg tiles continuously */
         .sc-no-gap > .mk-stat-band,
-        .sc-no-gap > .mk-cta-band,
         .sc-no-gap > .mk-footer {
           background-color: transparent !important;
           background-image: none !important;
+        }
+
+        /* ── CTA band — graff-5 photo bg ──────────────────── */
+        .sc-no-gap > .mk-cta-band {
+          background-color: #3B1848 !important;
+          background-image: url(/graff-5.jpg) !important;
+          background-size: cover !important;
+          background-position: center !important;
         }
       `}</style>
 
@@ -1168,7 +1175,11 @@ export default function SampleCPage() {
       <BranchFinder />
 
       {/* ── Testimonials: infinite scroll carousel ──────────────── */}
-      <section className="mk-bg-light section" id="reviews">
+      <section
+        className="section"
+        id="reviews"
+        style={{ backgroundImage: 'url(/graff-2.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+      >
         <div className="mk-container">
           <p className="mk-section-overline reveal" style={{ color: 'var(--plum)' }}>Google Reviews</p>
           <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', marginBottom: '0.75rem' }}>
