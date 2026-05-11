@@ -7,7 +7,7 @@ import { MkButton } from '@/components/ui/MkButton';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
-  { href: '/sell-gold', label: 'Sell Gold' },
+  { href: '/sell-gold', label: 'Home' },
   { href: '/release-pledged-gold', label: 'Release Pledged Gold' },
   { href: '/gold-rate-today', label: 'Gold Rate' },
   { href: '/about', label: 'About' },
