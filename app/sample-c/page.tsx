@@ -1697,7 +1697,7 @@ export default function SampleCPage() {
       <section
         className="section"
         id="reviews"
-        style={{ backgroundImage: 'url(/graff-2.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+        style={{ backgroundImage: 'url(/graff-1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
       >
         <div className="mk-container">
           <div className="sc-reviews-glass">
