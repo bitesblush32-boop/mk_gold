@@ -89,7 +89,7 @@ export function MkNavbar() {
 
           <div className="mk-navbar__actions">
             <MkButton variant="gold" size="sm" href="/sell-gold">
-              Buy Gold Today
+              Sell Gold Today
             </MkButton>
 
             {/* Hamburger */}
@@ -139,7 +139,7 @@ export function MkNavbar() {
             style={{ width: '100%' }}
             tabIndex={menuOpen ? 0 : -1}
           >
-            Buy Gold Today
+            Sell Gold Today
           </MkButton>
           <MkButton
             variant="whatsapp"
