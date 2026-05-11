@@ -15,7 +15,6 @@ import { MkCalculator } from '@/components/features/MkCalculator';
 import { MkSeal } from '@/components/ui/MkSeal';
 import { MkButton } from '@/components/ui/MkButton';
 import { BRANCHES } from '@/lib/branch-router';
-import { useGoldRate } from '@/hooks/useGoldRate';
 
 /* ─── Hero slides ─────────────────────────────────────────────── */
 
@@ -28,7 +27,7 @@ const SLIDES = [
   },
   {
     bg: '/858b4896-10-easy-ways-to-know-if-your-gold-jewellery-is-real.jpg',
-    headline: 'Karnataka\'s Most Trusted Gold Buyer',
+    headline: "Karnataka's Most Trusted Gold Buyer",
     headlineKn: 'ಕರ್ನಾಟಕದ ಅತ್ಯಂತ ವಿಶ್ವಾಸಾರ್ಹ ಚಿನ್ನ ಖರೀದಿದಾರ',
     sub: '16 branches · 10,000+ customers · Est. 2014',
   },
@@ -52,7 +51,7 @@ const SLIDES = [
   },
 ];
 
-/* ─── Chart data (12-year gold price history ─ illustrative) ──── */
+/* ─── Chart data (12-year gold price history — illustrative) ───── */
 
 const CHART_DATA = [
   { year: '2014', price: 26500 },
@@ -69,7 +68,7 @@ const CHART_DATA = [
   { year: '2025', price: 88600 },
 ];
 
-/* ─── Testimonials ────────────────────────────────────────────── */
+/* ─── Testimonials ─────────────────────────────────────────────── */
 
 const TESTIMONIALS = [
   {
@@ -116,12 +115,12 @@ const TESTIMONIALS = [
   },
 ];
 
-/* ─── City branch data ────────────────────────────────────────── */
+/* ─── City branch data ─────────────────────────────────────────── */
 
 const CITIES = ['Bangalore', 'Mysore', 'Mangalore', 'Davangere'] as const;
 type City = typeof CITIES[number];
 
-/* ─── SVG Area Chart ──────────────────────────────────────────── */
+/* ─── SVG Area Chart ───────────────────────────────────────────── */
 
 function GoldRateChart() {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
@@ -154,29 +153,34 @@ function GoldRateChart() {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* Filter pills */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', justifyContent: 'flex-end' }}>
-        {(['5yr', '10yr', 'all'] as const).map(f => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              padding: '0.25rem 0.875rem',
-              borderRadius: '9999px',
-              border: '1.5px solid',
-              borderColor: filter === f ? 'var(--gold)' : 'rgba(223,193,96,0.3)',
-              background: filter === f ? 'var(--gold)' : 'transparent',
-              color: filter === f ? 'var(--plum)' : 'var(--gold)',
-              cursor: 'pointer',
-              transition: 'all var(--t-fast)',
-            }}
-          >
-            {f === 'all' ? 'All Years' : f === '5yr' ? '5 Years' : '10 Years'}
-          </button>
-        ))}
+      {/* Header row: title left, filter pills right */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-sm)', fontWeight: 600, color: 'rgba(255,255,255,0.80)' }}>
+          Gold Rate Trend — 12 Years (INR per 10g)
+        </span>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {(['5yr', '10yr', 'all'] as const).map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              style={{
+                fontFamily: 'Poppins, sans-serif',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                padding: '0.25rem 0.875rem',
+                borderRadius: '9999px',
+                border: '1.5px solid',
+                borderColor: filter === f ? 'var(--gold)' : 'rgba(223,193,96,0.3)',
+                background: filter === f ? 'var(--gold)' : 'transparent',
+                color: filter === f ? 'var(--plum)' : 'var(--gold)',
+                cursor: 'pointer',
+                transition: 'all var(--t-fast)',
+              }}
+            >
+              {f === 'all' ? 'All Years' : f === '5yr' ? '5 Years' : '10 Years'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* SVG chart */}
@@ -192,46 +196,29 @@ function GoldRateChart() {
           </linearGradient>
         </defs>
 
-        {/* Y grid lines */}
         {yTickVals.map((v, i) => (
           <g key={i}>
-            <line
-              x1={PAD.left} y1={py(v)}
-              x2={PAD.left + chartW} y2={py(v)}
-              stroke="rgba(223,193,96,0.12)" strokeWidth="1"
-            />
-            <text
-              x={PAD.left - 8} y={py(v) + 4}
-              textAnchor="end"
-              style={{ fontFamily: 'Poppins,sans-serif', fontSize: '10px', fill: 'rgba(223,193,96,0.55)' }}
-            >
+            <line x1={PAD.left} y1={py(v)} x2={PAD.left + chartW} y2={py(v)} stroke="rgba(223,193,96,0.12)" strokeWidth="1" />
+            <text x={PAD.left - 8} y={py(v) + 4} textAnchor="end"
+              style={{ fontFamily: 'Poppins,sans-serif', fontSize: '10px', fill: 'rgba(223,193,96,0.55)' }}>
               {(v / 1000).toFixed(0)}K
             </text>
           </g>
         ))}
 
-        {/* Area fill */}
         <path d={areaPath} fill="url(#sc-area-grad)" />
-
-        {/* Line */}
         <path d={linePath} fill="none" stroke="#DFC160" strokeWidth="2" strokeLinejoin="round" />
 
-        {/* X labels */}
         {filtered.map((d, i) => {
           const skip = filtered.length > 8 ? i % 2 !== 0 : false;
           return !skip ? (
-            <text
-              key={d.year}
-              x={px(i)} y={H - 6}
-              textAnchor="middle"
-              style={{ fontFamily: 'Poppins,sans-serif', fontSize: '10px', fill: 'rgba(223,193,96,0.55)' }}
-            >
+            <text key={d.year} x={px(i)} y={H - 6} textAnchor="middle"
+              style={{ fontFamily: 'Poppins,sans-serif', fontSize: '10px', fill: 'rgba(223,193,96,0.55)' }}>
               {d.year}
             </text>
           ) : null;
         })}
 
-        {/* Hover dots + tooltip */}
         {filtered.map((d, i) => (
           <g key={d.year}>
             <circle
@@ -244,24 +231,14 @@ function GoldRateChart() {
             />
             {hoveredIdx === i && (
               <g>
-                <rect
-                  x={px(i) - 44} y={py(d.price) - 38}
-                  width="88" height="28"
-                  rx="6" fill="#3B1848"
-                  stroke="rgba(223,193,96,0.4)" strokeWidth="1"
-                />
-                <text
-                  x={px(i)} y={py(d.price) - 20}
-                  textAnchor="middle"
-                  style={{ fontFamily: 'Poppins,sans-serif', fontSize: '11px', fontWeight: '600', fill: '#DFC160' }}
-                >
+                <rect x={px(i) - 44} y={py(d.price) - 38} width="88" height="28"
+                  rx="6" fill="#3B1848" stroke="rgba(223,193,96,0.4)" strokeWidth="1" />
+                <text x={px(i)} y={py(d.price) - 20} textAnchor="middle"
+                  style={{ fontFamily: 'Poppins,sans-serif', fontSize: '11px', fontWeight: '600', fill: '#DFC160' }}>
                   ₹{d.price.toLocaleString('en-IN')}/10g
                 </text>
-                <text
-                  x={px(i)} y={py(d.price) - 8}
-                  textAnchor="middle"
-                  style={{ fontFamily: 'Poppins,sans-serif', fontSize: '9px', fill: 'rgba(255,255,255,0.6)' }}
-                >
+                <text x={px(i)} y={py(d.price) - 8} textAnchor="middle"
+                  style={{ fontFamily: 'Poppins,sans-serif', fontSize: '9px', fill: 'rgba(255,255,255,0.6)' }}>
                   {d.year}
                 </text>
               </g>
@@ -273,12 +250,10 @@ function GoldRateChart() {
   );
 }
 
-/* ─── Callback form ───────────────────────────────────────────── */
+/* ─── Callback form ────────────────────────────────────────────── */
 
 function CallbackForm() {
-  const [form, setForm] = useState({
-    name: '', phone: '', goldType: '', weight: '', city: '',
-  });
+  const [form, setForm] = useState({ name: '', phone: '', goldType: '', weight: '', city: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
@@ -307,9 +282,7 @@ function CallbackForm() {
           border: '2px solid var(--gold)', margin: '0 auto 1rem',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontFamily: 'Tanker, serif', fontSize: '1.5rem', color: 'var(--gold)',
-        }}>
-          MK
-        </div>
+        }}>MK</div>
         <h3 style={{ fontFamily: 'Tanker, serif', color: 'var(--gold)', fontSize: 'var(--t-h3)', marginBottom: '0.5rem' }}>
           We will call you back
         </h3>
@@ -325,27 +298,20 @@ function CallbackForm() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
         <div>
           <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Your Name</label>
-          <input
-            type="text" required
-            className="mk-input mk-input--dark"
-            placeholder="Full name"
-            value={form.name} onChange={set('name')}
-          />
+          <input type="text" required className="mk-input mk-input--dark" placeholder="Full name"
+            value={form.name} onChange={set('name')} />
         </div>
         <div>
           <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Phone Number</label>
-          <input
-            type="tel" required pattern="[6-9][0-9]{9}"
-            className="mk-input mk-input--dark"
-            placeholder="10-digit mobile"
-            value={form.phone} onChange={set('phone')}
-          />
+          <input type="tel" required pattern="[6-9][0-9]{9}" className="mk-input mk-input--dark"
+            placeholder="10-digit mobile" value={form.phone} onChange={set('phone')} />
         </div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
         <div>
           <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Gold Type</label>
-          <select className="mk-select mk-select--dark" value={form.goldType} onChange={set('goldType')}>
+          <select className="mk-select mk-select--dark" value={form.goldType} onChange={set('goldType')}
+            style={{ colorScheme: 'dark' }}>
             <option value="">Select type</option>
             <option value="jewellery">Jewellery</option>
             <option value="coins">Gold Coins</option>
@@ -356,17 +322,14 @@ function CallbackForm() {
         </div>
         <div>
           <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Approx. Weight (g)</label>
-          <input
-            type="number" min="0.1" step="0.1"
-            className="mk-input mk-input--dark"
-            placeholder="e.g. 10"
-            value={form.weight} onChange={set('weight')}
-          />
+          <input type="number" min="0.1" step="0.1" className="mk-input mk-input--dark"
+            placeholder="e.g. 10" value={form.weight} onChange={set('weight')} />
         </div>
       </div>
       <div>
         <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Nearest City</label>
-        <select className="mk-select mk-select--dark" value={form.city} onChange={set('city')}>
+        <select className="mk-select mk-select--dark" value={form.city} onChange={set('city')}
+          style={{ colorScheme: 'dark' }}>
           <option value="">Select city</option>
           <option value="bangalore">Bangalore</option>
           <option value="mysore">Mysore</option>
@@ -374,13 +337,9 @@ function CallbackForm() {
           <option value="davangere">Davangere</option>
         </select>
       </div>
-      <MkButton
-        type="submit"
-        variant="gold"
-        size="lg"
+      <MkButton type="submit" variant="gold" size="lg"
         style={{ width: '100%', marginTop: '0.5rem' }}
-        disabled={status === 'loading'}
-      >
+        disabled={status === 'loading'}>
         {status === 'loading' ? 'Submitting…' : 'Request Callback'}
       </MkButton>
       {status === 'error' && (
@@ -392,7 +351,7 @@ function CallbackForm() {
   );
 }
 
-/* ─── Branch Finder ───────────────────────────────────────────── */
+/* ─── Branch Finder ────────────────────────────────────────────── */
 
 function BranchFinder() {
   const [activeCity, setActiveCity] = useState<City>('Bangalore');
@@ -404,52 +363,103 @@ function BranchFinder() {
 
   const cityArt: Record<City, React.ReactNode> = {
     Bangalore: (
-      <svg viewBox="0 0 120 80" style={{ width: '100%', height: 'auto', opacity: 0.25 }}>
-        <rect x="20" y="20" width="30" height="50" fill="none" stroke="#DFC160" strokeWidth="1.5" />
-        <rect x="25" y="25" width="8" height="10" fill="#DFC160" opacity="0.4" />
-        <rect x="37" y="25" width="8" height="10" fill="#DFC160" opacity="0.4" />
-        <rect x="25" y="40" width="8" height="10" fill="#DFC160" opacity="0.4" />
-        <rect x="37" y="40" width="8" height="10" fill="#DFC160" opacity="0.4" />
-        <rect x="30" y="55" width="10" height="15" fill="#7B2C91" opacity="0.5" />
-        <rect x="60" y="30" width="20" height="40" fill="none" stroke="#DFC160" strokeWidth="1.5" />
-        <polygon points="60,30 70,18 80,30" fill="none" stroke="#DFC160" strokeWidth="1.5" />
-        <rect x="65" y="45" width="10" height="15" fill="#7B2C91" opacity="0.5" />
-        <rect x="88" y="35" width="18" height="35" fill="none" stroke="#DFC160" strokeWidth="1.5" />
-        <rect x="91" y="40" width="5" height="7" fill="#DFC160" opacity="0.4" />
-        <rect x="99" y="40" width="5" height="7" fill="#DFC160" opacity="0.4" />
-        <line x1="10" y1="70" x2="110" y2="70" stroke="#DFC160" strokeWidth="1" opacity="0.4" />
+      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
+        <rect x="8" y="78" width="104" height="4" rx="1" fill="#DFC160" opacity="0.4"/>
+        <rect x="48" y="18" width="24" height="60" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
+        <rect x="48" y="14" width="24" height="6" rx="1" fill="#7B2C91" opacity="0.4" stroke="#DFC160" strokeWidth="1"/>
+        <rect x="52" y="25" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="60" y="25" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="68" y="25" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="52" y="35" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="60" y="35" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="68" y="35" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="52" y="45" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="60" y="45" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="68" y="45" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="52" y="55" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="60" y="55" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="68" y="55" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
+        <rect x="22" y="34" width="18" height="44" fill="none" stroke="#DFC160" strokeWidth="1.2"/>
+        <rect x="26" y="38" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
+        <rect x="34" y="38" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
+        <rect x="26" y="48" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
+        <rect x="34" y="48" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
+        <rect x="80" y="30" width="20" height="48" fill="none" stroke="#DFC160" strokeWidth="1.2"/>
+        <rect x="83" y="36" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
+        <rect x="91" y="36" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
+        <rect x="83" y="46" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
+        <rect x="91" y="46" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
+        <rect x="8" y="50" width="12" height="28" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.7"/>
+        <rect x="102" y="42" width="10" height="36" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.7"/>
+        <line x1="60" y1="14" x2="60" y2="4" stroke="#DFC160" strokeWidth="1.5"/>
+        <circle cx="60" cy="4" r="2" fill="#DFC160" opacity="0.8"/>
       </svg>
     ),
     Mysore: (
-      <svg viewBox="0 0 120 80" style={{ width: '100%', height: 'auto', opacity: 0.25 }}>
-        <rect x="35" y="25" width="50" height="45" fill="none" stroke="#DFC160" strokeWidth="1.5" />
-        <polygon points="60,10 95,25 25,25" fill="none" stroke="#DFC160" strokeWidth="1.5" />
-        <polygon points="60,14 90,25 30,25" fill="#7B2C91" opacity="0.3" />
-        {[45,55,65,75].map(x => (
-          <rect key={x} x={x} y="45" width="8" height="25" fill="#DFC160" opacity="0.2" />
-        ))}
-        <line x1="10" y1="70" x2="110" y2="70" stroke="#DFC160" strokeWidth="1" opacity="0.4" />
-        <circle cx="60" cy="18" r="3" fill="#DFC160" opacity="0.6" />
+      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
+        <rect x="8" y="76" width="104" height="6" rx="1" fill="#DFC160" opacity="0.4"/>
+        <rect x="16" y="72" width="88" height="6" rx="1" fill="#DFC160" opacity="0.25"/>
+        <rect x="28" y="42" width="64" height="30" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
+        <path d="M30,72 Q36,58 42,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1"/>
+        <path d="M43,72 Q49,58 55,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1"/>
+        <path d="M56,72 Q62,58 68,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1"/>
+        <path d="M69,72 Q75,58 81,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1"/>
+        <path d="M48,42 Q60,22 72,42" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.5"/>
+        <ellipse cx="60" cy="22" rx="6" ry="8" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1.2"/>
+        <line x1="60" y1="14" x2="60" y2="6" stroke="#DFC160" strokeWidth="1.5"/>
+        <polygon points="57,6 60,0 63,6" fill="#DFC160" opacity="0.85"/>
+        <rect x="22" y="30" width="8" height="42" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.8"/>
+        <path d="M22,30 Q26,22 30,30" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1"/>
+        <line x1="26" y1="22" x2="26" y2="16" stroke="#DFC160" strokeWidth="1.2"/>
+        <circle cx="26" cy="15" r="2" fill="#DFC160" opacity="0.7"/>
+        <rect x="90" y="30" width="8" height="42" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.8"/>
+        <path d="M90,30 Q94,22 98,30" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1"/>
+        <line x1="94" y1="22" x2="94" y2="16" stroke="#DFC160" strokeWidth="1.2"/>
+        <circle cx="94" cy="15" r="2" fill="#DFC160" opacity="0.7"/>
+        <line x1="28" y1="52" x2="92" y2="52" stroke="#DFC160" strokeWidth="0.8" opacity="0.4"/>
+        <line x1="28" y1="60" x2="92" y2="60" stroke="#DFC160" strokeWidth="0.8" opacity="0.3"/>
       </svg>
     ),
     Mangalore: (
-      <svg viewBox="0 0 120 80" style={{ width: '100%', height: 'auto', opacity: 0.25 }}>
-        <path d="M10 65 Q30 30 50 55 Q70 75 90 40 Q100 25 110 45" fill="none" stroke="#DFC160" strokeWidth="2" strokeLinejoin="round" />
-        <circle cx="50" cy="55" r="4" fill="#DFC160" opacity="0.5" />
-        <circle cx="90" cy="40" r="4" fill="#DFC160" opacity="0.5" />
-        <path d="M50 55 L50 35 M90 40 L90 20" stroke="#DFC160" strokeWidth="1" strokeDasharray="3,3" opacity="0.4" />
-        <text x="44" y="30" style={{ fontFamily: 'Poppins', fontSize: '7px', fill: '#DFC160', opacity: 0.7 }}>Harbor</text>
-        <text x="84" y="16" style={{ fontFamily: 'Poppins', fontSize: '7px', fill: '#DFC160', opacity: 0.7 }}>Kadri</text>
+      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
+        <rect x="10" y="75" width="100" height="6" rx="2" fill="#DFC160" opacity="0.5"/>
+        <rect x="18" y="42" width="24" height="33" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
+        <polygon points="18,42 30,18 42,42" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.2"/>
+        <line x1="30" y1="18" x2="30" y2="10" stroke="#DFC160" strokeWidth="1.5"/>
+        <circle cx="30" cy="9" r="2.5" fill="#DFC160" opacity="0.7"/>
+        <rect x="24" y="52" width="6" height="8" rx="3" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
+        <rect x="24" y="64" width="6" height="6" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
+        <rect x="48" y="50" width="24" height="25" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
+        <path d="M48,50 Q60,36 72,50" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1.2"/>
+        <rect x="54" y="58" width="12" height="17" rx="1" fill="#DFC160" opacity="0.12"/>
+        <rect x="78" y="42" width="24" height="33" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
+        <polygon points="78,42 90,18 102,42" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.2"/>
+        <line x1="90" y1="18" x2="90" y2="10" stroke="#DFC160" strokeWidth="1.5"/>
+        <circle cx="90" cy="9" r="2.5" fill="#DFC160" opacity="0.7"/>
+        <rect x="84" y="52" width="6" height="8" rx="3" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
+        <rect x="84" y="64" width="6" height="6" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
+        <line x1="18" y1="48" x2="42" y2="48" stroke="#DFC160" strokeWidth="0.8" opacity="0.5"/>
+        <line x1="78" y1="48" x2="102" y2="48" stroke="#DFC160" strokeWidth="0.8" opacity="0.5"/>
       </svg>
     ),
     Davangere: (
-      <svg viewBox="0 0 120 80" style={{ width: '100%', height: 'auto', opacity: 0.25 }}>
-        <circle cx="60" cy="40" r="30" fill="none" stroke="#DFC160" strokeWidth="1.5" />
-        <circle cx="60" cy="40" r="20" fill="none" stroke="#7B2C91" strokeWidth="1" />
-        <circle cx="60" cy="40" r="8" fill="#DFC160" opacity="0.2" />
-        <line x1="60" y1="10" x2="60" y2="70" stroke="#DFC160" strokeWidth="0.8" opacity="0.3" />
-        <line x1="30" y1="40" x2="90" y2="40" stroke="#DFC160" strokeWidth="0.8" opacity="0.3" />
-        <circle cx="60" cy="40" r="2" fill="#DFC160" opacity="0.8" />
+      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
+        <rect x="10" y="78" width="100" height="5" rx="2" fill="#DFC160" opacity="0.45"/>
+        <rect x="46" y="28" width="28" height="50" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
+        <path d="M46,28 Q60,8 74,28" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.5"/>
+        <line x1="60" y1="8" x2="60" y2="0" stroke="#DFC160" strokeWidth="1.5"/>
+        <polygon points="56,0 60,-6 64,0" fill="#DFC160" opacity="0.8"/>
+        <rect x="52" y="34" width="8" height="10" rx="4" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
+        <rect x="64" y="34" width="8" height="10" rx="4" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
+        <rect x="52" y="50" width="8" height="10" rx="1" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5"/>
+        <rect x="64" y="50" width="8" height="10" rx="1" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5"/>
+        <rect x="26" y="52" width="20" height="26" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.7"/>
+        <rect x="74" y="52" width="20" height="26" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.7"/>
+        <path d="M26,52 Q36,42 46,52" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5"/>
+        <path d="M74,52 Q84,42 94,52" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5"/>
+        <line x1="26" y1="60" x2="94" y2="60" stroke="#DFC160" strokeWidth="0.8" opacity="0.35"/>
+        <circle cx="36" cy="52" r="2" fill="#DFC160" opacity="0.5"/>
+        <circle cx="84" cy="52" r="2" fill="#DFC160" opacity="0.5"/>
       </svg>
     ),
   };
@@ -469,89 +479,26 @@ function BranchFinder() {
           text-align: center;
         }
         .sc-city-card:hover { transform: translateY(-2px); }
-        .sc-city-card--active {
-          border-color: var(--gold);
-          background: rgba(223,193,96,0.08);
-        }
-        .sc-city-name {
-          font-family: 'Tanker', serif;
-          font-size: var(--t-h4);
-          color: var(--gold);
-          margin: 0.5rem 0 0.25rem;
-        }
-        .sc-city-count {
-          font-family: 'Poppins', sans-serif;
-          font-size: var(--t-xs);
-          color: var(--mist);
-        }
+        .sc-city-card--active { border-color: var(--gold); background: rgba(223,193,96,0.08); }
+        .sc-city-name { font-family: 'Tanker', serif; font-size: var(--t-h4); color: var(--gold); margin: 0.5rem 0 0.25rem; }
+        .sc-city-count { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); color: var(--mist); }
         .sc-branch-list { display: flex; flex-direction: column; gap: 0.75rem; }
-        .sc-branch-item {
-          border: 1px solid rgba(223,193,96,0.15);
-          border-radius: 10px;
-          overflow: hidden;
-          transition: border-color var(--t-fast);
-        }
+        .sc-branch-item { border: 1px solid rgba(223,193,96,0.15); border-radius: 10px; overflow: hidden; transition: border-color var(--t-fast); }
         .sc-branch-item:hover { border-color: rgba(223,193,96,0.35); }
-        .sc-branch-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.875rem 1rem;
-          cursor: pointer;
-          background: rgba(81,37,97,0.2);
-        }
-        .sc-branch-name {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 600;
-          font-size: var(--t-base);
-          color: #fff;
-        }
-        .sc-branch-toggle {
-          font-family: 'Tanker', serif;
-          font-size: 1.25rem;
-          color: var(--gold);
-          line-height: 1;
-          transform-origin: center;
-          transition: transform var(--t-fast);
-          display: inline-block;
-        }
+        .sc-branch-header { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1rem; cursor: pointer; background: rgba(81,37,97,0.2); }
+        .sc-branch-name { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: var(--t-base); color: #fff; }
+        .sc-branch-toggle { font-family: 'Tanker', serif; font-size: 1.25rem; color: var(--gold); line-height: 1; transform-origin: center; transition: transform var(--t-fast); display: inline-block; }
         .sc-branch-toggle--open { transform: rotate(45deg); }
-        .sc-branch-body {
-          padding: 0 1rem 1rem;
-          background: rgba(59,24,72,0.3);
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-        }
-        .sc-branch-addr {
-          font-family: 'Poppins', sans-serif;
-          font-size: var(--t-sm);
-          color: var(--mist);
-          line-height: 1.5;
-        }
+        .sc-branch-body { padding: 0 1rem 1rem; background: rgba(59,24,72,0.3); display: flex; flex-direction: column; gap: 0.5rem; }
+        .sc-branch-addr { font-family: 'Poppins', sans-serif; font-size: var(--t-sm); color: var(--mist); line-height: 1.5; }
         .sc-branch-actions { display: flex; gap: 0.75rem; margin-top: 0.25rem; flex-wrap: wrap; }
-        .sc-branch-action {
-          font-family: 'Poppins', sans-serif;
-          font-size: var(--t-xs);
-          font-weight: 600;
-          color: var(--gold);
-          text-decoration: none;
-          border: 1px solid rgba(223,193,96,0.35);
-          padding: 0.3rem 0.875rem;
-          border-radius: 9999px;
-          transition: background var(--t-fast), color var(--t-fast);
-        }
+        .sc-branch-action { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); font-weight: 600; color: var(--gold); text-decoration: none; border: 1px solid rgba(223,193,96,0.35); padding: 0.3rem 0.875rem; border-radius: 9999px; transition: background var(--t-fast), color var(--t-fast); }
         .sc-branch-action:hover { background: var(--gold); color: var(--plum); }
       `}</style>
 
       <div className="mk-container">
         <p className="mk-section-overline reveal">16 Branches Across Karnataka</p>
-        <h2 className="sc-section-h2 reveal delay-1" style={{
-          fontFamily: 'Tanker, serif',
-          fontSize: 'var(--t-h2)',
-          color: '#fff',
-          marginBottom: '2.5rem',
-        }}>
+        <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker, serif', fontSize: 'var(--t-h2)', color: '#fff', marginBottom: '2.5rem' }}>
           Find Your Nearest MK Gold Branch
         </h2>
 
@@ -590,21 +537,12 @@ function BranchFinder() {
               </div>
               {expanded === branch.slug && (
                 <div className="sc-branch-body">
-                  {branch.address && (
-                    <p className="sc-branch-addr">{branch.address}</p>
-                  )}
+                  {branch.address && <p className="sc-branch-addr">{branch.address}</p>}
                   <div className="sc-branch-actions">
+                    {branch.phone && <a href={`tel:${branch.phone}`} className="sc-branch-action">Call Now</a>}
                     {branch.phone && (
-                      <a href={`tel:${branch.phone}`} className="sc-branch-action">Call Now</a>
-                    )}
-                    {branch.phone && (
-                      <a
-                        href={`https://wa.me/91${branch.phone}?text=${encodeURIComponent('Hi, I want to sell my gold. Can you help?')}`}
-                        target="_blank" rel="noopener noreferrer"
-                        className="sc-branch-action"
-                      >
-                        WhatsApp
-                      </a>
+                      <a href={`https://wa.me/91${branch.phone}?text=${encodeURIComponent('Hi, I want to sell my gold. Can you help?')}`}
+                        target="_blank" rel="noopener noreferrer" className="sc-branch-action">WhatsApp</a>
                     )}
                     <a href={`/sell-gold-${branch.slug}`} className="sc-branch-action">View Branch</a>
                   </div>
@@ -618,12 +556,22 @@ function BranchFinder() {
   );
 }
 
-/* ─── Page ────────────────────────────────────────────────────── */
+/* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function SampleCPage() {
+  const [scrollPct, setScrollPct] = useState(0);
+  const [sealFlipped, setSealFlipped] = useState(false);
   const [slide, setSlide] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const { rate22K, isLoading } = useGoldRate();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const docH = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollPct(docH > 0 ? (window.scrollY / docH) * 100 : 0);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const startInterval = useCallback(() => {
     intervalRef.current = setInterval(() => {
@@ -647,6 +595,43 @@ export default function SampleCPage() {
   return (
     <>
       <style>{`
+        /* ── Chrome overrides ─────────────────────────────── */
+        :root {
+          --navbar-h: 80px;
+          --chrome-h: 116px;
+        }
+
+        /* ── Navbar: glassmorphism panel ──────────────────── */
+        .mk-navbar {
+          height: 80px !important;
+          background: rgba(40, 12, 56, 0.72) !important;
+          backdrop-filter: blur(32px) saturate(1.4) !important;
+          -webkit-backdrop-filter: blur(32px) saturate(1.4) !important;
+          border-bottom: 1px solid rgba(223, 193, 96, 0.18) !important;
+        }
+        .mk-navbar__inner {
+          background: rgba(59, 24, 72, 0.55) !important;
+          border-radius: 14px !important;
+          border: 1px solid rgba(223, 193, 96, 0.14) !important;
+          margin: 10px 24px !important;
+          padding: 0 1.5rem !important;
+          height: 60px !important;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06) !important;
+          max-width: unset !important;
+        }
+        .mk-navbar__logo-img {
+          height: 60px !important;
+        }
+        .mk-navbar__link {
+          font-size: 0.9375rem !important;
+          padding: 0.375rem 0.875rem !important;
+        }
+        .mk-navbar__actions .mk-btn {
+          font-size: 0.9rem !important;
+          padding: 0.6rem 1.5rem !important;
+        }
+        .mk-ticker { top: 0 !important; }
+
         /* ── Hero ─────────────────────────────────────────── */
         .sc-hero {
           position: relative;
@@ -656,21 +641,14 @@ export default function SampleCPage() {
           justify-content: center;
           overflow: hidden;
         }
-        .sc-hero__slide {
-          position: absolute;
-          inset: 0;
-          background-size: cover;
-          background-position: center;
-          transition: opacity 0.8s ease;
-        }
         .sc-hero__overlay {
           position: absolute;
           inset: 0;
           background: linear-gradient(
             135deg,
-            rgba(59,24,72,0.92) 0%,
-            rgba(81,37,97,0.80) 50%,
-            rgba(59,24,72,0.92) 100%
+            rgba(59,24,72,0.95) 0%,
+            rgba(81,37,97,0.82) 50%,
+            rgba(59,24,72,0.95) 100%
           );
         }
         .sc-grain {
@@ -680,6 +658,36 @@ export default function SampleCPage() {
           opacity: 0.4;
           pointer-events: none;
         }
+        .sc-hero__slide {
+          position: absolute;
+          inset: 0;
+          background-size: cover;
+          background-position: center;
+          transition: opacity 0.8s ease;
+        }
+        .sc-hero__dots {
+          position: absolute;
+          bottom: 1.75rem;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 3;
+          display: flex;
+          gap: 0.5rem;
+        }
+        .sc-hero__dot {
+          width: 8px; height: 8px;
+          border-radius: 50%;
+          background: rgba(223,193,96,0.35);
+          border: none;
+          cursor: pointer;
+          padding: 0;
+          transition: background var(--t-fast), transform var(--t-fast);
+        }
+        .sc-hero__dot--active {
+          background: var(--gold);
+          transform: scale(1.4);
+        }
+
         .sc-hero__content {
           position: relative;
           z-index: 2;
@@ -687,13 +695,9 @@ export default function SampleCPage() {
           margin: 0 auto;
           padding: 5rem 1.5rem 3rem;
           display: grid;
-          grid-template-columns: 1fr 420px;
-          gap: 4rem;
-          align-items: center;
+          grid-template-columns: 1fr;
         }
-        @media (max-width: 900px) {
-          .sc-hero__content { grid-template-columns: 1fr; gap: 2.5rem; }
-        }
+        .sc-hero__copy { max-width: 680px; }
         .sc-hero__eyebrow {
           font-family: 'Poppins', sans-serif;
           font-size: var(--t-2xs);
@@ -721,8 +725,6 @@ export default function SampleCPage() {
           color: rgba(223,193,96,0.75);
           margin-bottom: 0.5rem;
           line-height: 1.3;
-          min-height: 1.8em;
-          transition: opacity 0.5s ease;
         }
         .sc-hero__h1 {
           font-family: 'Tanker', serif;
@@ -730,94 +732,29 @@ export default function SampleCPage() {
           color: #fff;
           line-height: 1.05;
           margin-bottom: 1.25rem;
-          min-height: 3em;
-          transition: opacity 0.5s ease;
         }
         .sc-hero__sub {
           font-family: 'Poppins', sans-serif;
           font-size: var(--t-lg);
           color: rgba(255,255,255,0.7);
           margin-bottom: 2rem;
-          min-height: 2.5rem;
-          transition: opacity 0.5s ease;
+          max-width: 560px;
+          line-height: 1.65;
         }
-        .sc-hero__cta-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
-        .sc-hero__rate-badge {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.75rem;
-          background: rgba(223,193,96,0.1);
-          border: 1px solid rgba(223,193,96,0.3);
-          border-radius: 9999px;
-          padding: 0.5rem 1rem;
-          font-family: 'Poppins', sans-serif;
-          font-size: var(--t-sm);
-          color: var(--gold);
-        }
-        .sc-hero__live-dot {
-          width: 7px; height: 7px;
-          border-radius: 50%;
-          background: #4ade80;
-          animation: livePulse 2s ease-in-out infinite;
-          flex-shrink: 0;
-        }
-        .sc-hero__seals {
-          display: flex;
-          gap: 1rem;
-          align-items: center;
-          margin-top: 2rem;
-        }
-        .sc-hero__dots {
-          position: absolute;
-          bottom: 1.75rem;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 3;
-          display: flex;
-          gap: 0.5rem;
-        }
-        .sc-hero__dot {
-          width: 8px; height: 8px;
-          border-radius: 50%;
-          background: rgba(223,193,96,0.35);
-          border: none;
-          cursor: pointer;
-          padding: 0;
-          transition: background var(--t-fast), transform var(--t-fast);
-        }
-        .sc-hero__dot--active {
-          background: var(--gold);
-          transform: scale(1.4);
-        }
-        .sc-hero__clip {
-          clip-path: polygon(0 0, 100% 0, 100% calc(100% - 56px), 0 100%);
-        }
-        @media (max-width: 768px) {
-          .sc-hero__clip { clip-path: none; }
-        }
+        .sc-hero__cta-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
 
         /* ── Rate + Chart section ──────────────────────────── */
-        .sc-rate-section {
-          background: var(--plum-deep);
-          position: relative;
-        }
-        .sc-rate-section::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cpolygon points='36,4 68,64 4,64' fill='none' stroke='%23512561' stroke-width='1.5' opacity='0.20'/%3E%3Cpolygon points='36,18 56,58 16,58' fill='%237B2C91' opacity='0.12'/%3E%3Cpolygon points='36,32 50,56 22,56' fill='none' stroke='%237B2C91' stroke-width='0.8' opacity='0.15'/%3E%3C/svg%3E");
-          background-repeat: repeat;
-          background-size: 72px 72px;
-          pointer-events: none;
-        }
-        .sc-rate-grid {
+        .sc-rate-section { position: relative; }
+
+        .sc-rate-top-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 3rem;
           align-items: start;
+          margin-bottom: 2.5rem;
         }
         @media (max-width: 900px) {
-          .sc-rate-grid { grid-template-columns: 1fr; }
+          .sc-rate-top-grid { grid-template-columns: 1fr; }
         }
         .sc-chart-card {
           background: rgba(59,24,72,0.6);
@@ -830,37 +767,6 @@ export default function SampleCPage() {
           font-size: var(--t-h3);
           color: #fff;
           margin-bottom: 0.5rem;
-        }
-        .sc-chart-sub {
-          font-family: 'Poppins', sans-serif;
-          font-size: var(--t-sm);
-          color: var(--mist);
-          margin-bottom: 1.25rem;
-        }
-
-        /* ── Calculator + Form section ────────────────────── */
-        .sc-calc-section {
-          background: var(--plum);
-          position: relative;
-        }
-        .sc-calc-section::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cpolygon points='36,4 68,64 4,64' fill='none' stroke='%237B2C91' stroke-width='1.5' opacity='0.20'/%3E%3Cpolygon points='36,18 56,58 16,58' fill='%237B2C91' opacity='0.10'/%3E%3C/svg%3E");
-          background-repeat: repeat;
-          background-size: 72px 72px;
-          pointer-events: none;
-        }
-        .sc-two-col {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 3rem;
-          align-items: start;
-          position: relative;
-        }
-        @media (max-width: 900px) {
-          .sc-two-col { grid-template-columns: 1fr; }
         }
         .sc-card-dark {
           background: rgba(59,24,72,0.6);
@@ -880,19 +786,34 @@ export default function SampleCPage() {
           color: rgba(255,255,255,0.6);
           margin-bottom: 1.5rem;
         }
+        .sc-rate-divider {
+          height: 1px;
+          background: rgba(223,193,96,0.2);
+          margin: 1.5rem 0;
+        }
 
-        /* ── Testimonials ─────────────────────────────────── */
-        .sc-reviews-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
+        /* ── Reviews carousel ─────────────────────────────── */
+        .sc-reviews-track {
+          display: flex;
           gap: 1.25rem;
+          animation: reviewsScroll 32s linear infinite;
+          width: max-content;
+          will-change: transform;
         }
-        @media (max-width: 900px) {
-          .sc-reviews-grid { grid-template-columns: repeat(2, 1fr); }
+        .sc-reviews-track:hover { animation-play-state: paused; }
+        .sc-review-card--carousel {
+          width: 340px;
+          flex-shrink: 0;
         }
-        @media (max-width: 560px) {
-          .sc-reviews-grid { grid-template-columns: 1fr; }
+        @keyframes reviewsScroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(calc(-1 * (340px * 6 + 1.25rem * 6))); }
         }
+        @media (max-width: 640px) {
+          .sc-review-card--carousel { width: 280px; }
+        }
+
+        /* ── Review card ──────────────────────────────────── */
         .sc-review-card {
           background: #fff;
           border-radius: 12px;
@@ -900,11 +821,7 @@ export default function SampleCPage() {
           border: 1px solid var(--gallery-dk);
           position: relative;
         }
-        .sc-review-stars {
-          display: flex;
-          gap: 2px;
-          margin-bottom: 0.875rem;
-        }
+        .sc-review-stars { display: flex; gap: 2px; margin-bottom: 0.875rem; }
         .sc-review-star {
           width: 14px; height: 14px;
           background: var(--gold);
@@ -917,11 +834,7 @@ export default function SampleCPage() {
           line-height: 1.65;
           margin-bottom: 1.25rem;
         }
-        .sc-review-author {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
+        .sc-review-author { display: flex; align-items: center; gap: 0.75rem; }
         .sc-review-avatar {
           width: 40px; height: 40px;
           border-radius: 50%;
@@ -934,21 +847,11 @@ export default function SampleCPage() {
           color: var(--gold);
           flex-shrink: 0;
         }
-        .sc-review-name {
-          font-family: 'Poppins', sans-serif;
-          font-weight: 600;
-          font-size: var(--t-sm);
-          color: var(--ink);
-        }
-        .sc-review-area {
-          font-family: 'Poppins', sans-serif;
-          font-size: var(--t-xs);
-          color: var(--mist);
-        }
+        .sc-review-name { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: var(--t-sm); color: var(--ink); }
+        .sc-review-area { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); color: var(--mist); }
         .sc-google-badge {
           position: absolute;
-          top: 1rem;
-          right: 1rem;
+          top: 1rem; right: 1rem;
           font-family: 'Poppins', sans-serif;
           font-size: 0.6rem;
           font-weight: 700;
@@ -957,26 +860,101 @@ export default function SampleCPage() {
           opacity: 0.5;
           text-transform: uppercase;
         }
+
+        /* ── WhatsApp FAB override ────────────────────────── */
+        [aria-label="Chat on WhatsApp"] {
+          position: fixed !important;
+          bottom: 1.5rem !important;
+          right: 1.5rem !important;
+          z-index: 400 !important;
+          width: 56px !important;
+          height: 56px !important;
+          border-radius: 50% !important;
+          background: #25D366 !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          box-shadow: 0 4px 20px rgba(37,211,102,0.4), 0 2px 8px rgba(0,0,0,0.3) !important;
+          text-decoration: none !important;
+          transition: transform 260ms cubic-bezier(0.34,1.56,0.64,1), box-shadow 260ms ease !important;
+          color: white !important;
+          font-family: 'Tanker', serif !important;
+          font-size: 1.1rem !important;
+          letter-spacing: 0.02em !important;
+        }
+        [aria-label="Chat on WhatsApp"]:hover {
+          transform: scale(1.12) !important;
+          box-shadow: 0 6px 28px rgba(37,211,102,0.55), 0 4px 12px rgba(0,0,0,0.3) !important;
+        }
+
+        /* ── Select dropdown options ──────────────────────── */
+        .mk-select--dark option {
+          background-color: #2d0a42 !important;
+          color: rgba(255,255,255,0.90) !important;
+          font-family: 'Poppins', sans-serif !important;
+          font-size: 0.875rem !important;
+        }
+        .mk-select--dark option:checked {
+          background-color: #512561 !important;
+          color: #DFC160 !important;
+        }
+        .sc-card-dark select option,
+        .sc-card-dark .mk-select option {
+          background-color: #2d0a42 !important;
+          color: rgba(255,255,255,0.90) !important;
+        }
       `}</style>
+
+      {/* ── Scroll progress bar ─────────────────────────────────── */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '4px',
+          zIndex: 999,
+          background: 'rgba(40,12,56,0.85)',
+        }}
+      >
+        <div style={{
+          height: '100%',
+          width: `${scrollPct}%`,
+          background: 'linear-gradient(90deg, #512561 0%, #7B2C91 40%, #DFC160 80%, #EDD47A 100%)',
+          boxShadow: '0 1px 8px rgba(223,193,96,0.55), 0 2px 4px rgba(123,44,145,0.4)',
+          borderRadius: '0 2px 2px 0',
+          transition: 'width 80ms linear',
+          position: 'relative',
+        }}>
+          <div style={{
+            position: 'absolute',
+            right: 0,
+            top: '-3px',
+            width: '16px',
+            height: '10px',
+            background: 'radial-gradient(ellipse at right, rgba(223,193,96,0.9) 0%, transparent 70%)',
+            borderRadius: '50%',
+            filter: 'blur(2px)',
+            pointerEvents: 'none',
+          }} />
+        </div>
+      </div>
 
       <MkTicker />
       <MkNavbar />
 
-      {/* ── Hero ──────────────────────────────────────────────── */}
+      {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="sc-hero mk-bg-dark" aria-label="Hero">
-        {/* Slide background */}
         <div
           className="sc-hero__slide"
-          style={{
-            backgroundImage: `url('${current.bg}')`,
-          }}
+          style={{ backgroundImage: `url('${current.bg}')` }}
         />
         <div className="sc-hero__overlay" />
         <div className="sc-grain" />
 
-        {/* Content */}
         <div className="sc-hero__content">
-          <div>
+          <div className="sc-hero__copy">
             <p className="sc-hero__eyebrow">Karnataka&apos;s Trusted Gold Buyer Since 2014</p>
             <p className="sc-hero__h1-kn" key={`kn-${slide}`}>{current.headlineKn}</p>
             <h1 className="sc-hero__h1" key={`h1-${slide}`}>{current.headline}</h1>
@@ -989,25 +967,43 @@ export default function SampleCPage() {
               </MkButton>
             </div>
 
-            <div className="sc-hero__rate-badge">
-              <span className="sc-hero__live-dot" />
-              <span>
-                Live 22K Rate:{' '}
-                <strong>
-                  {isLoading ? '…' : `₹${rate22K.toLocaleString('en-IN')}/10g`}
-                </strong>
-              </span>
+            {/* Flippable seal */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem', marginTop: '1.5rem' }}>
+              <div
+                onClick={() => setSealFlipped(f => !f)}
+                role="button"
+                tabIndex={0}
+                aria-label={sealFlipped ? 'Showing Kannada seal — click to see English' : 'Showing English seal — click to see Kannada'}
+                onKeyDown={(e) => e.key === 'Enter' && setSealFlipped(f => !f)}
+                style={{ width: '96px', height: '96px', perspective: '600px', cursor: 'pointer', position: 'relative' }}
+              >
+                <div style={{
+                  width: '100%',
+                  height: '100%',
+                  position: 'relative',
+                  transformStyle: 'preserve-3d',
+                  transition: 'transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                  transform: sealFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+                  willChange: 'transform',
+                }}>
+                  <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}>
+                    <MkSeal variant="en" size="md" animate={!sealFlipped} />
+                  </div>
+                  <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+                    <MkSeal variant="kn" size="md" />
+                  </div>
+                </div>
+              </div>
+              {!sealFlipped ? (
+                <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: '0.65rem', color: 'rgba(223,193,96,0.55)', letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: '0.25rem' }}>
+                  Tap to see Kannada
+                </p>
+              ) : (
+                <p style={{ fontFamily: 'Anek Kannada, sans-serif', fontSize: '0.7rem', color: 'rgba(223,193,96,0.7)' }}>
+                  MK ಅಂದರೆ ನಂಬಿಕೆ
+                </p>
+              )}
             </div>
-
-            <div className="sc-hero__seals">
-              <MkSeal variant="en" size="md" animate />
-              <MkSeal variant="kn" size="md" />
-            </div>
-          </div>
-
-          {/* Rate widget */}
-          <div>
-            <MkRateWidget variant="hero" />
           </div>
         </div>
 
@@ -1026,93 +1022,67 @@ export default function SampleCPage() {
         </div>
       </section>
 
-      {/* ── Stats band ────────────────────────────────────────── */}
+      {/* ── Stats band ──────────────────────────────────────────── */}
       <MkStatBand />
 
-      {/* ── Rate + Chart ──────────────────────────────────────── */}
-      <section className="sc-rate-section section" id="gold-rate">
+      {/* ── Rate + Calculator + Callback + Chart ────────────────── */}
+      <section className="sc-rate-section mk-bg-dark section" id="gold-rate">
         <div className="mk-container" style={{ position: 'relative' }}>
           <p className="mk-section-overline reveal">Live Gold Rate Karnataka</p>
-          <h2
-            className="reveal delay-1"
-            style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: '#fff', marginBottom: '2.5rem' }}
-          >
-            Today&apos;s Rate + 12-Year Price History
+          <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: '#fff', marginBottom: '2.5rem' }}>
+            Today&apos;s Rate, Calculator &amp; Callback
           </h2>
-          <div className="sc-rate-grid">
-            <div className="reveal delay-2">
-              <MkRateWidget variant="page" />
-            </div>
-            <div className="sc-chart-card reveal delay-3">
-              <h3 className="sc-chart-title">Gold Price Trend (per 10g, INR)</h3>
-              <p className="sc-chart-sub">22K gold MCX reference — Karnataka market</p>
-              <GoldRateChart />
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ── Calculator + Callback ─────────────────────────────── */}
-      <section className="sc-calc-section section" id="calculator">
-        <div className="mk-container" style={{ position: 'relative' }}>
-          <p className="mk-section-overline reveal">Free Estimate</p>
-          <h2
-            className="reveal delay-1"
-            style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: '#fff', marginBottom: '2.5rem' }}
-          >
-            How Much Is Your Gold Worth?
-          </h2>
-          <div className="sc-two-col">
-            <div className="sc-card-dark reveal delay-2">
-              <h3 className="sc-card-title">Gold Value Calculator</h3>
-              <p className="sc-card-sub">Live MCX rates · Results in seconds · No sign-up needed</p>
-              <MkCalculator variant="dark" showBookingCTA />
+          {/* Top row: Rate+Calc | Callback */}
+          <div className="sc-rate-top-grid">
+            {/* Left: Rate widget + divider + calculator */}
+            <div className="sc-chart-card reveal delay-2">
+              <MkRateWidget variant="page" />
+              <div className="sc-rate-divider" />
+              <MkCalculator variant="dark" showBookingCTA={false} />
             </div>
+
+            {/* Right: Callback form */}
             <div className="sc-card-dark reveal delay-3">
               <h3 className="sc-card-title">Request a Callback</h3>
               <p className="sc-card-sub">Our team will call you within 30 minutes · Confidential</p>
               <CallbackForm />
             </div>
           </div>
+
+          {/* Bottom row: Full-width chart */}
+          <div className="sc-chart-card reveal delay-2" style={{ marginTop: 0 }}>
+            <GoldRateChart />
+          </div>
         </div>
       </section>
 
-      {/* ── How it works ──────────────────────────────────────── */}
+      {/* ── How it works ────────────────────────────────────────── */}
       <MkSteps />
 
-      {/* ── Trust architecture ────────────────────────────────── */}
+      {/* ── Trust architecture ──────────────────────────────────── */}
       <MkTrust />
 
-      {/* ── Branch finder ─────────────────────────────────────── */}
+      {/* ── Branch finder ───────────────────────────────────────── */}
       <BranchFinder />
 
-      {/* ── Testimonials ──────────────────────────────────────── */}
+      {/* ── Testimonials: infinite scroll carousel ──────────────── */}
       <section className="mk-bg-light section" id="reviews">
         <div className="mk-container">
-          <p className="mk-section-overline reveal" style={{ color: 'var(--plum)' }}>
-            Google Reviews
-          </p>
-          <h2
-            className="reveal delay-1"
-            style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', marginBottom: '0.75rem' }}
-          >
+          <p className="mk-section-overline reveal" style={{ color: 'var(--plum)' }}>Google Reviews</p>
+          <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', marginBottom: '0.75rem' }}>
             4.9 Stars Across All Branches
           </h2>
-          <p
-            className="reveal delay-2"
-            style={{
-              fontFamily: 'Poppins,sans-serif',
-              fontSize: 'var(--t-base)',
-              color: 'var(--ink-mid)',
-              marginBottom: '2.5rem',
-              maxWidth: '540px',
-            }}
-          >
-            Real reviews from real customers. We do not filter or curate — these are pulled live from Google.
+          <p className="reveal delay-2" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', marginBottom: '2.5rem', maxWidth: '540px' }}>
+            Real reviews from real customers — pulled live from Google.
           </p>
-          <div className="sc-reviews-grid">
-            {TESTIMONIALS.map((t, i) => (
-              <div key={t.name} className={`sc-review-card reveal delay-${(i % 3) + 1}`}>
+        </div>
+
+        {/* Carousel — full bleed, no container constraint */}
+        <div style={{ overflow: 'hidden', paddingBottom: '0.5rem' }}>
+          <div className="sc-reviews-track">
+            {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
+              <div key={i} className="sc-review-card sc-review-card--carousel">
                 <span className="sc-google-badge">Google</span>
                 <div className="sc-review-stars" aria-label={`${t.rating} out of 5 stars`}>
                   {Array.from({ length: t.rating }).map((_, j) => (
@@ -1133,17 +1103,17 @@ export default function SampleCPage() {
         </div>
       </section>
 
-      {/* ── FAQ ───────────────────────────────────────────────── */}
+      {/* ── FAQ ─────────────────────────────────────────────────── */}
       <MkFaq />
 
-      {/* ── CTA Band ──────────────────────────────────────────── */}
+      {/* ── CTA Band ────────────────────────────────────────────── */}
       <MkCtaBand />
 
-      {/* ── Footer ────────────────────────────────────────────── */}
+      {/* ── Footer ──────────────────────────────────────────────── */}
       <MkFooter />
 
-      {/* ── Floating WhatsApp ─────────────────────────────────── */}
-      <MkWhatsApp />
+      {/* ── Floating WhatsApp ───────────────────────────────────── */}
+      <MkWhatsApp number="918000000001" message="Hi, I want to sell my gold. Can you help?" />
     </>
   );
 }

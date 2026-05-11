@@ -4,7 +4,7 @@ import { MkButton } from '@/components/ui/MkButton';
 
 export function MkCtaBand() {
   return (
-    <section className="mk-cta-band mk-bg-purple section" aria-labelledby="cta-band-headline">
+    <section className="mk-cta-band mk-bg-dark section" aria-labelledby="cta-band-headline">
       <div className="mk-container mk-cta-band__inner">
 
         <div className="mk-cta-band__copy reveal">
