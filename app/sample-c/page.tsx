@@ -6,7 +6,6 @@ import { MkTicker } from '@/components/layout/MkTicker';
 import { MkFooter } from '@/components/layout/MkFooter';
 import { MkStatBand } from '@/components/sections/MkStatBand';
 import { MkSteps } from '@/components/sections/MkSteps';
-import { MkTrust } from '@/components/sections/MkTrust';
 import { MkFaq } from '@/components/sections/MkFaq';
 import { MkCtaBand } from '@/components/sections/MkCtaBand';
 import { MkWhatsApp } from '@/components/features/MkWhatsApp';
@@ -26,25 +25,25 @@ const SLIDES = [
     sub: 'Live MCX rates · XRF purity test · Payment in 45 minutes',
   },
   {
-    bg: '/858b4896-10-easy-ways-to-know-if-your-gold-jewellery-is-real.jpg',
+    bg: '/bg-2.jpg',
     headline: "Karnataka's Most Trusted Gold Buyer",
     headlineKn: 'ಕರ್ನಾಟಕದ ಅತ್ಯಂತ ವಿಶ್ವಾಸಾರ್ಹ ಚಿನ್ನ ಖರೀದಿದಾರ',
     sub: '16 branches · 10,000+ customers · Est. 2014',
   },
   {
-    bg: '/858b4896-10-easy-ways-to-know-if-your-gold-jewellery-is-real.jpg',
+    bg: '/bg3.jpg',
     headline: 'Release Pledged Gold Confidentially',
     headlineKn: 'ಗೋಪ್ಯವಾಗಿ ಅಡಮಾನ ಚಿನ್ನ ಬಿಡಿಸಿ',
     sub: 'We pay your lender directly · Discreet · Same-day possible',
   },
   {
-    bg: '/858b4896-10-easy-ways-to-know-if-your-gold-jewellery-is-real.jpg',
+    bg: '/bg-4.jpg',
     headline: 'Fair Value. Every Time.',
     headlineKn: 'ನ್ಯಾಯಯುತ ಮೌಲ್ಯ. ಪ್ರತಿ ಬಾರಿ.',
     sub: 'ISO 9001:2015 · German XRF Spectrometer · Transparent pricing',
   },
   {
-    bg: '/858b4896-10-easy-ways-to-know-if-your-gold-jewellery-is-real.jpg',
+    bg: '/bg-5.webp',
     headline: 'Instant Money, Lasting Trust',
     headlineKn: 'ತಕ್ಷಣ ಹಣ, ಶಾಶ್ವತ ವಿಶ್ವಾಸ',
     sub: 'Bangalore · Mysore · Mangalore · Davangere',
@@ -129,8 +128,8 @@ function GoldRateChart() {
   const filtered = filter === '5yr'
     ? CHART_DATA.slice(-5)
     : filter === '10yr'
-    ? CHART_DATA.slice(-10)
-    : CHART_DATA;
+      ? CHART_DATA.slice(-10)
+      : CHART_DATA;
 
   const W = 600;
   const H = 220;
@@ -364,102 +363,102 @@ function BranchFinder() {
   const cityArt: Record<City, React.ReactNode> = {
     Bangalore: (
       <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
-        <rect x="8" y="78" width="104" height="4" rx="1" fill="#DFC160" opacity="0.4"/>
-        <rect x="48" y="18" width="24" height="60" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
-        <rect x="48" y="14" width="24" height="6" rx="1" fill="#7B2C91" opacity="0.4" stroke="#DFC160" strokeWidth="1"/>
-        <rect x="52" y="25" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="60" y="25" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="68" y="25" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="52" y="35" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="60" y="35" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="68" y="35" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="52" y="45" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="60" y="45" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="68" y="45" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="52" y="55" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="60" y="55" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="68" y="55" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2"/>
-        <rect x="22" y="34" width="18" height="44" fill="none" stroke="#DFC160" strokeWidth="1.2"/>
-        <rect x="26" y="38" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
-        <rect x="34" y="38" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
-        <rect x="26" y="48" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
-        <rect x="34" y="48" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
-        <rect x="80" y="30" width="20" height="48" fill="none" stroke="#DFC160" strokeWidth="1.2"/>
-        <rect x="83" y="36" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
-        <rect x="91" y="36" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
-        <rect x="83" y="46" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
-        <rect x="91" y="46" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15"/>
-        <rect x="8" y="50" width="12" height="28" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.7"/>
-        <rect x="102" y="42" width="10" height="36" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.7"/>
-        <line x1="60" y1="14" x2="60" y2="4" stroke="#DFC160" strokeWidth="1.5"/>
-        <circle cx="60" cy="4" r="2" fill="#DFC160" opacity="0.8"/>
+        <rect x="8" y="78" width="104" height="4" rx="1" fill="#DFC160" opacity="0.4" />
+        <rect x="48" y="18" width="24" height="60" fill="none" stroke="#DFC160" strokeWidth="1.5" />
+        <rect x="48" y="14" width="24" height="6" rx="1" fill="#7B2C91" opacity="0.4" stroke="#DFC160" strokeWidth="1" />
+        <rect x="52" y="25" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="60" y="25" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="68" y="25" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="52" y="35" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="60" y="35" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="68" y="35" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="52" y="45" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="60" y="45" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="68" y="45" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="52" y="55" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="60" y="55" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="68" y="55" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.2" />
+        <rect x="22" y="34" width="18" height="44" fill="none" stroke="#DFC160" strokeWidth="1.2" />
+        <rect x="26" y="38" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15" />
+        <rect x="34" y="38" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15" />
+        <rect x="26" y="48" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15" />
+        <rect x="34" y="48" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15" />
+        <rect x="80" y="30" width="20" height="48" fill="none" stroke="#DFC160" strokeWidth="1.2" />
+        <rect x="83" y="36" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15" />
+        <rect x="91" y="36" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15" />
+        <rect x="83" y="46" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15" />
+        <rect x="91" y="46" width="4" height="5" rx="0.5" fill="#DFC160" opacity="0.15" />
+        <rect x="8" y="50" width="12" height="28" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.7" />
+        <rect x="102" y="42" width="10" height="36" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.7" />
+        <line x1="60" y1="14" x2="60" y2="4" stroke="#DFC160" strokeWidth="1.5" />
+        <circle cx="60" cy="4" r="2" fill="#DFC160" opacity="0.8" />
       </svg>
     ),
     Mysore: (
       <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
-        <rect x="8" y="76" width="104" height="6" rx="1" fill="#DFC160" opacity="0.4"/>
-        <rect x="16" y="72" width="88" height="6" rx="1" fill="#DFC160" opacity="0.25"/>
-        <rect x="28" y="42" width="64" height="30" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
-        <path d="M30,72 Q36,58 42,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1"/>
-        <path d="M43,72 Q49,58 55,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1"/>
-        <path d="M56,72 Q62,58 68,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1"/>
-        <path d="M69,72 Q75,58 81,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1"/>
-        <path d="M48,42 Q60,22 72,42" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.5"/>
-        <ellipse cx="60" cy="22" rx="6" ry="8" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1.2"/>
-        <line x1="60" y1="14" x2="60" y2="6" stroke="#DFC160" strokeWidth="1.5"/>
-        <polygon points="57,6 60,0 63,6" fill="#DFC160" opacity="0.85"/>
-        <rect x="22" y="30" width="8" height="42" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.8"/>
-        <path d="M22,30 Q26,22 30,30" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1"/>
-        <line x1="26" y1="22" x2="26" y2="16" stroke="#DFC160" strokeWidth="1.2"/>
-        <circle cx="26" cy="15" r="2" fill="#DFC160" opacity="0.7"/>
-        <rect x="90" y="30" width="8" height="42" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.8"/>
-        <path d="M90,30 Q94,22 98,30" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1"/>
-        <line x1="94" y1="22" x2="94" y2="16" stroke="#DFC160" strokeWidth="1.2"/>
-        <circle cx="94" cy="15" r="2" fill="#DFC160" opacity="0.7"/>
-        <line x1="28" y1="52" x2="92" y2="52" stroke="#DFC160" strokeWidth="0.8" opacity="0.4"/>
-        <line x1="28" y1="60" x2="92" y2="60" stroke="#DFC160" strokeWidth="0.8" opacity="0.3"/>
+        <rect x="8" y="76" width="104" height="6" rx="1" fill="#DFC160" opacity="0.4" />
+        <rect x="16" y="72" width="88" height="6" rx="1" fill="#DFC160" opacity="0.25" />
+        <rect x="28" y="42" width="64" height="30" fill="none" stroke="#DFC160" strokeWidth="1.5" />
+        <path d="M30,72 Q36,58 42,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1" />
+        <path d="M43,72 Q49,58 55,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1" />
+        <path d="M56,72 Q62,58 68,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1" />
+        <path d="M69,72 Q75,58 81,72" fill="#7B2C91" opacity="0.2" stroke="#DFC160" strokeWidth="1" />
+        <path d="M48,42 Q60,22 72,42" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.5" />
+        <ellipse cx="60" cy="22" rx="6" ry="8" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1.2" />
+        <line x1="60" y1="14" x2="60" y2="6" stroke="#DFC160" strokeWidth="1.5" />
+        <polygon points="57,6 60,0 63,6" fill="#DFC160" opacity="0.85" />
+        <rect x="22" y="30" width="8" height="42" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.8" />
+        <path d="M22,30 Q26,22 30,30" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1" />
+        <line x1="26" y1="22" x2="26" y2="16" stroke="#DFC160" strokeWidth="1.2" />
+        <circle cx="26" cy="15" r="2" fill="#DFC160" opacity="0.7" />
+        <rect x="90" y="30" width="8" height="42" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.8" />
+        <path d="M90,30 Q94,22 98,30" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1" />
+        <line x1="94" y1="22" x2="94" y2="16" stroke="#DFC160" strokeWidth="1.2" />
+        <circle cx="94" cy="15" r="2" fill="#DFC160" opacity="0.7" />
+        <line x1="28" y1="52" x2="92" y2="52" stroke="#DFC160" strokeWidth="0.8" opacity="0.4" />
+        <line x1="28" y1="60" x2="92" y2="60" stroke="#DFC160" strokeWidth="0.8" opacity="0.3" />
       </svg>
     ),
     Mangalore: (
       <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
-        <rect x="10" y="75" width="100" height="6" rx="2" fill="#DFC160" opacity="0.5"/>
-        <rect x="18" y="42" width="24" height="33" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
-        <polygon points="18,42 30,18 42,42" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.2"/>
-        <line x1="30" y1="18" x2="30" y2="10" stroke="#DFC160" strokeWidth="1.5"/>
-        <circle cx="30" cy="9" r="2.5" fill="#DFC160" opacity="0.7"/>
-        <rect x="24" y="52" width="6" height="8" rx="3" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
-        <rect x="24" y="64" width="6" height="6" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
-        <rect x="48" y="50" width="24" height="25" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
-        <path d="M48,50 Q60,36 72,50" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1.2"/>
-        <rect x="54" y="58" width="12" height="17" rx="1" fill="#DFC160" opacity="0.12"/>
-        <rect x="78" y="42" width="24" height="33" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
-        <polygon points="78,42 90,18 102,42" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.2"/>
-        <line x1="90" y1="18" x2="90" y2="10" stroke="#DFC160" strokeWidth="1.5"/>
-        <circle cx="90" cy="9" r="2.5" fill="#DFC160" opacity="0.7"/>
-        <rect x="84" y="52" width="6" height="8" rx="3" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
-        <rect x="84" y="64" width="6" height="6" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
-        <line x1="18" y1="48" x2="42" y2="48" stroke="#DFC160" strokeWidth="0.8" opacity="0.5"/>
-        <line x1="78" y1="48" x2="102" y2="48" stroke="#DFC160" strokeWidth="0.8" opacity="0.5"/>
+        <rect x="10" y="75" width="100" height="6" rx="2" fill="#DFC160" opacity="0.5" />
+        <rect x="18" y="42" width="24" height="33" fill="none" stroke="#DFC160" strokeWidth="1.5" />
+        <polygon points="18,42 30,18 42,42" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.2" />
+        <line x1="30" y1="18" x2="30" y2="10" stroke="#DFC160" strokeWidth="1.5" />
+        <circle cx="30" cy="9" r="2.5" fill="#DFC160" opacity="0.7" />
+        <rect x="24" y="52" width="6" height="8" rx="3" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6" />
+        <rect x="24" y="64" width="6" height="6" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6" />
+        <rect x="48" y="50" width="24" height="25" fill="none" stroke="#DFC160" strokeWidth="1.5" />
+        <path d="M48,50 Q60,36 72,50" fill="#7B2C91" opacity="0.3" stroke="#DFC160" strokeWidth="1.2" />
+        <rect x="54" y="58" width="12" height="17" rx="1" fill="#DFC160" opacity="0.12" />
+        <rect x="78" y="42" width="24" height="33" fill="none" stroke="#DFC160" strokeWidth="1.5" />
+        <polygon points="78,42 90,18 102,42" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.2" />
+        <line x1="90" y1="18" x2="90" y2="10" stroke="#DFC160" strokeWidth="1.5" />
+        <circle cx="90" cy="9" r="2.5" fill="#DFC160" opacity="0.7" />
+        <rect x="84" y="52" width="6" height="8" rx="3" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6" />
+        <rect x="84" y="64" width="6" height="6" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6" />
+        <line x1="18" y1="48" x2="42" y2="48" stroke="#DFC160" strokeWidth="0.8" opacity="0.5" />
+        <line x1="78" y1="48" x2="102" y2="48" stroke="#DFC160" strokeWidth="0.8" opacity="0.5" />
       </svg>
     ),
     Davangere: (
       <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
-        <rect x="10" y="78" width="100" height="5" rx="2" fill="#DFC160" opacity="0.45"/>
-        <rect x="46" y="28" width="28" height="50" fill="none" stroke="#DFC160" strokeWidth="1.5"/>
-        <path d="M46,28 Q60,8 74,28" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.5"/>
-        <line x1="60" y1="8" x2="60" y2="0" stroke="#DFC160" strokeWidth="1.5"/>
-        <polygon points="56,0 60,-6 64,0" fill="#DFC160" opacity="0.8"/>
-        <rect x="52" y="34" width="8" height="10" rx="4" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
-        <rect x="64" y="34" width="8" height="10" rx="4" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6"/>
-        <rect x="52" y="50" width="8" height="10" rx="1" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5"/>
-        <rect x="64" y="50" width="8" height="10" rx="1" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5"/>
-        <rect x="26" y="52" width="20" height="26" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.7"/>
-        <rect x="74" y="52" width="20" height="26" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.7"/>
-        <path d="M26,52 Q36,42 46,52" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5"/>
-        <path d="M74,52 Q84,42 94,52" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5"/>
-        <line x1="26" y1="60" x2="94" y2="60" stroke="#DFC160" strokeWidth="0.8" opacity="0.35"/>
-        <circle cx="36" cy="52" r="2" fill="#DFC160" opacity="0.5"/>
-        <circle cx="84" cy="52" r="2" fill="#DFC160" opacity="0.5"/>
+        <rect x="10" y="78" width="100" height="5" rx="2" fill="#DFC160" opacity="0.45" />
+        <rect x="46" y="28" width="28" height="50" fill="none" stroke="#DFC160" strokeWidth="1.5" />
+        <path d="M46,28 Q60,8 74,28" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.5" />
+        <line x1="60" y1="8" x2="60" y2="0" stroke="#DFC160" strokeWidth="1.5" />
+        <polygon points="56,0 60,-6 64,0" fill="#DFC160" opacity="0.8" />
+        <rect x="52" y="34" width="8" height="10" rx="4" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6" />
+        <rect x="64" y="34" width="8" height="10" rx="4" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.6" />
+        <rect x="52" y="50" width="8" height="10" rx="1" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5" />
+        <rect x="64" y="50" width="8" height="10" rx="1" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5" />
+        <rect x="26" y="52" width="20" height="26" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.7" />
+        <rect x="74" y="52" width="20" height="26" fill="none" stroke="#DFC160" strokeWidth="1.2" opacity="0.7" />
+        <path d="M26,52 Q36,42 46,52" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5" />
+        <path d="M74,52 Q84,42 94,52" fill="none" stroke="#DFC160" strokeWidth="1" opacity="0.5" />
+        <line x1="26" y1="60" x2="94" y2="60" stroke="#DFC160" strokeWidth="0.8" opacity="0.35" />
+        <circle cx="36" cy="52" r="2" fill="#DFC160" opacity="0.5" />
+        <circle cx="84" cy="52" r="2" fill="#DFC160" opacity="0.5" />
       </svg>
     ),
   };
@@ -556,11 +555,102 @@ function BranchFinder() {
   );
 }
 
+/* ─── Trust section data (mirrors MkTrust) ─────────────────────── */
+
+const TRUST_PILLARS = [
+  { label: 'ISO 9001:2015 Certified',     detail: 'Quality management certified. Every process — weighing, testing, payment — is audited and documented.' },
+  { label: 'German XRF Spectrometer',     detail: 'We use a Bruker S1 Titan XRF spectrometer. It reads exact gold content. No acid. No guesswork.' },
+  { label: 'Live MCX Rate Transparency',  detail: 'Our buying rate is displayed beside the MCX rate so you can see exactly what we earn. Nothing hidden.' },
+  { label: 'Est. 2014 — 11 Years',        detail: '10,000+ transactions across Karnataka. A business built on repeat customers and word-of-mouth alone.' },
+  { label: 'Confidential Service',        detail: 'Private consultation rooms. Discreet transactions. Your decision to sell gold is yours — we never judge.' },
+  { label: 'Post-Sale Support',           detail: 'WhatsApp support after your transaction. Grievance email in footer. We stand behind every offer we make.' },
+] as const;
+
+const TRUST_BADGES = ['GST Registered', 'ISO 9001:2015', 'XRF Certified', '16 Physical Branches'] as const;
+
+/* ─── Flippable trust coins ────────────────────────────────────── */
+
+function FlippableTrustSeals({
+  flip1, setFlip1,
+}: {
+  flip1: boolean; setFlip1: (v: (p: boolean) => boolean) => void;
+}) {
+  const coinStyle = { width: '130px', height: '130px', perspective: '600px', cursor: 'pointer', position: 'relative' as const };
+  const innerStyle = (flipped: boolean) => ({
+    width: '100%', height: '100%', position: 'relative' as const,
+    transformStyle: 'preserve-3d' as const,
+    transition: 'transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+    transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+    willChange: 'transform' as const,
+  });
+  const faceStyle: React.CSSProperties = { position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden' };
+  const backStyle: React.CSSProperties = { ...faceStyle, transform: 'rotateY(180deg)' };
+
+  return (
+    <div className="mk-trust__seals reveal">
+      {/* Single coin — EN front / KN back */}
+      <div
+        style={coinStyle}
+        onClick={() => setFlip1(f => !f)}
+        role="button" tabIndex={0}
+        aria-label={flip1 ? 'Showing Kannada — tap for English' : 'Showing English — tap for Kannada'}
+        onKeyDown={(e) => e.key === 'Enter' && setFlip1(f => !f)}
+      >
+        <div style={innerStyle(flip1)}>
+          <div style={faceStyle}><MkSeal variant="en" size="lg" animate={!flip1} /></div>
+          <div style={backStyle}><MkSeal variant="kn" size="lg" /></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Local trust section with flippable coins ──────────────────── */
+
+function LocalTrustSection({
+  flip1, setFlip1,
+}: {
+  flip1: boolean; setFlip1: (v: (p: boolean) => boolean) => void;
+}) {
+  return (
+    <section className="mk-trust mk-bg-dark section" id="why-mk-gold">
+      <div className="mk-container mk-trust__inner">
+        <div className="mk-trust__left">
+          <FlippableTrustSeals flip1={flip1} setFlip1={setFlip1} />
+          <div className="reveal delay-1">
+            <p className="mk-section-overline">Why MK Gold</p>
+            <h2 className="mk-trust__headline">
+              Trust is built in <span className="mk-trust__accent">every detail.</span>
+            </h2>
+            <p className="mk-trust__intro">
+              We have spent 11 years earning the trust of Karnataka&apos;s gold sellers —
+              not through advertising, but through transparent process, fair rates,
+              and respectful service.
+            </p>
+          </div>
+          <div className="mk-trust__badges reveal delay-2" aria-label="Certifications">
+            {TRUST_BADGES.map((b) => <span key={b} className="mk-trust__badge">{b}</span>)}
+          </div>
+        </div>
+        <ul className="mk-trust__pillars" aria-label="Trust pillars">
+          {TRUST_PILLARS.map((p, i) => (
+            <li key={p.label} className={`mk-trust__pillar reveal delay-${(i % 3) + 1}`}>
+              <strong className="mk-trust__pillar-label">{p.label}</strong>
+              <p className="mk-trust__pillar-detail">{p.detail}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 /* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function SampleCPage() {
   const [scrollPct, setScrollPct] = useState(0);
   const [sealFlipped, setSealFlipped] = useState(false);
+  const [trustFlip1, setTrustFlip1] = useState(false);
   const [slide, setSlide] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -597,30 +687,30 @@ export default function SampleCPage() {
       <style>{`
         /* ── Chrome overrides ─────────────────────────────── */
         :root {
-          --navbar-h: 80px;
-          --chrome-h: 116px;
+          --navbar-h: 90px;
+          --chrome-h: 126px;
         }
 
         /* ── Navbar: glassmorphism panel ──────────────────── */
         .mk-navbar {
-          height: 80px !important;
-          background: rgba(40, 12, 56, 0.72) !important;
+          height: 90px !important;
+          background: rgba(40, 12, 56, 0.88) !important;
           backdrop-filter: blur(32px) saturate(1.4) !important;
           -webkit-backdrop-filter: blur(32px) saturate(1.4) !important;
           border-bottom: 1px solid rgba(223, 193, 96, 0.18) !important;
         }
         .mk-navbar__inner {
-          background: rgba(59, 24, 72, 0.55) !important;
+          background: rgba(59, 24, 72, 0.3) !important;
           border-radius: 14px !important;
           border: 1px solid rgba(223, 193, 96, 0.14) !important;
           margin: 10px 24px !important;
           padding: 0 1.5rem !important;
-          height: 60px !important;
+          height: 70px !important;
           box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06) !important;
           max-width: unset !important;
         }
         .mk-navbar__logo-img {
-          height: 60px !important;
+          height: 70px !important;
         }
         .mk-navbar__link {
           font-size: 0.9375rem !important;
@@ -903,6 +993,15 @@ export default function SampleCPage() {
           background-color: #2d0a42 !important;
           color: rgba(255,255,255,0.90) !important;
         }
+
+        /* ── Continuous bg wrappers ───────────────────────── */
+        /* Child sections become transparent so wrapper bg tiles continuously */
+        .sc-no-gap > .mk-stat-band,
+        .sc-no-gap > .mk-cta-band,
+        .sc-no-gap > .mk-footer {
+          background-color: transparent !important;
+          background-image: none !important;
+        }
       `}</style>
 
       {/* ── Scroll progress bar ─────────────────────────────────── */}
@@ -1022,11 +1121,12 @@ export default function SampleCPage() {
         </div>
       </section>
 
-      {/* ── Stats band ──────────────────────────────────────────── */}
+      {/* ── Stats band + Rate section — continuous dark bg ─────── */}
+      <div className="mk-bg-dark sc-no-gap">
       <MkStatBand />
 
       {/* ── Rate + Calculator + Callback + Chart ────────────────── */}
-      <section className="sc-rate-section mk-bg-dark section" id="gold-rate">
+      <section className="sc-rate-section section" id="gold-rate">
         <div className="mk-container" style={{ position: 'relative' }}>
           <p className="mk-section-overline reveal">Live Gold Rate Karnataka</p>
           <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: '#fff', marginBottom: '2.5rem' }}>
@@ -1056,12 +1156,13 @@ export default function SampleCPage() {
           </div>
         </div>
       </section>
+      </div>{/* end continuous dark: StatBand + Rate */}
 
       {/* ── How it works ────────────────────────────────────────── */}
       <MkSteps />
 
       {/* ── Trust architecture ──────────────────────────────────── */}
-      <MkTrust />
+      <LocalTrustSection flip1={trustFlip1} setFlip1={setTrustFlip1} />
 
       {/* ── Branch finder ───────────────────────────────────────── */}
       <BranchFinder />
@@ -1106,11 +1207,11 @@ export default function SampleCPage() {
       {/* ── FAQ ─────────────────────────────────────────────────── */}
       <MkFaq />
 
-      {/* ── CTA Band ────────────────────────────────────────────── */}
-      <MkCtaBand />
-
-      {/* ── Footer ──────────────────────────────────────────────── */}
-      <MkFooter />
+      {/* ── CTA Band + Footer — continuous dark bg ──────────────── */}
+      <div className="mk-bg-dark sc-no-gap">
+        <MkCtaBand />
+        <MkFooter />
+      </div>
 
       {/* ── Floating WhatsApp ───────────────────────────────────── */}
       <MkWhatsApp number="918000000001" message="Hi, I want to sell my gold. Can you help?" />

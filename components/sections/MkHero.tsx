@@ -17,6 +17,15 @@ export function MkHero() {
   return (
     <section className="mk-hero mk-bg-dark" aria-label="Homepage hero">
 
+      {/* Background image slideshow — CSS crossfade, no JS */}
+      <div className="mk-hero__slides" aria-hidden="true">
+        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg-2.jpg)',   animationDelay: '-1s'  }} />
+        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg3.jpg)',    animationDelay:  '4s'  }} />
+        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg-4.jpg)',   animationDelay:  '9s'  }} />
+        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg-5.webp)',  animationDelay: '14s'  }} />
+        <div className="mk-hero__overlay" />
+      </div>
+
       {/* Purple atmospheric glow — radial, no hard edges */}
       <div className="mk-hero__glow" aria-hidden="true" />
 
