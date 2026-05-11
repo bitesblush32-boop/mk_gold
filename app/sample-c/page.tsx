@@ -558,12 +558,12 @@ function BranchFinder() {
 /* ─── Trust section data (mirrors MkTrust) ─────────────────────── */
 
 const TRUST_PILLARS = [
-  { label: 'ISO 9001:2015 Certified',     detail: 'Quality management certified. Every process — weighing, testing, payment — is audited and documented.' },
-  { label: 'German XRF Spectrometer',     detail: 'We use a Bruker S1 Titan XRF spectrometer. It reads exact gold content. No acid. No guesswork.' },
-  { label: 'Live MCX Rate Transparency',  detail: 'Our buying rate is displayed beside the MCX rate so you can see exactly what we earn. Nothing hidden.' },
-  { label: 'Est. 2014 — 11 Years',        detail: '10,000+ transactions across Karnataka. A business built on repeat customers and word-of-mouth alone.' },
-  { label: 'Confidential Service',        detail: 'Private consultation rooms. Discreet transactions. Your decision to sell gold is yours — we never judge.' },
-  { label: 'Post-Sale Support',           detail: 'WhatsApp support after your transaction. Grievance email in footer. We stand behind every offer we make.' },
+  { label: 'ISO 9001:2015 Certified', detail: 'Quality management certified. Every process — weighing, testing, payment — is audited and documented.' },
+  { label: 'German XRF Spectrometer', detail: 'We use a Bruker S1 Titan XRF spectrometer. It reads exact gold content. No acid. No guesswork.' },
+  { label: 'Live MCX Rate Transparency', detail: 'Our buying rate is displayed beside the MCX rate so you can see exactly what we earn. Nothing hidden.' },
+  { label: 'Est. 2014 — 11 Years', detail: '10,000+ transactions across Karnataka. A business built on repeat customers and word-of-mouth alone.' },
+  { label: 'Confidential Service', detail: 'Private consultation rooms. Discreet transactions. Your decision to sell gold is yours — we never judge.' },
+  { label: 'Post-Sale Support', detail: 'WhatsApp support after your transaction. Grievance email in footer. We stand behind every offer we make.' },
 ] as const;
 
 const TRUST_BADGES = ['GST Registered', 'ISO 9001:2015', 'XRF Certified', '16 Physical Branches'] as const;
@@ -1005,7 +1005,7 @@ export default function SampleCPage() {
         /* ── CTA band — graff-5 photo bg ──────────────────── */
         .sc-no-gap > .mk-cta-band {
           background-color: #3B1848 !important;
-          background-image: url(/graff-5.jpg) !important;
+          background-image: url(/graff-3.jpg) !important;
           background-size: cover !important;
           background-position: center !important;
         }
@@ -1130,39 +1130,39 @@ export default function SampleCPage() {
 
       {/* ── Stats band + Rate section — continuous dark bg ─────── */}
       <div className="mk-bg-dark sc-no-gap">
-      <MkStatBand />
+        <MkStatBand />
 
-      {/* ── Rate + Calculator + Callback + Chart ────────────────── */}
-      <section className="sc-rate-section section" id="gold-rate">
-        <div className="mk-container" style={{ position: 'relative' }}>
-          <p className="mk-section-overline reveal">Live Gold Rate Karnataka</p>
-          <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: '#fff', marginBottom: '2.5rem' }}>
-            Today&apos;s Rate, Calculator &amp; Callback
-          </h2>
+        {/* ── Rate + Calculator + Callback + Chart ────────────────── */}
+        <section className="sc-rate-section section" id="gold-rate">
+          <div className="mk-container" style={{ position: 'relative' }}>
+            <p className="mk-section-overline reveal">Live Gold Rate Karnataka</p>
+            <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: '#fff', marginBottom: '2.5rem' }}>
+              Today&apos;s Rate, Calculator &amp; Callback
+            </h2>
 
-          {/* Top row: Rate+Calc | Callback */}
-          <div className="sc-rate-top-grid">
-            {/* Left: Rate widget + divider + calculator */}
-            <div className="sc-chart-card reveal delay-2">
-              <MkRateWidget variant="page" />
-              <div className="sc-rate-divider" />
-              <MkCalculator variant="dark" showBookingCTA={false} />
+            {/* Top row: Rate+Calc | Callback */}
+            <div className="sc-rate-top-grid">
+              {/* Left: Rate widget + divider + calculator */}
+              <div className="sc-chart-card reveal delay-2">
+                <MkRateWidget variant="page" />
+                <div className="sc-rate-divider" />
+                <MkCalculator variant="dark" showBookingCTA={false} />
+              </div>
+
+              {/* Right: Callback form */}
+              <div className="sc-card-dark reveal delay-3">
+                <h3 className="sc-card-title">Request a Callback</h3>
+                <p className="sc-card-sub">Our team will call you within 30 minutes · Confidential</p>
+                <CallbackForm />
+              </div>
             </div>
 
-            {/* Right: Callback form */}
-            <div className="sc-card-dark reveal delay-3">
-              <h3 className="sc-card-title">Request a Callback</h3>
-              <p className="sc-card-sub">Our team will call you within 30 minutes · Confidential</p>
-              <CallbackForm />
+            {/* Bottom row: Full-width chart */}
+            <div className="sc-chart-card reveal delay-2" style={{ marginTop: 0 }}>
+              <GoldRateChart />
             </div>
           </div>
-
-          {/* Bottom row: Full-width chart */}
-          <div className="sc-chart-card reveal delay-2" style={{ marginTop: 0 }}>
-            <GoldRateChart />
-          </div>
-        </div>
-      </section>
+        </section>
       </div>{/* end continuous dark: StatBand + Rate */}
 
       {/* ── How it works ────────────────────────────────────────── */}
