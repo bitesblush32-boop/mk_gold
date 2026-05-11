@@ -363,7 +363,7 @@ function BranchFinder() {
 
   const cityArt: Record<City, React.ReactNode> = {
     Bangalore: (
-      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
+      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.75 }}>
         <rect x="8" y="78" width="104" height="4" rx="1" fill="#DFC160" opacity="0.4" />
         <rect x="48" y="18" width="24" height="60" fill="none" stroke="#DFC160" strokeWidth="1.5" />
         <rect x="48" y="14" width="24" height="6" rx="1" fill="#7B2C91" opacity="0.4" stroke="#DFC160" strokeWidth="1" />
@@ -396,7 +396,7 @@ function BranchFinder() {
       </svg>
     ),
     Mysore: (
-      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
+      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.75 }}>
         <rect x="8" y="76" width="104" height="6" rx="1" fill="#DFC160" opacity="0.4" />
         <rect x="16" y="72" width="88" height="6" rx="1" fill="#DFC160" opacity="0.25" />
         <rect x="28" y="42" width="64" height="30" fill="none" stroke="#DFC160" strokeWidth="1.5" />
@@ -421,7 +421,7 @@ function BranchFinder() {
       </svg>
     ),
     Mangalore: (
-      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
+      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.75 }}>
         <rect x="10" y="75" width="100" height="6" rx="2" fill="#DFC160" opacity="0.5" />
         <rect x="18" y="42" width="24" height="33" fill="none" stroke="#DFC160" strokeWidth="1.5" />
         <polygon points="18,42 30,18 42,42" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.2" />
@@ -443,7 +443,7 @@ function BranchFinder() {
       </svg>
     ),
     Davangere: (
-      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.3 }}>
+      <svg viewBox="0 0 120 90" style={{ width: '100%', height: 'auto', opacity: 0.75 }}>
         <rect x="10" y="78" width="100" height="5" rx="2" fill="#DFC160" opacity="0.45" />
         <rect x="46" y="28" width="28" height="50" fill="none" stroke="#DFC160" strokeWidth="1.5" />
         <path d="M46,28 Q60,8 74,28" fill="#7B2C91" opacity="0.35" stroke="#DFC160" strokeWidth="1.5" />
@@ -465,40 +465,40 @@ function BranchFinder() {
   };
 
   return (
-    <section className="mk-bg-dark section" id="branches" aria-label="Branch finder">
+    <section className="mk-bg-light section" id="branches" aria-label="Branch finder">
       <style>{`
         .sc-city-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2.5rem; }
         @media (max-width: 640px) { .sc-city-grid { grid-template-columns: repeat(2,1fr); } }
         .sc-city-card {
-          border: 1.5px solid rgba(223,193,96,0.2);
+          border: 1.5px solid var(--gallery-dk);
           border-radius: 12px;
           padding: 1rem;
           cursor: pointer;
-          background: rgba(59,24,72,0.4);
+          background: var(--white);
           transition: border-color var(--t-base), background var(--t-base), transform var(--t-fast);
           text-align: center;
         }
         .sc-city-card:hover { transform: translateY(-2px); }
-        .sc-city-card--active { border-color: var(--gold); background: rgba(223,193,96,0.08); }
-        .sc-city-name { font-family: 'Tanker', serif; font-size: var(--t-h4); color: var(--gold); margin: 0.5rem 0 0.25rem; }
-        .sc-city-count { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); color: var(--mist); }
+        .sc-city-card--active { border-color: var(--plum); background: rgba(81,37,97,0.06); }
+        .sc-city-name { font-family: 'Tanker', serif; font-size: var(--t-h4); color: var(--plum); margin: 0.5rem 0 0.25rem; }
+        .sc-city-count { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); color: var(--ink-mid); }
         .sc-branch-list { display: flex; flex-direction: column; gap: 0.75rem; }
-        .sc-branch-item { border: 1px solid rgba(223,193,96,0.15); border-radius: 10px; overflow: hidden; transition: border-color var(--t-fast); }
-        .sc-branch-item:hover { border-color: rgba(223,193,96,0.35); }
-        .sc-branch-header { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1rem; cursor: pointer; background: rgba(81,37,97,0.2); }
-        .sc-branch-name { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: var(--t-base); color: #fff; }
-        .sc-branch-toggle { font-family: 'Tanker', serif; font-size: 1.25rem; color: var(--gold); line-height: 1; transform-origin: center; transition: transform var(--t-fast); display: inline-block; }
+        .sc-branch-item { border: 1px solid var(--gallery-dk); border-radius: 10px; overflow: hidden; transition: border-color var(--t-fast); }
+        .sc-branch-item:hover { border-color: var(--plum); }
+        .sc-branch-header { display: flex; justify-content: space-between; align-items: center; padding: 0.875rem 1rem; cursor: pointer; background: var(--gallery); }
+        .sc-branch-name { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: var(--t-base); color: var(--ink); }
+        .sc-branch-toggle { font-family: 'Tanker', serif; font-size: 1.25rem; color: var(--plum); line-height: 1; transform-origin: center; transition: transform var(--t-fast); display: inline-block; }
         .sc-branch-toggle--open { transform: rotate(45deg); }
-        .sc-branch-body { padding: 0 1rem 1rem; background: rgba(59,24,72,0.3); display: flex; flex-direction: column; gap: 0.5rem; }
-        .sc-branch-addr { font-family: 'Poppins', sans-serif; font-size: var(--t-sm); color: var(--mist); line-height: 1.5; }
+        .sc-branch-body { padding: 0 1rem 1rem; background: rgba(240,239,239,0.6); display: flex; flex-direction: column; gap: 0.5rem; }
+        .sc-branch-addr { font-family: 'Poppins', sans-serif; font-size: var(--t-sm); color: var(--ink-mid); line-height: 1.5; }
         .sc-branch-actions { display: flex; gap: 0.75rem; margin-top: 0.25rem; flex-wrap: wrap; }
-        .sc-branch-action { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); font-weight: 600; color: var(--gold); text-decoration: none; border: 1px solid rgba(223,193,96,0.35); padding: 0.3rem 0.875rem; border-radius: 9999px; transition: background var(--t-fast), color var(--t-fast); }
-        .sc-branch-action:hover { background: var(--gold); color: var(--plum); }
+        .sc-branch-action { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); font-weight: 600; color: var(--plum); text-decoration: none; border: 1px solid rgba(81,37,97,0.3); padding: 0.3rem 0.875rem; border-radius: 9999px; transition: background var(--t-fast), color var(--t-fast); }
+        .sc-branch-action:hover { background: var(--plum); color: var(--white); }
       `}</style>
 
       <div className="mk-container">
         <p className="mk-section-overline reveal">16 Branches Across Karnataka</p>
-        <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker, serif', fontSize: 'var(--t-h2)', color: '#fff', marginBottom: '2.5rem' }}>
+        <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker, serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', marginBottom: '2.5rem' }}>
           Find Your Nearest MK Gold Branch
         </h2>
 
