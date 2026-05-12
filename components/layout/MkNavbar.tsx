@@ -36,6 +36,7 @@ export function MkNavbar() {
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const lastScrollY = useRef(0);
   const servicesRef = useRef<HTMLLIElement>(null);
+  const suppressHoverRef = useRef(false);
 
   // Hide on scroll down, show on scroll up — passive listener
   useEffect(() => {
@@ -116,7 +117,12 @@ export function MkNavbar() {
           <ul className="mk-navbar__nav" role="list">
 
             {/* Services dropdown */}
-            <li ref={servicesRef} className="mk-nav-item--dropdown">
+            <li
+              ref={servicesRef}
+              className="mk-nav-item--dropdown"
+              onMouseEnter={() => { if (!suppressHoverRef.current) setServicesOpen(true); }}
+              onMouseLeave={() => setServicesOpen(false)}
+            >
               <button
                 className={cn(
                   'mk-navbar__link mk-nav-dropdown__trigger',
@@ -124,7 +130,14 @@ export function MkNavbar() {
                 )}
                 aria-haspopup="true"
                 aria-expanded={servicesOpen}
-                onClick={() => setServicesOpen((v) => !v)}
+                onClick={() => {
+                  const wasOpen = servicesOpen;
+                  setServicesOpen(!wasOpen);
+                  if (wasOpen) {
+                    suppressHoverRef.current = true;
+                    setTimeout(() => { suppressHoverRef.current = false; }, 300);
+                  }
+                }}
               >
                 Services
                 <span className="mk-nav-dropdown__chevron" aria-hidden="true" />
