@@ -353,7 +353,7 @@ function CallbackForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+      <div className="sc-callback-grid">
         <div>
           <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Your Name</label>
           <input type="text" required className="mk-input mk-input--dark" placeholder="Full name"
@@ -365,7 +365,7 @@ function CallbackForm() {
             placeholder="10-digit mobile" value={form.phone} onChange={set('phone')} />
         </div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+      <div className="sc-callback-grid">
         <div>
           <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Gold Type</label>
           <select className="mk-select mk-select--dark" value={form.goldType} onChange={set('goldType')}
@@ -1287,8 +1287,8 @@ export default function HomePage() {
         /* ── Hero ─────────────────────────────────────────── */
         .sc-hero {
           position: relative;
-          height: 100vh;
-          min-height: 680px;
+          height: 100svh !important;
+          min-height: 560px !important;
           display: flex;
           flex-direction: column;
           justify-content: center;
@@ -1884,16 +1884,148 @@ export default function HomePage() {
         /* ── iOS zoom prevention (16px min on all inputs) ────────── */
         .mk-input, .mk-select, .mk-textarea { font-size: max(16px, var(--t-sm)) !important; }
 
-        /* ── Hero: svh for mobile address bar ────────────────────── */
-        .sc-hero { min-height: calc(100svh - var(--chrome-h)); }
+        /* ── Fix 1: global overflow prevention ─────────────────── */
+        html { overflow-x: hidden; }
+        body { overflow-x: hidden; }
 
-        /* ── Responsiveness ──────────────────────────────────────── */
+        /* ── Fix 3B: callback form responsive grid ───────────────── */
+        .sc-callback-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+        @media (max-width: 600px) {
+          .sc-callback-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── Fix 4: reviews carousel mobile animation ────────────── */
+        @keyframes reviewsScrollMobile {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(calc(-1 * (280px * 6 + 1.25rem * 6))); }
+        }
+        @media (max-width: 640px) {
+          .sc-reviews-track { animation-name: reviewsScrollMobile !important; }
+        }
+        .sc-review-text {
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 5;
+          -webkit-box-orient: vertical;
+        }
+
+        /* ── Fix 5: scroll-to-top above bottom nav on mobile ─────── */
+        @media (max-width: 768px) {
+          .sc-scroll-top {
+            bottom: 5.75rem !important;
+            right: 0.875rem !important;
+            width: 40px !important;
+            height: 40px !important;
+            font-size: 1rem !important;
+          }
+        }
+
+        /* ── Fix 6: bottom nav overflow at 320–400px ─────────────── */
+        @media (max-width: 400px) {
+          .sc-bottom-nav {
+            height: 60px !important;
+            padding: 0 0.5rem 0 0.625rem !important;
+            gap: 0.3rem !important;
+          }
+          .sc-bn-btn {
+            padding: 0 0.625rem !important;
+            font-size: 0.72rem !important;
+            height: 38px !important;
+          }
+          .sc-bn-hide-768 { display: none !important; }
+          .sc-bn-phone   { display: none !important; }
+        }
+        @media (max-width: 340px) {
+          .sc-bottom-nav-wrap { width: calc(100vw - 1rem) !important; }
+          .sc-bn-btn { padding: 0 0.5rem !important; font-size: 0.675rem !important; }
+          .sc-bn-btn--gold { display: none !important; }
+        }
+
+        /* ── Fix 7: navbar inner panel tight on small screens ─────── */
         @media (max-width: 480px) {
-          .lp-form-grid { grid-template-columns: 1fr !important; }
+          .mk-navbar__inner {
+            margin: 8px 10px !important;
+            padding: 0 0.75rem !important;
+            gap: 0.5rem !important;
+          }
+        }
+        @media (max-width: 360px) {
+          .mk-navbar__inner { margin: 6px 8px !important; }
+          .mk-navbar__logo-img { height: 44px !important; }
+        }
+
+        /* ── Fix 8: rate widget padding mobile ───────────────────── */
+        @media (max-width: 480px) {
+          .mk-rate-widget {
+            padding: var(--s-5) !important;
+            gap: var(--s-4) !important;
+          }
+          .mk-rate-widget__cell { padding: var(--s-3) !important; }
+          .mk-rate-widget__value { font-size: 1rem !important; }
+          .mk-rate-widget__calc-inputs { grid-template-columns: 1fr !important; }
+          .mk-rate-widget__margin-row { flex-wrap: wrap; }
+          .mk-rate-widget__margin-sep { display: none; }
+          .mk-rate-widget__margin-pill { width: 100%; text-align: center; }
+        }
+
+        /* ── Fix 9: dark card padding + title size mobile ────────── */
+        @media (max-width: 480px) {
+          .sc-card-dark  { padding: 1.25rem !important; }
+          .sc-card-title { font-size: 1.25rem !important; }
+          .sc-card-sub   { font-size: var(--t-xs) !important; margin-bottom: 0.875rem !important; }
+        }
+
+        /* ── Fix 10: chart SVG minimum height ────────────────────── */
+        @media (max-width: 900px) { .sc-chart-card { min-height: 300px; } }
+        @media (max-width: 640px) { .sc-chart-card { min-height: 260px; } }
+
+        /* ── Fix 11: steps cards tighter on mobile ───────────────── */
+        @media (max-width: 480px) {
+          .sc-step { padding: 1.25rem; }
+          .sc-step__number { font-size: 2.75rem; margin-bottom: 0.5rem; }
+          .sc-step__title  { font-size: 1rem; }
+          .sc-step__body   { font-size: var(--t-xs); }
+        }
+
+        /* ── Fix 12: lead popup very small screens ───────────────── */
+        @media (max-width: 380px) {
+          [role="dialog"] > div:first-child { padding: 1.125rem 1.25rem !important; }
+          [role="dialog"] > div:last-child  { padding: 1.25rem !important; }
+          [role="dialog"] h2 { font-size: 1.5rem !important; }
+          .lp-form-grid { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+        }
+
+        /* ── Fix 13: CTA band buttons stack on mobile ────────────── */
+        @media (max-width: 480px) {
+          .mk-cta-band__actions {
+            flex-direction: column;
+            align-items: stretch;
+            width: 100%;
+          }
+          .mk-cta-band__actions .mk-btn { justify-content: center; }
+        }
+
+        /* ── Fix 14: section padding on small screens ────────────── */
+        @media (max-width: 480px) {
+          .section          { padding-block: 3rem !important; }
+          .mk-faq           { padding-block: 3rem 3.5rem !important; }
+          .mk-cta-band      { padding-block: 3rem 3.5rem !important; }
+          .mk-trust         { padding-block: 3rem 3.5rem !important; }
+          .sc-rate-section  { padding-top: 2.5rem !important; }
+          .lp-form-grid     { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 375px) {
           .sc-rate-top-grid { grid-template-columns: 1fr !important; }
-          .lp-form-grid { grid-template-columns: 1fr !important; }
+          .lp-form-grid     { grid-template-columns: 1fr !important; }
+        }
+
+        /* ── Fix 15: Google Maps height very small screens ───────── */
+        @media (max-width: 380px) {
+          .sc-gmap-container { height: 240px !important; }
         }
       `}</style>
 
