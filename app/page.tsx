@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkTicker } from '@/components/layout/MkTicker';
 import { MkFooter } from '@/components/layout/MkFooter';
 import { MkFaq } from '@/components/sections/MkFaq';
 import { MkCtaBand } from '@/components/sections/MkCtaBand';
-import { MkWhatsApp } from '@/components/features/MkWhatsApp';
 import { MkRateWidget } from '@/components/features/MkRateWidget';
 import { MkCalculator } from '@/components/features/MkCalculator';
 import { MkSeal } from '@/components/ui/MkSeal';
@@ -928,6 +928,311 @@ function LocalStepsSection() {
   );
 }
 
+/* ─── ScrollToTop (fixed bottom-right — appears when past hero) ── */
+
+function ScrollToTop() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const hero = document.querySelector('[aria-label="Hero"]');
+    if (!hero) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setVisible(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    obs.observe(hero);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <button
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      aria-label="Back to top"
+      className="sc-scroll-top"
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0) scale(1)' : 'translateY(12px) scale(0.85)',
+        pointerEvents: visible ? 'auto' : 'none',
+        transition: 'opacity 350ms ease, transform 350ms cubic-bezier(0.34,1.56,0.64,1)',
+      }}
+    >
+      ↑
+    </button>
+  );
+}
+
+/* ─── BottomNav (floating pill — appears when past hero) ───────── */
+
+function BottomNav() {
+  const [pastHero, setPastHero] = useState(false);
+
+  useEffect(() => {
+    const hero = document.querySelector('[aria-label="Hero"]');
+    if (!hero) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setPastHero(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    obs.observe(hero);
+    return () => obs.disconnect();
+  }, []);
+
+  const whatsappHref = `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT ?? '918000000001'}?text=Hi%2C%20I%20want%20to%20sell%20my%20gold.`;
+
+  return (
+    <>
+      <div
+        className="sc-bottom-nav-wrap"
+        style={{
+          opacity: pastHero ? 1 : 0,
+          transform: pastHero
+            ? 'translateX(-50%) translateY(0)'
+            : 'translateX(-50%) translateY(120%)',
+          transition: 'all 420ms cubic-bezier(0.34, 1.2, 0.64, 1)',
+        }}
+        aria-hidden={!pastHero}
+      >
+        <div className="sc-bottom-nav" role="navigation" aria-label="Quick actions">
+          <a
+            href="#branches"
+            className="sc-bn-btn sc-bn-btn--ghost sc-bn-hide-768"
+            onClick={(e) => { e.preventDefault(); document.getElementById('branches')?.scrollIntoView({ behavior: 'smooth' }); }}
+          >
+            Find Branch
+          </a>
+          <a
+            href="#gold-rate"
+            className="sc-bn-btn sc-bn-btn--gold sc-bn-hide-600"
+            onClick={(e) => { e.preventDefault(); document.getElementById('gold-rate')?.scrollIntoView({ behavior: 'smooth' }); }}
+          >
+            <span className="sc-bn-live-dot" aria-hidden="true" />
+            Live Gold Rate
+          </a>
+          <a href="/sell-gold" className="sc-bn-btn sc-bn-btn--primary">
+            Sell Gold
+          </a>
+          <span className="sc-bn-sep" aria-hidden="true" />
+          <a href={`tel:+${process.env.NEXT_PUBLIC_PHONE_DEFAULT ?? '918000000001'}`} className="sc-bn-phone sc-bn-hide-360">
+            <img src="/phone_icon.png" alt="" width={18} height={18} className="sc-bn-icon" aria-hidden="true" />
+            <span className="sc-bn-phone-text sc-bn-hide-900">+91 80000 00001</span>
+          </a>
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sc-bn-btn sc-bn-btn--whatsapp"
+          >
+            <img src="/whatsapp_icon.png" alt="" width={18} height={18} className="sc-bn-icon" aria-hidden="true" />
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ─── LeadPopup (2s delay · portal · session storage) ──────────── */
+
+function LeadPopup() {
+  const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [form, setForm] = useState({ name: '', phone: '', goldType: '', weight: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+  useEffect(() => {
+    setMounted(true);
+    if (sessionStorage.getItem('mk_popup_dismissed')) return;
+    const t = setTimeout(() => setOpen(true), 2000);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') dismiss(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  function dismiss() {
+    setOpen(false);
+    sessionStorage.setItem('mk_popup_dismissed', '1');
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('loading');
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, source: 'popup-lead-form' }),
+      });
+      if (!res.ok) throw new Error();
+      setStatus('success');
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  if (!mounted || !open) return null;
+
+  const popup = (
+    <>
+      <div
+        aria-hidden="true"
+        onClick={dismiss}
+        style={{
+          position: 'fixed', inset: 0, zIndex: 500,
+          background: 'rgba(28,10,36,0.72)',
+          backdropFilter: 'blur(4px)',
+          WebkitBackdropFilter: 'blur(4px)',
+          animation: 'lp-fadeIn 300ms ease both',
+        }}
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Get a free gold evaluation"
+        style={{
+          position: 'fixed',
+          top: '50%', left: '50%',
+          zIndex: 501,
+          width: 'min(520px, calc(100vw - 2rem))',
+          maxHeight: 'calc(100svh - 4rem)',
+          overflowY: 'auto',
+          borderRadius: 'var(--r-2xl)',
+          boxShadow: '0 24px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(223,193,96,0.2)',
+          animation: 'lp-popupSlideIn 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        }}
+      >
+        <div style={{ background: 'var(--plum-deep)', padding: '1.5rem 2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+            <span style={{
+              display: 'inline-block',
+              background: 'var(--gold)', color: 'var(--plum)',
+              fontFamily: 'Poppins, sans-serif', fontSize: '0.65rem', fontWeight: 700,
+              letterSpacing: '0.1em', textTransform: 'uppercase',
+              padding: '0.25rem 0.75rem', borderRadius: '9999px',
+            }}>Free Evaluation</span>
+            <button
+              onClick={dismiss}
+              aria-label="Close"
+              style={{
+                width: 32, height: 32, borderRadius: '50%',
+                background: 'rgba(255,255,255,0.12)', border: 'none',
+                color: 'white', cursor: 'pointer', flexShrink: 0,
+                fontFamily: 'Poppins, sans-serif', fontSize: '1.125rem',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+            >×</button>
+          </div>
+          <h2 style={{
+            fontFamily: 'Tanker, serif', fontSize: '1.75rem', color: 'white',
+            textAlign: 'center', lineHeight: 1.2, marginBottom: '0.625rem', marginTop: 0,
+          }}>
+            Get the{' '}<span style={{ color: 'var(--gold)' }}>Best Price</span>{' '}for Your Gold
+          </h2>
+          <p style={{
+            fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-sm)',
+            color: 'rgba(255,255,255,0.65)', textAlign: 'center', margin: 0,
+          }}>
+            Fill in your details — we&apos;ll call you back within 30 minutes.
+          </p>
+        </div>
+
+        <div style={{ background: 'white', padding: '2rem' }}>
+          {status === 'success' ? (
+            <div style={{ textAlign: 'center', padding: '1rem 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <MkSeal variant="en" size="sm" />
+              </div>
+              <h3 style={{
+                fontFamily: 'Tanker, serif', fontSize: '1.5rem',
+                color: 'var(--gold)', marginBottom: '0.75rem', marginTop: 0,
+              }}>We&apos;ll call you shortly.</h3>
+              <p style={{
+                fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-sm)',
+                color: 'var(--ink-mid)', marginBottom: '1.5rem',
+              }}>
+                Our team will reach out within 30 minutes during branch hours (9:30 AM – 7:00 PM).
+              </p>
+              <MkButton variant="outline-plum" onClick={dismiss}>Close</MkButton>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className="lp-form-grid">
+                <div>
+                  <label className="lp-form-label">Full Name</label>
+                  <input type="text" className="mk-input" placeholder="Your name" required
+                    value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="lp-form-label">Phone Number</label>
+                  <input type="tel" className="mk-input" placeholder="+91 98765 43210" required
+                    value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="lp-form-label">Gold Type</label>
+                  <select className="mk-select" required
+                    value={form.goldType} onChange={e => setForm(f => ({ ...f, goldType: e.target.value }))}>
+                    <option value="" disabled>Select type</option>
+                    <option value="jewellery">Gold Jewellery</option>
+                    <option value="coins">Gold Coins</option>
+                    <option value="bars">Gold Bars</option>
+                    <option value="broken">Broken / Damaged Gold</option>
+                    <option value="pledged">Pledged Gold (bank/NBFC)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="lp-form-label">Approx. Weight (grams)</label>
+                  <input type="number" className="mk-input" placeholder="e.g. 20" min="1"
+                    value={form.weight} onChange={e => setForm(f => ({ ...f, weight: e.target.value }))} />
+                </div>
+              </div>
+              <div style={{ marginTop: '1rem' }}>
+                <label className="lp-form-label">Message / Notes</label>
+                <textarea className="mk-textarea" rows={3}
+                  placeholder="Any details about your gold (optional)"
+                  value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} />
+              </div>
+              <button
+                type="submit"
+                disabled={status === 'loading'}
+                className="mk-btn mk-btn--gold"
+                style={{
+                  width: '100%', marginTop: '1.25rem',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '1rem', padding: '0.875rem 1.5rem',
+                  opacity: status === 'loading' ? 0.7 : 1,
+                  cursor: status === 'loading' ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {status === 'loading' ? 'Sending...' : 'Get My Free Quote Now'}
+              </button>
+              {status === 'error' && (
+                <p style={{
+                  textAlign: 'center', color: '#dc2626',
+                  fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-xs)', marginTop: '0.5rem',
+                }}>
+                  Something went wrong. Please try again.
+                </p>
+              )}
+              <p style={{
+                textAlign: 'center', fontFamily: 'Poppins, sans-serif',
+                fontSize: 'var(--t-xs)', color: 'var(--mist)', marginTop: '0.75rem',
+              }}>
+                No spam. No pressure. We call once.
+              </p>
+            </form>
+          )}
+        </div>
+      </div>
+    </>
+  );
+
+  return createPortal(popup, document.body);
+}
+
 /* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function HomePage() {
@@ -1487,6 +1792,243 @@ export default function HomePage() {
           line-height: 1.65;
           margin: 0;
         }
+
+        /* ── Scroll to top button ────────────────────────────────── */
+        .sc-scroll-top {
+          position: fixed;
+          bottom: 1.5rem;
+          right: 1.5rem;
+          z-index: 400;
+          width: 48px; height: 48px;
+          border-radius: 50%;
+          background: var(--plum-deep);
+          border: 1.5px solid rgba(223,193,96,0.45);
+          color: white;
+          font-family: 'Poppins', sans-serif;
+          font-size: 1.25rem;
+          font-weight: 700;
+          cursor: pointer;
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(223,193,96,0.1);
+          will-change: transform, opacity;
+        }
+        .sc-scroll-top:hover {
+          background: var(--plum);
+          border-color: rgba(223,193,96,0.75);
+          box-shadow: 0 6px 28px rgba(0,0,0,0.45), 0 0 12px rgba(223,193,96,0.2);
+        }
+
+        /* ── Floating pill bottom nav ─────────────────────────────── */
+        .sc-bottom-nav-wrap {
+          position: fixed;
+          bottom: 1.25rem;
+          left: 50%;
+          z-index: 350;
+          width: min(1120px, calc(100vw - 2rem));
+          pointer-events: none;
+          will-change: transform, opacity;
+        }
+        .sc-bottom-nav {
+          pointer-events: all;
+          background: var(--plum-deep);
+          border-radius: 9999px;
+          border: 1px solid rgba(223,193,96,0.22);
+          box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.07);
+          height: 68px;
+          display: flex;
+          align-items: center;
+          padding: 0 0.875rem 0 1rem;
+          gap: 0.5rem;
+          overflow: hidden;
+        }
+        .sc-bn-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 9999px;
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.8125rem;
+          font-weight: 600;
+          letter-spacing: 0.01em;
+          white-space: nowrap;
+          cursor: pointer;
+          text-decoration: none;
+          flex-shrink: 0;
+          transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+          padding: 0 1.1rem;
+          height: 44px;
+          border: 1.5px solid transparent;
+        }
+        .sc-bn-btn--ghost {
+          background: rgba(255,255,255,0.07);
+          border-color: rgba(255,255,255,0.14);
+          color: rgba(255,255,255,0.82);
+        }
+        .sc-bn-btn--ghost:hover {
+          background: rgba(255,255,255,0.12);
+          border-color: rgba(255,255,255,0.28);
+        }
+        .sc-bn-btn--gold {
+          background: var(--gold);
+          color: var(--plum);
+          border-color: transparent;
+          font-weight: 700;
+          gap: 0.4rem;
+        }
+        .sc-bn-btn--gold:hover {
+          background: var(--gold-light);
+          box-shadow: 0 4px 16px rgba(223,193,96,0.4);
+        }
+        .sc-bn-btn--primary {
+          background: var(--purple);
+          color: white;
+          border-color: transparent;
+          font-weight: 700;
+          box-shadow: 0 2px 12px rgba(123,44,145,0.45);
+        }
+        .sc-bn-btn--primary:hover {
+          background: #8D35A8;
+          box-shadow: 0 4px 20px rgba(123,44,145,0.60);
+        }
+        .sc-bn-btn--whatsapp {
+          background: #25D366;
+          color: white;
+          border-color: transparent;
+          font-weight: 700;
+          gap: 0.4rem;
+          box-shadow: 0 2px 10px rgba(37,211,102,0.35);
+        }
+        .sc-bn-btn--whatsapp:hover {
+          background: #1EA855;
+          box-shadow: 0 4px 16px rgba(37,211,102,0.50);
+        }
+        .sc-bn-live-dot {
+          display: inline-block;
+          width: 7px; height: 7px;
+          border-radius: 50%;
+          background: #4ade80;
+          flex-shrink: 0;
+          vertical-align: middle;
+          animation: livePulse 2s ease-in-out infinite;
+        }
+        .sc-bn-icon {
+          width: 18px; height: 18px;
+          object-fit: contain;
+          filter: brightness(0) invert(1);
+          flex-shrink: 0;
+          display: block;
+        }
+        .sc-bn-sep {
+          display: inline-block;
+          width: 1px; height: 28px;
+          background: rgba(255,255,255,0.12);
+          margin: 0 0.375rem 0 auto;
+          flex-shrink: 0;
+        }
+        .sc-bn-phone {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.25rem 0.625rem;
+          border-radius: 9999px;
+          background: rgba(255,255,255,0.05);
+          text-decoration: none;
+          transition: background 150ms ease;
+          flex-shrink: 0;
+        }
+        .sc-bn-phone:hover { background: rgba(255,255,255,0.10); }
+        .sc-bn-phone-text {
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.875rem;
+          font-weight: 700;
+          color: white;
+          white-space: nowrap;
+        }
+        @media (max-width: 900px)  { .sc-bn-hide-900 { display: none !important; } }
+        @media (max-width: 768px)  { .sc-bn-hide-768 { display: none !important; } }
+        @media (max-width: 600px)  { .sc-bn-hide-600 { display: none !important; } }
+        @media (max-width: 480px)  {
+          .sc-bn-btn { padding: 0 0.875rem; font-size: 0.75rem; }
+          .sc-bottom-nav { height: 60px; }
+          .sc-bottom-nav-wrap { bottom: 1rem; }
+        }
+        @media (max-width: 360px)  {
+          .sc-bn-hide-360 { display: none !important; }
+          .sc-bottom-nav-wrap { width: calc(100vw - 1.5rem); }
+          .sc-bn-btn--primary, .sc-bn-btn--whatsapp { flex: 1; justify-content: center; }
+        }
+
+        /* ── FAQ accordion — explicit colours so open state never goes white ── */
+        .mk-faq__item { background: var(--white); }
+        .mk-faq__trigger { background: var(--white) !important; }
+        .mk-faq__trigger:hover { background: var(--gallery) !important; }
+        .mk-faq__item--open .mk-faq__trigger {
+          background: rgba(81,37,97,0.06) !important;
+          border-bottom: 1px solid rgba(81,37,97,0.10);
+        }
+        .mk-faq__answer { background: var(--white); }
+        .mk-faq__answer-text { color: var(--ink-mid) !important; opacity: 1 !important; }
+        .mk-faq__icon { border-color: var(--gallery-dk) !important; }
+        .mk-faq__item--open .mk-faq__icon {
+          border-color: var(--plum) !important;
+          background: rgba(81,37,97,0.06);
+        }
+
+        /* ── Navbar CTAs — uniform size ──────────────────────────── */
+        .mk-navbar__actions .mk-btn {
+          font-size: 0.875rem !important;
+          padding: 0.6rem 1.4rem !important;
+          height: 38px !important;
+          min-height: 38px !important;
+          line-height: 1 !important;
+          display: inline-flex !important;
+          align-items: center !important;
+        }
+        /* ── Popup animations ────────────────────────────────────── */
+        @keyframes lp-popupSlideIn {
+          from { opacity: 0; transform: translate(-50%, calc(-50% + 24px)) scale(0.95); }
+          to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+        @keyframes lp-fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+
+        /* ── Popup form ──────────────────────────────────────────── */
+        .lp-form-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+        .lp-form-label {
+          display: block;
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--ink-mid);
+          margin-bottom: 0.375rem;
+        }
+
+        /* ── iOS zoom prevention (16px min on all inputs) ────────── */
+        .mk-input, .mk-select, .mk-textarea { font-size: max(16px, var(--t-sm)) !important; }
+
+        /* ── Hero: svh for mobile address bar ────────────────────── */
+        .sc-hero { min-height: calc(100svh - var(--chrome-h)); }
+
+        /* ── Responsiveness ──────────────────────────────────────── */
+        @media (max-width: 480px) {
+          .lp-form-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 375px) {
+          .sc-hero__h1 { font-size: 2.4rem !important; }
+          .sc-hero__h1-kn { font-size: 1rem !important; }
+          .sc-hero__cta-row { flex-direction: column; }
+          .sc-hero__cta-row .mk-btn { width: 100%; justify-content: center; }
+          .sc-rate-top-grid { grid-template-columns: 1fr !important; }
+          .lp-form-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       {/* ── Scroll progress bar ─────────────────────────────────── */}
@@ -1729,8 +2271,9 @@ export default function HomePage() {
       {/* ── Footer ───────────────────────────────────────────────── */}
       <MkFooter />
 
-      {/* ── Floating WhatsApp ───────────────────────────────────── */}
-      <MkWhatsApp number="918000000001" message="Hi, I want to sell my gold. Can you help?" />
+      <ScrollToTop />
+      <BottomNav />
+      <LeadPopup />
     </>
   );
 }
