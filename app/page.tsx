@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkTicker } from '@/components/layout/MkTicker';
 import { MkFooter } from '@/components/layout/MkFooter';
@@ -351,7 +350,7 @@ function CallbackForm() {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, source: 'homepage-callback' }),
+        body: JSON.stringify({ ...form, source: 'sample-c-callback' }),
       });
       setStatus(res.ok ? 'success' : 'error');
     } catch {
@@ -447,8 +446,9 @@ function loadMapsSDK(): Promise<void> {
   if ((window as any).google?.maps) { _mapsReady = Promise.resolve(); return _mapsReady; }
   _mapsReady = new Promise<void>((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&libraries=marker&loading=async`;
+    s.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}`;
     s.async = true;
+    s.defer = true;
     s.onload = () => resolve();
     s.onerror = () => { _mapsReady = null; reject(new Error('Maps SDK failed to load')); };
     document.head.appendChild(s);
@@ -485,16 +485,18 @@ const CITY_CENTERS: Record<City, { lat: number; lng: number; zoom: number }> = {
   Davangere: { lat: 14.4644, lng: 75.9218, zoom: 14 },
 };
 
-/* ─── Branch pin factory (AdvancedMarkerElement PinElement) ─────── */
+/* ─── Branch marker icon factory ────────────────────────────────── */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function makePinElement(g: any, isActive: boolean): any {
-  return new g.marker.PinElement({
-    background: isActive ? '#DFC160' : '#512561',
-    borderColor: isActive ? '#C9A940' : '#ffffff',
-    glyphColor: isActive ? '#512561' : '#ffffff',
-    scale: isActive ? 1.3 : 1.0,
-  });
+function markerIcon(isActive: boolean): any {
+  return {
+    path: 0, // google.maps.SymbolPath.CIRCLE
+    scale: isActive ? 11 : 8,
+    fillColor: isActive ? '#DFC160' : '#512561',
+    fillOpacity: 1,
+    strokeColor: isActive ? '#C9A940' : '#ffffff',
+    strokeWeight: 2,
+  };
 }
 
 /* ─── Google Maps city panel ────────────────────────────────────── */
@@ -506,7 +508,7 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
 }) {
   const mapDivRef = useRef<HTMLDivElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const markersRef = useRef<{ branch: Branch; marker: any; pin: any }[]>([]);
+  const markersRef = useRef<{ branch: Branch; marker: any }[]>([]);
   const activeBranchRef = useRef(activeBranch);
   const [mapError, setMapError] = useState(false);
 
@@ -526,14 +528,13 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
         const g = (window as any).google.maps;
 
         // Clear old markers
-        markersRef.current.forEach(({ marker }) => { marker.map = null; });
+        markersRef.current.forEach(({ marker }) => marker.setMap(null));
         markersRef.current = [];
 
         const map = new g.Map(mapDivRef.current, {
           center: { lat: center.lat, lng: center.lng },
           zoom: center.zoom,
-          // mapId is required for AdvancedMarkerElement; styles are set in Cloud Console per map ID
-          mapId: process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID || 'DEMO_MAP_ID',
+          styles: MAP_STYLES,
           disableDefaultUI: true,
           zoomControl: true,
           gestureHandling: 'cooperative',
@@ -541,13 +542,12 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
         });
 
         markersRef.current = cityBranches.map(branch => {
-          const isActive = activeBranchRef.current?.slug === branch.slug;
-          const pin = makePinElement(g, isActive);
-          const marker = new g.marker.AdvancedMarkerElement({
+          const marker = new g.Marker({
             position: { lat: branch.coordinates.lat, lng: branch.coordinates.lng },
             map,
             title: branch.name,
-            content: pin.element,
+            icon: markerIcon(activeBranchRef.current?.slug === branch.slug),
+            cursor: 'pointer',
           });
 
           marker.addListener('click', () => {
@@ -555,27 +555,24 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
             setActiveBranch(cur?.slug === branch.slug ? null : branch);
           });
 
-          return { branch, marker, pin };
+          return { branch, marker };
         });
       })
       .catch(() => setMapError(true));
 
     return () => {
-      markersRef.current.forEach(({ marker }) => { marker.map = null; });
+      markersRef.current.forEach(({ marker }) => marker.setMap(null));
       markersRef.current = [];
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [city]);
 
-  // Update marker pin colours when activeBranch changes (no map re-init)
+  // Update marker icon colours when activeBranch changes (no map re-init)
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const g = (window as any).google?.maps;
-    if (!g?.marker) return;
+    if (!(window as any).google?.maps) return;
     markersRef.current.forEach(({ branch, marker }) => {
-      const isActive = activeBranch?.slug === branch.slug;
-      const newPin = makePinElement(g, isActive);
-      marker.content = newPin.element;
+      marker.setIcon(markerIcon(activeBranch?.slug === branch.slug));
     });
   }, [activeBranch]);
 
@@ -931,438 +928,6 @@ function LocalStepsSection() {
   );
 }
 
-/* ─── Bottom Nav ────────────────────────────────────────────────── */
-
-function BottomNav() {
-  const [pastHero, setPastHero] = useState(false);
-
-  useEffect(() => {
-    const hero = document.querySelector('[aria-label="Hero"]');
-    if (!hero) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setPastHero(!entry.isIntersecting),
-      { threshold: 0 }
-    );
-    observer.observe(hero);
-    return () => observer.disconnect();
-  }, []);
-
-  const scrollTo = (id: string) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-
-  const waHref = 'https://wa.me/918000000001?text=Hi%2C%20I%20want%20to%20sell%20my%20gold.';
-
-  return (
-    <div
-      className={`mk-bottom-nav ${pastHero ? 'mk-bottom-nav--visible' : 'mk-bottom-nav--hidden'}`}
-      aria-hidden={!pastHero}
-    >
-      <div className="mk-bottom-nav__inner">
-        {/* Item 1 — Sell Gold (primary CTA) */}
-        <a
-          href="/sell-gold"
-          style={{
-            fontFamily: 'Poppins, sans-serif',
-            fontSize: '0.8125rem',
-            fontWeight: 700,
-            letterSpacing: '0.02em',
-            background: 'var(--gold)',
-            color: 'var(--plum)',
-            borderRadius: '9999px',
-            padding: '0.5rem 1.25rem',
-            minHeight: '40px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            textDecoration: 'none',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Sell Gold
-        </a>
-
-        {/* Item 2 — Gold Rate (hidden on mobile) */}
-        <button
-          className="mk-bottom-nav__text-btn mk-bottom-nav__hide-mobile"
-          onClick={() => scrollTo('gold-rate')}
-          tabIndex={pastHero ? 0 : -1}
-        >
-          Gold Rate
-        </button>
-
-        {/* Separator (hidden on mobile) */}
-        <span className="mk-bottom-nav__sep mk-bottom-nav__hide-mobile" aria-hidden="true" />
-
-        {/* Item 3 — Get Quote */}
-        <button
-          className="mk-bottom-nav__text-btn"
-          onClick={() => scrollTo('gold-rate')}
-          tabIndex={pastHero ? 0 : -1}
-        >
-          Get Quote
-        </button>
-
-        {/* Item 4 — WhatsApp */}
-        <a
-          href={waHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          tabIndex={pastHero ? 0 : -1}
-          style={{
-            fontFamily: 'Poppins, sans-serif',
-            fontSize: '0.75rem',
-            fontWeight: 700,
-            background: '#25D366',
-            color: 'white',
-            borderRadius: '9999px',
-            padding: '0.5rem 1.1rem',
-            minHeight: '40px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            textDecoration: 'none',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          WhatsApp
-        </a>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Bottom Nav Spacer — prevents footer hiding under fixed nav ── */
-
-function BottomNavSpacer() {
-  const [pastHero, setPastHero] = useState(false);
-
-  useEffect(() => {
-    const hero = document.querySelector('[aria-label="Hero"]');
-    if (!hero) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setPastHero(!entry.isIntersecting),
-      { threshold: 0 }
-    );
-    observer.observe(hero);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      aria-hidden="true"
-      style={{
-        height: pastHero ? '60px' : '0',
-        transition: 'height 400ms ease',
-        flexShrink: 0,
-      }}
-    />
-  );
-}
-
-/* ─── Lead Capture Popup ────────────────────────────────────────── */
-
-function LeadPopup() {
-  const [mounted, setMounted] = useState(false);
-  const [popupOpen, setPopupOpen] = useState(false);
-  const [popupForm, setPopupForm] = useState({
-    name: '', phone: '', goldType: '', weight: '', message: '',
-  });
-  const [popupStatus, setPopupStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
-  useEffect(() => {
-    setMounted(true);
-    if (sessionStorage.getItem('mk_popup_dismissed')) return;
-    const timer = setTimeout(() => setPopupOpen(true), 2000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!popupOpen) return;
-    const onKeyDown = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [popupOpen]);
-
-  function close() {
-    setPopupOpen(false);
-    sessionStorage.setItem('mk_popup_dismissed', '1');
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setPopupStatus('loading');
-    try {
-      const res = await fetch('/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...popupForm, source: 'popup-lead-form' }),
-      });
-      setPopupStatus(res.ok ? 'success' : 'error');
-    } catch {
-      setPopupStatus('error');
-    }
-  }
-
-  if (!mounted || !popupOpen) return null;
-  if (typeof window === 'undefined') return null;
-
-  const labelStyle: React.CSSProperties = {
-    display: 'block',
-    fontFamily: 'Poppins, sans-serif',
-    fontSize: '0.7rem',
-    fontWeight: 700,
-    letterSpacing: '0.08em',
-    textTransform: 'uppercase',
-    color: 'var(--ink-mid)',
-    marginBottom: '0.375rem',
-  };
-
-  const popup = (
-    <>
-      {/* Backdrop */}
-      <div
-        aria-hidden="true"
-        onClick={close}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 500,
-          background: 'rgba(28, 10, 36, 0.72)',
-          backdropFilter: 'blur(4px)',
-          animation: 'fadeIn 300ms ease both',
-        }}
-      />
-
-      {/* Card */}
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="mk-popup-headline"
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 501,
-          width: 'min(520px, calc(100vw - 2rem))',
-          maxHeight: 'calc(100svh - 4rem)',
-          overflowY: 'auto',
-          borderRadius: '1.5rem',
-          boxShadow: '0 24px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(223,193,96,0.2)',
-          animation: 'popupSlideIn 350ms cubic-bezier(0.34, 1.56, 0.64, 1) both',
-        }}
-      >
-        {/* Header */}
-        <div style={{ background: 'var(--plum-deep)', padding: '1.5rem 2rem' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-            <span style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: '0.65rem',
-              fontWeight: 700,
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              background: 'var(--gold)',
-              color: 'var(--plum)',
-              padding: '0.3rem 0.875rem',
-              borderRadius: '9999px',
-            }}>
-              FREE EVALUATION
-            </span>
-            <button
-              onClick={close}
-              aria-label="Close popup"
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: 'rgba(255,255,255,0.12)',
-                border: 'none',
-                color: 'white',
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: '1.25rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                lineHeight: 1,
-                flexShrink: 0,
-              }}
-            >
-              ×
-            </button>
-          </div>
-          <h2
-            id="mk-popup-headline"
-            style={{
-              fontFamily: 'Tanker, serif',
-              fontSize: '1.75rem',
-              color: 'white',
-              textAlign: 'center',
-              lineHeight: 1.15,
-              marginBottom: '0.75rem',
-            }}
-          >
-            Get the <span style={{ color: 'var(--gold)' }}>Best Price</span> for Your Gold
-          </h2>
-          <p style={{
-            fontFamily: 'Poppins, sans-serif',
-            fontSize: 'var(--t-sm)',
-            color: 'rgba(255,255,255,0.65)',
-            textAlign: 'center',
-            lineHeight: 1.6,
-          }}>
-            Fill in your details — we&apos;ll call you back within 30 minutes.
-          </p>
-        </div>
-
-        {/* Form body */}
-        <div style={{ background: 'white', padding: '2rem' }}>
-          {popupStatus === 'success' ? (
-            <div style={{ textAlign: 'center', padding: '1rem 0' }}>
-              <MkSeal variant="en" size="sm" />
-              <h3 style={{
-                fontFamily: 'Tanker, serif',
-                color: 'var(--plum)',
-                fontSize: 'var(--t-h3)',
-                margin: '1.25rem 0 0.625rem',
-              }}>
-                We&apos;ll call you shortly.
-              </h3>
-              <p style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 'var(--t-sm)',
-                color: 'var(--ink-mid)',
-                maxWidth: '320px',
-                margin: '0 auto 1.5rem',
-                lineHeight: 1.6,
-              }}>
-                Our team will reach out within 30 minutes during branch hours (9:30 AM – 7:00 PM).
-              </p>
-              <button
-                onClick={close}
-                style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontWeight: 600,
-                  fontSize: 'var(--t-base)',
-                  letterSpacing: '0.03em',
-                  padding: '0.75rem 2rem',
-                  borderRadius: '9999px',
-                  border: '1.5px solid var(--plum)',
-                  background: 'transparent',
-                  color: 'var(--plum)',
-                  cursor: 'pointer',
-                  transition: 'background var(--t-fast), color var(--t-fast)',
-                }}
-              >
-                Close
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} noValidate>
-              <div className="mk-popup-form-grid">
-                <div>
-                  <label style={labelStyle}>Full Name</label>
-                  <input
-                    type="text"
-                    required
-                    className="mk-input"
-                    placeholder="Your full name"
-                    value={popupForm.name}
-                    onChange={e => setPopupForm(p => ({ ...p, name: e.target.value }))}
-                    style={{ fontSize: '16px', minHeight: '44px' }}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Phone Number</label>
-                  <input
-                    type="tel"
-                    required
-                    pattern="[6-9][0-9]{9}"
-                    className="mk-input"
-                    placeholder="10-digit mobile"
-                    value={popupForm.phone}
-                    onChange={e => setPopupForm(p => ({ ...p, phone: e.target.value }))}
-                    style={{ fontSize: '16px', minHeight: '44px' }}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Gold Type</label>
-                  <select
-                    className="mk-select"
-                    value={popupForm.goldType}
-                    onChange={e => setPopupForm(p => ({ ...p, goldType: e.target.value }))}
-                    style={{ fontSize: '16px', minHeight: '44px' }}
-                  >
-                    <option value="" disabled>Select type</option>
-                    <option value="jewellery">Gold Jewellery</option>
-                    <option value="coins">Gold Coins</option>
-                    <option value="bars">Gold Bars</option>
-                    <option value="broken">Broken / Damaged Gold</option>
-                    <option value="pledged">Pledged Gold (bank/NBFC)</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={labelStyle}>Approx. Weight / grams</label>
-                  <input
-                    type="number"
-                    min="0.1"
-                    step="0.1"
-                    className="mk-input"
-                    placeholder="e.g. 10"
-                    value={popupForm.weight}
-                    onChange={e => setPopupForm(p => ({ ...p, weight: e.target.value }))}
-                    style={{ fontSize: '16px', minHeight: '44px' }}
-                  />
-                </div>
-              </div>
-              <div style={{ marginBottom: '1rem' }}>
-                <label style={labelStyle}>Message / Notes</label>
-                <textarea
-                  className="mk-input"
-                  rows={3}
-                  placeholder="Any details about your gold (optional)"
-                  value={popupForm.message}
-                  onChange={e => setPopupForm(p => ({ ...p, message: e.target.value }))}
-                  style={{ fontSize: '16px', resize: 'vertical', minHeight: '88px' }}
-                />
-              </div>
-              <MkButton
-                type="submit"
-                variant="gold"
-                size="lg"
-                style={{ width: '100%' }}
-                disabled={popupStatus === 'loading'}
-              >
-                {popupStatus === 'loading' ? 'Submitting…' : 'Get My Free Quote Now'}
-              </MkButton>
-              {popupStatus === 'error' && (
-                <p style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 'var(--t-xs)',
-                  color: '#dc2626',
-                  textAlign: 'center',
-                  marginTop: '0.75rem',
-                }}>
-                  Something went wrong. Please WhatsApp us directly.
-                </p>
-              )}
-              <p style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 'var(--t-xs)',
-                color: 'var(--mist)',
-                textAlign: 'center',
-                marginTop: '0.75rem',
-              }}>
-                No spam. No pressure. We call once.
-              </p>
-            </form>
-          )}
-        </div>
-      </div>
-    </>
-  );
-
-  return createPortal(popup, document.body);
-}
-
 /* ─── Page ─────────────────────────────────────────────────────── */
 
 export default function HomePage() {
@@ -1439,15 +1004,13 @@ export default function HomePage() {
           font-size: 0.875rem !important;
           padding: 0.375rem 0.625rem !important;
         }
-        /* Navbar CTAs — uniform size across all 3 buttons */
-        .mk-navbar__actions .mk-btn {
-          font-size: 0.875rem !important;
-          padding: 0.6rem 1.4rem !important;
-          height: 38px !important;
-          min-height: 38px !important;
-          line-height: 1 !important;
-          display: inline-flex !important;
-          align-items: center !important;
+        .mk-navbar__actions > .mk-btn {
+          font-size: 0.9rem !important;
+          padding: 0.56rem 1.4rem !important;
+        }
+        .mk-navbar__extra-ctas .mk-btn {
+          font-size: 0.8rem !important;
+          padding: 0.4rem 0.875rem !important;
         }
         .mk-ticker { top: 0 !important; }
 
@@ -1924,127 +1487,6 @@ export default function HomePage() {
           line-height: 1.65;
           margin: 0;
         }
-
-        /* ── Lead Popup ───────────────────────────────────── */
-        @keyframes popupSlideIn {
-          from { opacity: 0; transform: translate(-50%, calc(-50% + 24px)) scale(0.95); }
-          to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to   { opacity: 1; }
-        }
-        .mk-popup-form-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1rem;
-          margin-bottom: 1rem;
-        }
-        @media (max-width: 480px) {
-          .mk-popup-form-grid { grid-template-columns: 1fr; }
-        }
-
-        /* ── FAQ accordion — explicit colours, no bleed-through ── */
-        .mk-faq__item { background: var(--white); }
-        .mk-faq__trigger { background: var(--white) !important; }
-        .mk-faq__trigger:hover { background: var(--gallery) !important; }
-        .mk-faq__item--open .mk-faq__trigger {
-          background: rgba(81, 37, 97, 0.06) !important;
-          border-bottom: 1px solid rgba(81, 37, 97, 0.10);
-        }
-        .mk-faq__answer { background: var(--white); }
-        .mk-faq__answer-text { color: var(--ink-mid) !important; opacity: 1 !important; }
-        .mk-faq__icon { border-color: var(--gallery-dk) !important; }
-        .mk-faq__item--open .mk-faq__icon {
-          border-color: var(--plum) !important;
-          background: rgba(81, 37, 97, 0.06);
-        }
-
-        /* ── Bottom Nav ───────────────────────────────────────── */
-        .mk-bottom-nav {
-          position: fixed;
-          bottom: 0; left: 0; right: 0;
-          z-index: 350;
-          height: 56px;
-          background: rgba(40, 12, 56, 0.97);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border-top: 1px solid rgba(223, 193, 96, 0.18);
-          box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
-          will-change: transform;
-          transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        @media (max-width: 480px) { .mk-bottom-nav { height: 60px; } }
-        .mk-bottom-nav--hidden { transform: translateY(100%); }
-        .mk-bottom-nav--visible { transform: translateY(0); }
-        .mk-bottom-nav__inner {
-          display: flex;
-          align-items: center;
-          justify-content: space-around;
-          padding: 0 1rem;
-          height: 100%;
-          max-width: var(--max-w, 1200px);
-          margin-inline: auto;
-        }
-        .mk-bottom-nav__sep {
-          width: 1px; height: 20px;
-          background: rgba(255, 255, 255, 0.12);
-          flex-shrink: 0;
-        }
-        .mk-bottom-nav__text-btn {
-          font-family: 'Poppins', sans-serif;
-          font-size: 0.75rem;
-          font-weight: 500;
-          color: rgba(255, 255, 255, 0.75);
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 0.5rem 0.75rem;
-          min-height: 40px;
-          white-space: nowrap;
-          transition: color var(--t-fast);
-        }
-        .mk-bottom-nav__text-btn:hover { color: var(--gold); }
-        @media (max-width: 480px) {
-          .mk-bottom-nav__hide-mobile { display: none; }
-        }
-
-        /* ── Responsiveness audit — Task 5 ────────────────── */
-
-        /* iOS zoom prevention — 16px minimum on all form controls */
-        .mk-input, .mk-select, textarea.mk-input {
-          font-size: max(16px, var(--t-sm)) !important;
-        }
-
-        /* Hero: svh unit for iOS address-bar handling */
-        .sc-hero {
-          min-height: calc(100svh - var(--chrome-h)) !important;
-        }
-
-        /* Rate widget — never overflow its card */
-        .sc-chart-card .mk-rate-widget--page { max-width: 100%; }
-
-        /* 375px — iPhone SE */
-        @media (max-width: 375px) {
-          .sc-hero__h1 { font-size: 2.4rem !important; }
-          .sc-hero__h1-kn { font-size: 1rem !important; }
-          .sc-hero__cta-row {
-            flex-direction: column;
-            align-items: stretch;
-          }
-          .sc-hero__cta-row .mk-btn { width: 100% !important; justify-content: center; }
-          .sc-rate-top-grid { grid-template-columns: 1fr !important; }
-          .mk-bottom-nav__inner { padding: 0 0.5rem; }
-          .mk-bottom-nav__text-btn { font-size: 0.7rem !important; padding: 0.4rem 0.5rem !important; }
-        }
-
-        /* 480px — 1-col forms */
-        @media (max-width: 480px) {
-          .sc-rate-top-grid { grid-template-columns: 1fr; }
-        }
-
-        /* Carousel parent — no horizontal page scroll */
-        .sc-reviews-overflow { overflow: hidden; padding-bottom: 0.5rem; }
       `}</style>
 
       {/* ── Scroll progress bar ─────────────────────────────────── */}
@@ -2289,15 +1731,6 @@ export default function HomePage() {
 
       {/* ── Floating WhatsApp ───────────────────────────────────── */}
       <MkWhatsApp number="918000000001" message="Hi, I want to sell my gold. Can you help?" />
-
-      {/* ── Bottom Nav ──────────────────────────────────────────── */}
-      <BottomNav />
-
-      {/* ── Spacer — prevents footer content hiding behind BottomNav */}
-      <BottomNavSpacer />
-
-      {/* ── Lead Capture Popup ──────────────────────────────────── */}
-      <LeadPopup />
     </>
   );
 }

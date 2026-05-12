@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "maps.googleapis.com" },
     ],
   },
+  turbopack: {
+    root: __dirname,
+  },
   experimental: {
     optimizeCss: true,
   },

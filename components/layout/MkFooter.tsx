@@ -46,6 +46,7 @@ export function MkFooter() {
                 height={44}
                 width={198}
                 className="mk-footer__logo-img"
+                style={{ height: '44px', width: 'auto' }}
               />
             </a>
 
