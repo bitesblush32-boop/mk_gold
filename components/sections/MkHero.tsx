@@ -5,9 +5,9 @@ import { MkRateWidget } from '@/components/features/MkRateWidget';
 /* ─── Stats ──────────────────────────────────────────────────── */
 
 const STATS = [
-  { value: '11',   label: 'Years of trust'    },
-  { value: '16',   label: 'Branches'          },
-  { value: '10K+', label: 'Customers served'  },
+  { value: '11', label: 'Years of trust' },
+  { value: '16', label: 'Branches' },
+  { value: '10K+', label: 'Customers served' },
   { value: '45 min', label: 'Payment guarantee' },
 ] as const;
 
@@ -19,10 +19,10 @@ export function MkHero() {
 
       {/* Background image slideshow — CSS crossfade, no JS */}
       <div className="mk-hero__slides" aria-hidden="true">
-        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg-2.jpg)',   animationDelay: '-1s'  }} />
-        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg3.jpg)',    animationDelay:  '4s'  }} />
-        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg-4.jpg)',   animationDelay:  '9s'  }} />
-        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg-5.webp)',  animationDelay: '14s'  }} />
+        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg-2.jpg)', animationDelay: '-1s' }} />
+        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg3.jpg)', animationDelay: '4s' }} />
+        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg-4.jpg)', animationDelay: '9s' }} />
+        <div className="mk-hero__slide" style={{ backgroundImage: 'url(/bg-5.webp)', animationDelay: '14s' }} />
         <div className="mk-hero__overlay" />
       </div>
 

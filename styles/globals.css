@@ -198,8 +198,8 @@
 
   /* Fixed chrome heights — referenced everywhere */
   --ticker-h: 36px;
-  --navbar-h: 68px;
-  --chrome-h: 104px;
+  --navbar-h: 96px;
+  --chrome-h: 132px;
   /* ticker + navbar — main pt offset */
 }
 

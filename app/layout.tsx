@@ -24,11 +24,11 @@ const anekKannada = Anek_Kannada({
 export const metadata: Metadata = {
   metadataBase: new URL("https://mkgold.in"),
   title: {
-    default: "MK Gold — Sell Gold in Karnataka | Instant Cash | 11 Years Trusted",
+    default: "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
     template: "%s | MK Gold",
   },
   description:
-    "MK Gold — Karnataka's trusted gold buyer since 2014. Sell gold jewellery, coins & bars at live MCX rates. XRF purity test. Payment in 45 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere.",
+    "Karnataka's most trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 45 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere.",
   keywords: [
     "sell gold Karnataka",
     "gold buyer Bangalore",
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://mkgold.in",
     siteName: "MK Gold",
-    title: "MK Gold — Sell Gold in Karnataka | Instant Cash | 11 Years Trusted",
+    title: "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
     description:
       "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 45 minutes. 16 branches.",
   },
