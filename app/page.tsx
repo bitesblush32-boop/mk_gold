@@ -1294,11 +1294,34 @@ export default function HomePage() {
           justify-content: center;
           overflow: hidden;
         }
+        @media (max-width: 768px) {
+          .sc-hero {
+            height: auto !important;
+            min-height: unset !important;
+            aspect-ratio: 16 / 9;
+            overflow: hidden !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .sc-hero__banner {
+            object-position: 25% center !important;
+          }
+        }
+        @media (max-width: 768px) {
+          .sc-hero__dots {
+            bottom: 0.75rem !important;
+          }
+        }
         .sc-hero__overlay {
           position: absolute;
           inset: 0;
           background: linear-gradient(to top, rgba(20,6,30,0.55) 0%, transparent 32%);
           pointer-events: none;
+        }
+        @media (max-width: 768px) {
+          .sc-hero__overlay {
+            background: rgba(59, 24, 72, 0.55) !important;
+          }
         }
         .sc-grain {
           position: absolute;
@@ -1532,6 +1555,12 @@ export default function HomePage() {
 
         /* Rate section gets coin clearance now that StatBand is gone */
         .sc-rate-section { padding-top: 5rem !important; }
+        @media (max-width: 768px) {
+          .sc-rate-section { padding-top: 2.5rem !important; }
+        }
+        @media (max-width: 480px) {
+          .sc-rate-section { padding-top: 2rem !important; }
+        }
 
         /* Anchor: absolute at hero bottom, 30% (66px of 220px) below the edge */
         .sc-coin-anchor {
@@ -1585,12 +1614,8 @@ export default function HomePage() {
           .sc-coin-perspective { width: 160px; height: 160px; }
         }
         @media (max-width: 768px) {
-          .sc-coin-anchor { width: 120px; bottom: -36px; left: 4%; }
-          .sc-coin-perspective { width: 120px; height: 120px; }
-        }
-        @media (max-width: 480px) {
-          .sc-coin-anchor { display: none; }
-          .sc-coin-hint { display: none; }
+          .sc-coin-anchor { display: none !important; }
+          .sc-coin-hint   { display: none !important; }
         }
 
 
@@ -2015,7 +2040,7 @@ export default function HomePage() {
           .mk-faq           { padding-block: 3rem 3.5rem !important; }
           .mk-cta-band      { padding-block: 3rem 3.5rem !important; }
           .mk-trust         { padding-block: 3rem 3.5rem !important; }
-          .sc-rate-section  { padding-top: 2.5rem !important; }
+          .sc-rate-section  { padding-top: 2rem !important; }
           .lp-form-grid     { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 375px) {
