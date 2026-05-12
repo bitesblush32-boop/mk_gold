@@ -76,7 +76,7 @@ export function MkFaq({ variant = 'home' }: { variant?: string }) {
             return (
               <div
                 key={i}
-                className={`mk-faq__item${isOpen ? ' mk-faq__item--open' : ''} reveal`}
+                className={`mk-faq__item${isOpen ? ' mk-faq__item--open' : ''}`}
               >
                 <dt>
                   <button

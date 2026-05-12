@@ -13,39 +13,13 @@ import { MkSeal } from '@/components/ui/MkSeal';
 import { MkButton } from '@/components/ui/MkButton';
 import { BRANCHES, type Branch } from '@/lib/branch-router';
 
-/* ─── Hero slides ─────────────────────────────────────────────── */
+/* ─── Hero banners ─────────────────────────────────────────────── */
 
-const SLIDES = [
-  {
-    video: '/b1.mp4',
-    headline: 'Sell Your Gold Today',
-    headlineKn: 'ನಿಮ್ಮ ಚಿನ್ನವನ್ನು ಇಂದೇ ಮಾರಿ',
-    sub: 'Live MCX rates · XRF purity test · Payment in 45 minutes',
-  },
-  {
-    video: '/b2.mp4',
-    headline: "Karnataka's Most Trusted Gold Buyer",
-    headlineKn: 'ಕರ್ನಾಟಕದ ಅತ್ಯಂತ ವಿಶ್ವಾಸಾರ್ಹ ಚಿನ್ನ ಖರೀದಿದಾರ',
-    sub: '16 branches · 10,000+ customers · Est. 2014',
-  },
-  {
-    video: '/b3.mp4',
-    headline: 'Release Pledged Gold Confidentially',
-    headlineKn: 'ಗೋಪ್ಯವಾಗಿ ಅಡಮಾನ ಚಿನ್ನ ಬಿಡಿಸಿ',
-    sub: 'We pay your lender directly · Discreet · Same-day possible',
-  },
-  {
-    video: '/b4.mp4',
-    headline: 'Fair Value. Every Time.',
-    headlineKn: 'ನ್ಯಾಯಯುತ ಮೌಲ್ಯ. ಪ್ರತಿ ಬಾರಿ.',
-    sub: 'ISO 9001:2015 · German XRF Spectrometer · Transparent pricing',
-  },
-  {
-    video: '/b5.mp4',
-    headline: 'Instant Money, Lasting Trust',
-    headlineKn: 'ತಕ್ಷಣ ಹಣ, ಶಾಶ್ವತ ವಿಶ್ವಾಸ',
-    sub: 'Bangalore · Mysore · Mangalore · Davangere',
-  },
+const BANNERS = [
+  { src: '/Web Banners_Design 2.jpg.jpeg',    alt: 'Turn your gold into cash — MK Gold' },
+  { src: '/Web Banners_Design 6.jpg (1).jpeg', alt: 'We buy your gold at the right value — MK Gold' },
+  { src: '/Web Banners_Design 7.jpg.jpeg',    alt: 'ನಿಮ್ಮ ಚಿನ್ನಕ್ಕೆ ಸರಿಯಾದ ಬೆಲೆ, ತಕ್ಷಣ ಹಣ — MK Gold' },
+  { src: '/Home Page.png',                    alt: 'MK Gold branch — trusted gold buyers since 2014' },
 ];
 
 /* ─── Chart data (12-year gold price history — illustrative) ───── */
@@ -1240,7 +1214,6 @@ export default function HomePage() {
   const [sealFlipped, setSealFlipped] = useState(false);
   const [trustFlip1, setTrustFlip1] = useState(false);
   const [slide, setSlide] = useState(0);
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -1251,23 +1224,15 @@ export default function HomePage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Auto-advance banner every 5 seconds
   useEffect(() => {
-    videoRefs.current.forEach((v, i) => {
-      if (!v) return;
-      if (i === slide) {
-        v.currentTime = 0;
-        v.play().catch(() => { });
-      } else {
-        v.pause();
-      }
-    });
-  }, [slide]);
+    const id = setInterval(() => setSlide(p => (p + 1) % BANNERS.length), 5000);
+    return () => clearInterval(id);
+  }, []);
 
   function goToSlide(i: number) {
     setSlide(i);
   }
-
-  const current = SLIDES[slide];
 
   return (
     <>
@@ -1332,12 +1297,8 @@ export default function HomePage() {
         .sc-hero__overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(
-            135deg,
-            rgba(59,24,72,0.9) 0%,
-            rgba(81,37,97,0.75) 50%,
-            rgba(59,24,72,0.9) 100%
-          );
+          background: linear-gradient(to top, rgba(20,6,30,0.55) 0%, transparent 32%);
+          pointer-events: none;
         }
         .sc-grain {
           position: absolute;
@@ -1346,17 +1307,19 @@ export default function HomePage() {
           opacity: 0.4;
           pointer-events: none;
         }
-        .sc-hero__video {
+        .sc-hero__banner {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
+          object-position: center;
           opacity: 0;
-          transition: opacity 0.8s ease;
+          transition: opacity 0.9s ease;
           pointer-events: none;
+          user-select: none;
         }
-        .sc-hero__video--active {
+        .sc-hero__banner--active {
           opacity: 1;
         }
         .sc-hero__dots {
@@ -1382,60 +1345,6 @@ export default function HomePage() {
           transform: scale(1.4);
         }
 
-        .sc-hero__content {
-          position: relative;
-          z-index: 2;
-          max-width: 1100px;
-          margin: 0 auto;
-          padding: 5rem 1.5rem 3rem;
-          display: grid;
-          grid-template-columns: 1fr;
-        }
-        .sc-hero__copy { max-width: 680px; }
-        .sc-hero__eyebrow {
-          font-family: 'Poppins', sans-serif;
-          font-size: var(--t-2xs);
-          font-weight: 700;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: var(--gold);
-          margin-bottom: 1.25rem;
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-        .sc-hero__eyebrow::before {
-          content: '';
-          display: inline-block;
-          width: 32px;
-          height: 2px;
-          background: var(--gold);
-          border-radius: 1px;
-        }
-        .sc-hero__h1-kn {
-          font-family: 'Anek Kannada', sans-serif;
-          font-size: clamp(1rem, 2.5vw, 1.375rem);
-          font-weight: 600;
-          color: rgba(223,193,96,0.75);
-          margin-bottom: 0.5rem;
-          line-height: 1.3;
-        }
-        .sc-hero__h1 {
-          font-family: 'Tanker', serif;
-          font-size: var(--t-display);
-          color: #fff;
-          line-height: 1.05;
-          margin-bottom: 1.25rem;
-        }
-        .sc-hero__sub {
-          font-family: 'Poppins', sans-serif;
-          font-size: var(--t-lg);
-          color: rgba(255,255,255,0.7);
-          margin-bottom: 2rem;
-          max-width: 560px;
-          line-height: 1.65;
-        }
-        .sc-hero__cta-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
 
         /* ── Rate + Chart section ──────────────────────────── */
         .sc-rate-section { position: relative; }
@@ -1684,45 +1593,6 @@ export default function HomePage() {
           .sc-coin-hint { display: none; }
         }
 
-        /* ── Hero stats row ───────────────────────────────── */
-        .sc-hero__stats {
-          display: flex;
-          align-items: center;
-          gap: 1.25rem;
-          flex-wrap: wrap;
-          margin-top: 1.75rem;
-          padding-top: 1.5rem;
-          border-top: 1px solid rgba(223,193,96,0.18);
-        }
-        .sc-hero__stat {
-          display: flex;
-          flex-direction: column;
-          gap: 0.2rem;
-        }
-        .sc-hero__stat-value {
-          font-family: 'Tanker', serif;
-          font-size: 1.25rem;
-          line-height: 1;
-          color: var(--gold);
-        }
-        .sc-hero__stat-label {
-          font-family: 'Poppins', sans-serif;
-          font-size: 0.6rem;
-          font-weight: 600;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.45);
-        }
-        .sc-hero__stat-sep {
-          width: 1px;
-          height: 28px;
-          background: rgba(223,193,96,0.2);
-          flex-shrink: 0;
-        }
-        @media (max-width: 480px) {
-          .sc-hero__stats { gap: 0.875rem; }
-          .sc-hero__stat-sep { height: 20px; }
-        }
 
         /* ── How It Works — dark premium cards ─────────────── */
         .sc-steps-grid {
@@ -2022,10 +1892,6 @@ export default function HomePage() {
           .lp-form-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 375px) {
-          .sc-hero__h1 { font-size: 2.4rem !important; }
-          .sc-hero__h1-kn { font-size: 1rem !important; }
-          .sc-hero__cta-row { flex-direction: column; }
-          .sc-hero__cta-row .mk-btn { width: 100%; justify-content: center; }
           .sc-rate-top-grid { grid-template-columns: 1fr !important; }
           .lp-form-grid { grid-template-columns: 1fr !important; }
         }
@@ -2072,57 +1938,19 @@ export default function HomePage() {
 
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="sc-hero mk-bg-dark" aria-label="Hero">
-        {SLIDES.map((s, i) => (
-          <video
-            key={s.video}
-            ref={el => { videoRefs.current[i] = el; }}
-            src={s.video}
-            className={`sc-hero__video${i === slide ? ' sc-hero__video--active' : ''}`}
-            muted
-            playsInline
-            preload="auto"
-            onEnded={() => setSlide(p => (p + 1) % SLIDES.length)}
-            aria-hidden="true"
+        {BANNERS.map((b, i) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={b.src}
+            src={b.src}
+            alt={b.alt}
+            className={`sc-hero__banner${i === slide ? ' sc-hero__banner--active' : ''}`}
+            aria-hidden={i !== slide}
+            draggable={false}
           />
         ))}
         <div className="sc-hero__overlay" />
         <div className="sc-grain" />
-
-        <div className="sc-hero__content">
-          <div className="sc-hero__copy">
-            <p className="sc-hero__eyebrow">Karnataka&apos;s Trusted Gold Buyer Since 2014</p>
-            <p className="sc-hero__h1-kn" key={`kn-${slide}`}>{current.headlineKn}</p>
-            <h1 className="sc-hero__h1" key={`h1-${slide}`}>{current.headline}</h1>
-            <p className="sc-hero__sub" key={`sub-${slide}`}>{current.sub}</p>
-
-            <div className="sc-hero__cta-row">
-              <MkButton variant="gold" size="lg" href="/sell-gold">Sell Gold Today</MkButton>
-              <MkButton variant="outline-light" size="lg" href="/release-pledged-gold">
-                Release Pledged Gold
-              </MkButton>
-            </div>
-
-            {/* Stats row */}
-            <div className="sc-hero__stats">
-              {([
-                { value: '10,000+', label: 'Customers' },
-                { value: '16', label: 'Branches' },
-                { value: '11 Yrs', label: 'Of Trust' },
-                { value: '4.9', label: 'Rating' },
-                { value: '45 min', label: 'Payout' },
-              ] as const).map((s, i, arr) => (
-                <React.Fragment key={s.value}>
-                  <div className="sc-hero__stat">
-                    <span className="sc-hero__stat-value">{s.value}</span>
-                    <span className="sc-hero__stat-label">{s.label}</span>
-                  </div>
-                  {i < arr.length - 1 && <span className="sc-hero__stat-sep" aria-hidden="true" />}
-                </React.Fragment>
-              ))}
-            </div>
-
-          </div>
-        </div>
 
         {/* ── Overlapping coin anchor — 70% hero / 30% below ── */}
         <div className="sc-coin-anchor">
@@ -2163,7 +1991,7 @@ export default function HomePage() {
 
         {/* Slide dots */}
         <div className="sc-hero__dots" role="tablist" aria-label="Hero slides">
-          {SLIDES.map((_, i) => (
+          {BANNERS.map((_, i) => (
             <button
               key={i}
               onClick={() => goToSlide(i)}
