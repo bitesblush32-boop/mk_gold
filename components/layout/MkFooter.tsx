@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { MkSeal } from '@/components/ui/MkSeal';
+import { MkFooterCoin } from '@/components/features/MkFooterCoin';
 
 const FOOTER_LINKS = {
   Services: [
@@ -59,10 +59,9 @@ export function MkFooter() {
               45 minutes.
             </p>
 
-            {/* Dual seals */}
+            {/* Single flippable coin — EN front / KN back */}
             <div className="mk-footer__seals">
-              <MkSeal variant="en" size="sm" />
-              <MkSeal variant="kn" size="sm" />
+              <MkFooterCoin />
             </div>
 
             {/* Trust badges */}

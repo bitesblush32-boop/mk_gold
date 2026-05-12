@@ -994,13 +994,23 @@ export default function SampleCPage() {
         .mk-navbar__logo-img {
           height: 85px !important;
         }
-        .mk-navbar__link {
-          font-size: 0.9375rem !important;
-          padding: 0.375rem 0.875rem !important;
+        .mk-navbar__inner {
+          gap: 1rem !important;
         }
-        .mk-navbar__actions .mk-btn {
+        .mk-navbar__nav {
+          gap: 0 !important;
+        }
+        .mk-navbar__link {
+          font-size: 0.875rem !important;
+          padding: 0.375rem 0.625rem !important;
+        }
+        .mk-navbar__actions > .mk-btn {
           font-size: 0.9rem !important;
-          padding: 0.6rem 1.5rem !important;
+          padding: 0.56rem 1.4rem !important;
+        }
+        .mk-navbar__extra-ctas .mk-btn {
+          font-size: 0.8rem !important;
+          padding: 0.4rem 0.875rem !important;
         }
         .mk-ticker { top: 0 !important; }
 
@@ -1283,46 +1293,22 @@ export default function SampleCPage() {
           color: rgba(255,255,255,0.90) !important;
         }
 
-        /* ── Continuous bg wrappers ───────────────────────── */
-        /* Child sections become transparent so wrapper bg tiles continuously */
-        .sc-no-gap > .mk-stat-band,
-        .sc-no-gap > .mk-footer {
+        /* ── CTA band — light bg override (wrapper has mk-bg-light) ── */
+        .sc-light-cta .mk-cta-band {
           background-color: transparent !important;
           background-image: none !important;
         }
-
-        /* ── Reviews glass header ─────────────────────────── */
-        .sc-reviews-glass {
-          display: inline-block;
-          background: rgba(223, 193, 96, 0.18);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border: 1px solid rgba(201, 169, 64, 0.50);
-          border-radius: 16px;
-          padding: 2rem 2.5rem 1.5rem;
-          margin-bottom: 2rem;
-          box-shadow: 0 8px 32px rgba(201,169,64,0.15), inset 0 1px 0 rgba(255,255,255,0.30);
+        .sc-light-cta .mk-cta-band__headline { color: var(--ink) !important; }
+        .sc-light-cta .mk-cta-band__sub { color: var(--ink-mid) !important; }
+        .sc-light-cta .mk-cta-band__note { color: var(--mist) !important; }
+        .sc-light-cta .mk-btn--outline-light {
+          color: var(--plum) !important;
+          border-color: rgba(81,37,97,0.4) !important;
         }
-
-        /* ── CTA band — graff-5 photo bg ──────────────────── */
-        .sc-no-gap > .mk-cta-band {
-          background-color: #3B1848 !important;
-          background-image: url(/graff-3.jpg) !important;
-          background-size: cover !important;
-          background-position: center !important;
-          position: relative !important;
-        }
-        .sc-no-gap > .mk-cta-band::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: rgba(36, 8, 56, 0.68);
-          pointer-events: none;
-          z-index: 0;
-        }
-        .sc-no-gap > .mk-cta-band .mk-cta-band__inner {
-          position: relative;
-          z-index: 1;
+        .sc-light-cta .mk-btn--outline-light:hover {
+          background: var(--plum) !important;
+          color: var(--white) !important;
+          border-color: var(--plum) !important;
         }
 
         /* ── Hero coin — 70/30 overlap, static 3D ─────────── */
@@ -1694,15 +1680,11 @@ export default function SampleCPage() {
       <BranchFinder />
 
       {/* ── Testimonials: infinite scroll carousel ──────────────── */}
-      <section
-        className="section"
-        id="reviews"
-        style={{ backgroundImage: 'url(/graff-1.jpg)', backgroundSize: 'cover', backgroundPosition: 'center' }}
-      >
+      <section className="mk-bg-light section" id="reviews">
         <div className="mk-container">
-          <div className="sc-reviews-glass">
-            <p className="mk-section-overline reveal" style={{ color: 'var(--plum)' }}>Google Reviews</p>
-            <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--plum)', marginBottom: '0.75rem' }}>
+          <div className="reveal" style={{ maxWidth: '42rem', marginBottom: '2rem' }}>
+            <p className="mk-section-overline">Google Reviews</p>
+            <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', marginBottom: '0.75rem' }}>
               4.9 Stars Across All Branches
             </h2>
             <p className="reveal delay-2" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', marginBottom: 0, maxWidth: '540px' }}>
@@ -1739,11 +1721,13 @@ export default function SampleCPage() {
       {/* ── FAQ ─────────────────────────────────────────────────── */}
       <MkFaq />
 
-      {/* ── CTA Band + Footer — continuous dark bg ──────────────── */}
-      <div className="mk-bg-dark sc-no-gap">
+      {/* ── CTA Band ─────────────────────────────────────────────── */}
+      <div className="mk-bg-light sc-light-cta">
         <MkCtaBand />
-        <MkFooter />
       </div>
+
+      {/* ── Footer ───────────────────────────────────────────────── */}
+      <MkFooter />
 
       {/* ── Floating WhatsApp ───────────────────────────────────── */}
       <MkWhatsApp number="918000000001" message="Hi, I want to sell my gold. Can you help?" />

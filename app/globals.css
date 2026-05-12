@@ -16,34 +16,6 @@
 /* ── 2. Design System (tokens, reset, patterns, reveal, layout) ─ */
 @import "../styles/globals.css";
 
-/* ── Logo image helpers ──────────────────────────────────────── */
-.mk-navbar__logo-link {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  text-decoration: none;
-}
-
-.mk-navbar__logo-img {
-  height: 85px;
-  width: auto;
-  object-fit: contain;
-}
-
-.mk-footer__logo-img {
-  height: 44px;
-  width: auto;
-  object-fit: contain;
-}
-
-/* mk-container — alias for .container; used by all section components */
-.mk-container {
-  width: 100%;
-  max-width: var(--max-w);
-  margin-inline: auto;
-  padding-inline: var(--pad-x);
-}
-
 /* ── 3. Tailwind v4 ──────────────────────────────────────────── */
 @import "tailwindcss";
 
@@ -215,6 +187,35 @@
 }
 
 
+/* ── Logo image helpers ──────────────────────────────────────── */
+.mk-navbar__logo-link {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+
+.mk-navbar__logo-img {
+  height: 85px;
+  width: auto;
+  object-fit: contain;
+}
+
+.mk-footer__logo-img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* mk-container — alias for .container; used by all section components */
+.mk-container {
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+
+
 /* ─── Navbar ─────────────────────────────────────────────────── */
 .mk-navbar {
   position: fixed;
@@ -309,6 +310,146 @@
   align-items: center;
   gap: var(--s-3);
   flex-shrink: 0;
+}
+
+.mk-navbar__extra-ctas {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+@media (max-width: 1100px) {
+  .mk-navbar__extra-ctas {
+    display: none;
+  }
+}
+
+/* ─── Services dropdown — desktop ────────────────────────────── */
+.mk-nav-item--dropdown {
+  position: relative;
+}
+
+.mk-nav-dropdown__trigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+}
+
+/* Chevron — pure CSS geometry (border trick), no icon library */
+.mk-nav-dropdown__chevron {
+  display: inline-block;
+  width: 0.42em;
+  height: 0.42em;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform var(--t-fast);
+  flex-shrink: 0;
+}
+
+.mk-nav-dropdown__trigger[aria-expanded="true"] .mk-nav-dropdown__chevron,
+.mk-nav-dropdown__chevron--up {
+  transform: rotate(-135deg) translateY(2px);
+}
+
+/* Dropdown panel — specificity boosted to beat Tailwind layer resets */
+.mk-navbar .mk-nav-item--dropdown .mk-nav-dropdown__panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 0;
+  z-index: 300;
+  min-width: 440px;
+  /* Solid background-color first; backdrop-filter is enhancement only */
+  background-color: #240838;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(223, 193, 96, 0.22);
+  border-top: 2px solid var(--gold);
+  border-radius: 0 0 12px 12px;
+  padding: 0.625rem;
+  list-style: none;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem;
+  color: rgba(255, 255, 255, 0.82);
+  /* Hidden state */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity var(--t-base), transform var(--t-base), visibility 0s var(--t-base);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(223, 193, 96, 0.06);
+}
+
+/* Show: CSS hover, keyboard focus-within, or JS --open class (click/touch) */
+.mk-navbar .mk-nav-item--dropdown:hover .mk-nav-dropdown__panel,
+.mk-navbar .mk-nav-item--dropdown:focus-within .mk-nav-dropdown__panel,
+.mk-navbar .mk-nav-dropdown__panel--open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition: opacity var(--t-base), transform var(--t-base), visibility 0s;
+}
+
+.mk-nav-dropdown__item {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-sm);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.80);
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  display: block;
+  transition: color var(--t-fast), background-color var(--t-fast);
+  white-space: nowrap;
+}
+
+.mk-nav-dropdown__item:hover,
+.mk-nav-dropdown__item--active {
+  color: var(--gold);
+  background: rgba(223, 193, 96, 0.08);
+}
+
+/* ─── Services dropdown — mobile ─────────────────────────────── */
+.mk-mobile-services__toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.mk-mobile-services__items {
+  list-style: none;
+  padding: var(--s-1) 0 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mk-mobile-services__item {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-sm);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  padding: 0.5rem var(--s-4) 0.5rem var(--s-8);
+  display: block;
+  border-radius: var(--r-lg);
+  transition: color var(--t-fast), background-color var(--t-fast);
+}
+
+.mk-mobile-services__item:hover {
+  color: var(--gold);
+  background: rgba(223, 193, 96, 0.08);
 }
 
 /* Hamburger button */
@@ -937,7 +1078,7 @@
   max-width: 260px;
 }
 
-/* Two seals side by side */
+/* Single flippable coin */
 .mk-footer__seals {
   display: flex;
   align-items: center;
