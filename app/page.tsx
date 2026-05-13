@@ -163,7 +163,7 @@ const CITY_MAPS: Record<City, CityMapDef> = {
 /* ─── Callback form ────────────────────────────────────────────── */
 
 function CallbackForm() {
-  const [form, setForm] = useState({ name: '', phone: '', goldType: '', weight: '', city: '' });
+  const [form, setForm] = useState({ name: '', phone: '', goldType: '', weight: '', purity: '', city: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
@@ -205,36 +205,44 @@ function CallbackForm() {
 
   return (
     <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <div className="sc-callback-grid">
-        <div>
-          <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Your Name</label>
-          <input type="text" required className="mk-input mk-input--dark" placeholder="Full name"
-            value={form.name} onChange={set('name')} />
-        </div>
-        <div>
-          <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Phone Number</label>
-          <input type="tel" required pattern="[6-9][0-9]{9}" className="mk-input mk-input--dark"
-            placeholder="10-digit mobile" value={form.phone} onChange={set('phone')} />
-        </div>
+      <div>
+        <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Your Name</label>
+        <input type="text" required className="mk-input mk-input--dark" placeholder="Full name"
+          value={form.name} onChange={set('name')} />
       </div>
-      <div className="sc-callback-grid">
-        <div>
-          <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Gold Type</label>
-          <select className="mk-select mk-select--dark" value={form.goldType} onChange={set('goldType')}
-            style={{ colorScheme: 'dark' }}>
-            <option value="">Select type</option>
-            <option value="jewellery">Jewellery</option>
-            <option value="coins">Gold Coins</option>
-            <option value="bars">Gold Bars</option>
-            <option value="broken">Broken / Scrap</option>
-            <option value="pledged">Pledged Gold</option>
-          </select>
-        </div>
-        <div>
-          <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Approx. Weight (g)</label>
-          <input type="number" min="0.1" step="0.1" className="mk-input mk-input--dark"
-            placeholder="e.g. 10" value={form.weight} onChange={set('weight')} />
-        </div>
+      <div>
+        <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Phone Number</label>
+        <input type="tel" required pattern="[6-9][0-9]{9}" className="mk-input mk-input--dark"
+          placeholder="10-digit mobile" value={form.phone} onChange={set('phone')} />
+      </div>
+      <div>
+        <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Gold Type</label>
+        <select className="mk-select mk-select--dark" value={form.goldType} onChange={set('goldType')}
+          style={{ colorScheme: 'dark' }}>
+          <option value="">Select type</option>
+          <option value="jewellery">Jewellery</option>
+          <option value="coins">Gold Coins</option>
+          <option value="bars">Gold Bars</option>
+          <option value="broken">Broken / Scrap</option>
+          <option value="pledged">Pledged Gold</option>
+        </select>
+      </div>
+      <div>
+        <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Gold Purity</label>
+        <select className="mk-select mk-select--dark" value={form.purity} onChange={set('purity')}
+          style={{ colorScheme: 'dark' }}>
+          <option value="">Select purity</option>
+          <option value="24k">24K (Pure / Coins)</option>
+          <option value="22k">22K (Most common)</option>
+          <option value="20k">20K</option>
+          <option value="18k">18K</option>
+          <option value="unknown">Not sure (we test free)</option>
+        </select>
+      </div>
+      <div>
+        <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Approx. Weight (g)</label>
+        <input type="number" min="0.1" step="0.1" className="mk-input mk-input--dark"
+          placeholder="e.g. 10" value={form.weight} onChange={set('weight')} />
       </div>
       <div>
         <label className="mk-calc__label" style={{ color: 'rgba(223,193,96,0.8)' }}>Nearest City</label>
@@ -839,7 +847,7 @@ function BottomNav() {
           </a>
           <span className="sc-bn-sep" aria-hidden="true" />
           <a href={`tel:+${process.env.NEXT_PUBLIC_PHONE_DEFAULT ?? '918000000001'}`} className="sc-bn-phone sc-bn-hide-360">
-            <img src="/phone_icon.png" alt="" width={18} height={18} className="sc-bn-icon" aria-hidden="true" />
+            <img src="/phone_icon.png" alt="" width={22} height={22} className="sc-bn-icon" aria-hidden="true" />
             <span className="sc-bn-phone-text sc-bn-hide-900">+91 80000 00001</span>
           </a>
           <a
@@ -848,7 +856,7 @@ function BottomNav() {
             rel="noopener noreferrer"
             className="sc-bn-btn sc-bn-btn--whatsapp"
           >
-            <img src="/whatsapp_icon.png" alt="" width={18} height={18} className="sc-bn-icon" aria-hidden="true" />
+            <img src="/whatsapp_icon.png" alt="" width={22} height={22} className="sc-bn-icon" aria-hidden="true" />
             WhatsApp
           </a>
         </div>
@@ -862,7 +870,7 @@ function BottomNav() {
 function LeadPopup() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const [form, setForm] = useState({ name: '', phone: '', goldType: '', weight: '', message: '' });
+  const [form, setForm] = useState({ name: '', phone: '', goldType: '', weight: '', purity: '', message: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
   useEffect(() => {
@@ -1013,6 +1021,18 @@ function LeadPopup() {
                   <label className="lp-form-label">Approx. Weight (grams)</label>
                   <input type="number" className="mk-input" placeholder="e.g. 20" min="1"
                     value={form.weight} onChange={e => setForm(f => ({ ...f, weight: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="lp-form-label">Gold Purity</label>
+                  <select className="mk-select"
+                    value={form.purity} onChange={e => setForm(f => ({ ...f, purity: e.target.value }))}>
+                    <option value="" disabled>Select purity</option>
+                    <option value="24k">24K (Pure / Coins)</option>
+                    <option value="22k">22K (Most common)</option>
+                    <option value="20k">20K</option>
+                    <option value="18k">18K</option>
+                    <option value="unknown">Not sure (we test free)</option>
+                  </select>
                 </div>
               </div>
               <div style={{ marginTop: '1rem' }}>
@@ -1645,7 +1665,7 @@ export default function HomePage() {
           animation: livePulse 2s ease-in-out infinite;
         }
         .sc-bn-icon {
-          width: 18px; height: 18px;
+          width: 22px; height: 22px;
           object-fit: contain;
           filter: brightness(0) invert(1);
           flex-shrink: 0;
@@ -1661,6 +1681,7 @@ export default function HomePage() {
         .sc-bn-phone {
           display: flex;
           align-items: center;
+          justify-content: center;
           gap: 0.5rem;
           padding: 0.25rem 0.625rem;
           border-radius: 9999px;

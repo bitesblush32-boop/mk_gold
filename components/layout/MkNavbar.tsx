@@ -22,10 +22,10 @@ const SERVICES_LINKS = [
 
 /* ─── Regular nav links ───────────────────────────────────────── */
 const NAV_LINKS = [
-  { href: '/gold-rate-today', label: 'Gold Rate' },
-  { href: '/about',           label: 'About' },
-  { href: '/contact',         label: 'Branches' },
-  { href: '/blog',            label: 'Blog' },
+  { href: '/#gold-rate',    label: 'Gold Rate' },
+  { href: '/#why-mk-gold',  label: 'About' },
+  { href: '/#branches',     label: 'Branches' },
+  { href: '/blog',          label: 'Blog' },
 ];
 
 export function MkNavbar() {
