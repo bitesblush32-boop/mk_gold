@@ -62,9 +62,14 @@ export function MkSteps() {
               key={step.n}
               className={`mk-step reveal delay-${(i % 3) + 1}`}
             >
-              <span className="mk-step__number" aria-hidden="true">
-                {step.n}
-              </span>
+              <div className="mk-step__circle-wrap">
+                <div className="mk-step__line" aria-hidden="true" />
+                <div className="mk-step__coin">
+                  <div className="mk-step__circle">
+                    <span className="mk-step__num">{step.n}</span>
+                  </div>
+                </div>
+              </div>
               <h3 className="mk-step__title">{step.title}</h3>
               <p className="mk-step__body">{step.body}</p>
             </li>

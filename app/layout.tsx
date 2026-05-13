@@ -3,6 +3,7 @@ import { Poppins, Anek_Kannada } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MkRevealObserver } from "@/components/ui/MkRevealObserver";
+import { MkSocialProof } from "@/components/features/MkSocialProof";
 import { GoldRateProvider } from "@/context/GoldRateContext";
 import "./globals.css";
 
@@ -71,6 +72,7 @@ export default function RootLayout({
         <GoldRateProvider>
           {children}
         </GoldRateProvider>
+        <MkSocialProof />
         <Analytics />
         <SpeedInsights />
       </body>

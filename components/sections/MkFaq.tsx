@@ -2,7 +2,7 @@
 
 // F14 — FAQ accordion with FAQPage schema
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 /* ─── Data ────────────────────────────────────────────────────── */
 
@@ -53,8 +53,17 @@ const FAQ_SCHEMA = {
 
 export function MkFaq({ variant = 'home' }: { variant?: string }) {
   const [open, setOpen] = useState<number | null>(null);
+  const triggerRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const toggle = (i: number) => setOpen(open === i ? null : i);
+
+  function handleKeyDown(e: React.KeyboardEvent, i: number) {
+    const count = FAQS.length;
+    if (e.key === 'ArrowDown') { e.preventDefault(); triggerRefs.current[(i + 1) % count]?.focus(); }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); triggerRefs.current[(i - 1 + count) % count]?.focus(); }
+    if (e.key === 'Home')      { e.preventDefault(); triggerRefs.current[0]?.focus(); }
+    if (e.key === 'End')       { e.preventDefault(); triggerRefs.current[count - 1]?.focus(); }
+  }
 
   return (
     <section className="mk-faq mk-bg-light section" id="faq">
@@ -70,7 +79,11 @@ export function MkFaq({ variant = 'home' }: { variant?: string }) {
           <h2 className="mk-faq__title">Questions we hear every day</h2>
         </div>
 
-        <dl className="mk-faq__list">
+        <dl
+          className="mk-faq__list"
+          role="group"
+          aria-label="Frequently asked questions"
+        >
           {FAQS.map((item, i) => {
             const isOpen = open === i;
             return (
@@ -80,8 +93,10 @@ export function MkFaq({ variant = 'home' }: { variant?: string }) {
               >
                 <dt>
                   <button
+                    ref={el => { triggerRefs.current[i] = el; }}
                     className="mk-faq__trigger"
                     onClick={() => toggle(i)}
+                    onKeyDown={(e) => handleKeyDown(e, i)}
                     aria-expanded={isOpen}
                     aria-controls={`faq-answer-${i}`}
                     id={`faq-q-${i}`}

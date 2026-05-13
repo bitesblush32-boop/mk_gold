@@ -74,14 +74,22 @@ export function MkReviews() {
               aria-label={`Review by ${r.author}`}
             >
               <Stars rating={r.rating} />
+              <span className="mk-review-card__deco-quote" aria-hidden="true">&ldquo;</span>
               <blockquote className="mk-review-card__quote">
                 &ldquo;{r.quote}&rdquo;
               </blockquote>
               <footer className="mk-review-card__footer">
-                <strong className="mk-review-card__author">{r.author}</strong>
-                <span className="mk-review-card__meta">
-                  {r.location} &middot; {r.date}
-                </span>
+                <div className="mk-review-card__author-row">
+                  <div className="mk-review-card__avatar" aria-hidden="true">
+                    {r.author.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  </div>
+                  <div className="mk-review-card__author-info">
+                    <strong className="mk-review-card__author">{r.author}</strong>
+                    <span className="mk-review-card__meta">
+                      {r.location} &middot; {r.date}
+                    </span>
+                  </div>
+                </div>
                 <span className="mk-review-card__source" aria-label="Source: Google">
                   Google
                 </span>
