@@ -1315,11 +1315,8 @@
   will-change: opacity;
 }
 
-/* Dark overlay so text stays readable over any photo */
 .mk-hero__overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(59, 24, 72, 0.68);
+  display: none;
 }
 
 @keyframes heroFade {

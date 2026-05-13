@@ -22,22 +22,6 @@ const BANNERS = [
   { src: '/Home Page.png',                    alt: 'MK Gold branch — trusted gold buyers since 2014' },
 ];
 
-/* ─── Chart data (12-year gold price history — illustrative) ───── */
-
-const CHART_DATA = [
-  { year: '2014', price: 26500 },
-  { year: '2015', price: 24800 },
-  { year: '2016', price: 28200 },
-  { year: '2017', price: 29100 },
-  { year: '2018', price: 30400 },
-  { year: '2019', price: 35800 },
-  { year: '2020', price: 48500 },
-  { year: '2021', price: 44200 },
-  { year: '2022', price: 52100 },
-  { year: '2023', price: 58400 },
-  { year: '2024', price: 71200 },
-  { year: '2025', price: 88600 },
-];
 
 /* ─── Testimonials ─────────────────────────────────────────────── */
 
@@ -175,138 +159,6 @@ const CITY_MAPS: Record<City, CityMapDef> = {
   },
 };
 
-/* ─── SVG Area Chart ───────────────────────────────────────────── */
-
-function GoldRateChart() {
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const [filter, setFilter] = useState<'5yr' | '10yr' | 'all'>('all');
-
-  const filtered = filter === '5yr'
-    ? CHART_DATA.slice(-5)
-    : filter === '10yr'
-      ? CHART_DATA.slice(-10)
-      : CHART_DATA;
-
-  const W = 600;
-  const H = 220;
-  const PAD = { top: 20, right: 20, bottom: 36, left: 64 };
-  const chartW = W - PAD.left - PAD.right;
-  const chartH = H - PAD.top - PAD.bottom;
-
-  const minP = Math.min(...filtered.map(d => d.price));
-  const maxP = Math.max(...filtered.map(d => d.price));
-  const range = maxP - minP || 1;
-
-  const px = (i: number) => PAD.left + (i / (filtered.length - 1)) * chartW;
-  const py = (p: number) => PAD.top + chartH - ((p - minP) / range) * chartH;
-
-  const linePath = filtered.map((d, i) => `${i === 0 ? 'M' : 'L'}${px(i)},${py(d.price)}`).join(' ');
-  const areaPath = `${linePath} L${px(filtered.length - 1)},${PAD.top + chartH} L${px(0)},${PAD.top + chartH} Z`;
-
-  const yTicks = 4;
-  const yTickVals = Array.from({ length: yTicks + 1 }, (_, i) => minP + (range / yTicks) * i);
-
-  return (
-    <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Header row: title left, filter pills right */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <span style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-sm)', fontWeight: 600, color: 'rgba(255,255,255,0.80)' }}>
-          Gold Rate Trend — 12 Years (INR per 10g)
-        </span>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          {(['5yr', '10yr', 'all'] as const).map(f => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                padding: '0.25rem 0.875rem',
-                borderRadius: '9999px',
-                border: '1.5px solid',
-                borderColor: filter === f ? 'var(--gold)' : 'rgba(223,193,96,0.3)',
-                background: filter === f ? 'var(--gold)' : 'transparent',
-                color: filter === f ? 'var(--plum)' : 'var(--gold)',
-                cursor: 'pointer',
-                transition: 'all var(--t-fast)',
-              }}
-            >
-              {f === 'all' ? 'All Years' : f === '5yr' ? '5 Years' : '10 Years'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* SVG chart — fills remaining card height */}
-      <div style={{ flex: 1, position: 'relative', minHeight: 0 }}>
-        <svg
-          viewBox={`0 0 ${W} ${H}`}
-          preserveAspectRatio="none"
-          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block', overflow: 'visible' }}
-          aria-label="Gold price history chart"
-        >
-          <defs>
-            <linearGradient id="sc-area-grad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#DFC160" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#DFC160" stopOpacity="0.02" />
-            </linearGradient>
-          </defs>
-
-          {yTickVals.map((v, i) => (
-            <g key={i}>
-              <line x1={PAD.left} y1={py(v)} x2={PAD.left + chartW} y2={py(v)} stroke="rgba(223,193,96,0.12)" strokeWidth="1" />
-              <text x={PAD.left - 8} y={py(v) + 4} textAnchor="end"
-                style={{ fontFamily: 'Poppins,sans-serif', fontSize: '10px', fill: 'rgba(223,193,96,0.55)' }}>
-                {(v / 1000).toFixed(0)}K
-              </text>
-            </g>
-          ))}
-
-          <path d={areaPath} fill="url(#sc-area-grad)" />
-          <path d={linePath} fill="none" stroke="#DFC160" strokeWidth="2" strokeLinejoin="round" />
-
-          {filtered.map((d, i) => {
-            const skip = filtered.length > 8 ? i % 2 !== 0 : false;
-            return !skip ? (
-              <text key={d.year} x={px(i)} y={H - 6} textAnchor="middle"
-                style={{ fontFamily: 'Poppins,sans-serif', fontSize: '10px', fill: 'rgba(223,193,96,0.55)' }}>
-                {d.year}
-              </text>
-            ) : null;
-          })}
-
-          {filtered.map((d, i) => (
-            <g key={d.year}>
-              <circle
-                cx={px(i)} cy={py(d.price)} r={hoveredIdx === i ? 5 : 3}
-                fill={hoveredIdx === i ? '#DFC160' : '#7B2C91'}
-                stroke="#DFC160" strokeWidth="1.5"
-                style={{ cursor: 'pointer', transition: 'r var(--t-fast)' }}
-                onMouseEnter={() => setHoveredIdx(i)}
-                onMouseLeave={() => setHoveredIdx(null)}
-              />
-              {hoveredIdx === i && (
-                <g>
-                  <rect x={px(i) - 44} y={py(d.price) - 38} width="88" height="28"
-                    rx="6" fill="#3B1848" stroke="rgba(223,193,96,0.4)" strokeWidth="1" />
-                  <text x={px(i)} y={py(d.price) - 20} textAnchor="middle"
-                    style={{ fontFamily: 'Poppins,sans-serif', fontSize: '11px', fontWeight: '600', fill: '#DFC160' }}>
-                    ₹{d.price.toLocaleString('en-IN')}/10g
-                  </text>
-                  <text x={px(i)} y={py(d.price) - 8} textAnchor="middle"
-                    style={{ fontFamily: 'Poppins,sans-serif', fontSize: '9px', fill: 'rgba(255,255,255,0.6)' }}>
-                    {d.year}
-                  </text>
-                </g>
-              )}
-            </g>
-          ))}
-        </svg>
-      </div>
-    </div>
-  );
-}
 
 /* ─── Callback form ────────────────────────────────────────────── */
 
@@ -1313,15 +1165,7 @@ export default function HomePage() {
           }
         }
         .sc-hero__overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to top, rgba(20,6,30,0.55) 0%, transparent 32%);
-          pointer-events: none;
-        }
-        @media (max-width: 768px) {
-          .sc-hero__overlay {
-            background: rgba(59, 24, 72, 0.55) !important;
-          }
+          display: none;
         }
         .sc-grain {
           position: absolute;
@@ -1387,12 +1231,6 @@ export default function HomePage() {
           border: 1px solid rgba(223,193,96,0.2);
           border-radius: 16px;
           padding: 1.75rem;
-        }
-        .sc-chart-title {
-          font-family: 'Tanker', serif;
-          font-size: var(--t-h3);
-          color: #fff;
-          margin-bottom: 0.5rem;
         }
         .sc-card-dark {
           background: rgba(59,24,72,0.6);
@@ -2004,9 +1842,6 @@ export default function HomePage() {
           .sc-card-sub   { font-size: var(--t-xs) !important; margin-bottom: 0.875rem !important; }
         }
 
-        /* ── Fix 10: chart SVG minimum height ────────────────────── */
-        @media (max-width: 900px) { .sc-chart-card { min-height: 300px; } }
-        @media (max-width: 640px) { .sc-chart-card { min-height: 260px; } }
 
         /* ── Fix 11: steps cards tighter on mobile ───────────────── */
         @media (max-width: 480px) {
@@ -2181,16 +2016,11 @@ export default function HomePage() {
                 <MkCalculator variant="dark" showBookingCTA={false} />
               </div>
 
-              {/* Right: Callback + Chart stacked */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', height: '100%' }}>
-                <div className="sc-card-dark reveal delay-3">
-                  <h3 className="sc-card-title">Request a Callback</h3>
-                  <p className="sc-card-sub">Our team will call you within 30 minutes · Confidential</p>
-                  <CallbackForm />
-                </div>
-                <div className="sc-chart-card reveal delay-4" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <GoldRateChart />
-                </div>
+              {/* Right: Callback */}
+              <div className="sc-card-dark reveal delay-3">
+                <h3 className="sc-card-title">Request a Callback</h3>
+                <p className="sc-card-sub">Our team will call you within 30 minutes · Confidential</p>
+                <CallbackForm />
               </div>
             </div>
           </div>
