@@ -7,10 +7,13 @@ export interface Branch {
   phone: string;
   whatsapp: string;
   coordinates: { lat: number; lng: number };
-  openHours: {
-    days: string;
-    time: string;
-  };
+  openHours: { days: string; time: string };
+  /** Concise local landmarks for SEO descriptions and page copy */
+  landmarksNear: string;
+  /** Google Maps iframe embed URL (placeholder; replace with Place embed when live) */
+  mapEmbed: string;
+  /** Google Maps get-directions URL */
+  googleMapsUrl: string;
 }
 
 export const BRANCHES: Branch[] = [
@@ -25,6 +28,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918000000001",
     coordinates: { lat: 12.9916, lng: 77.5518 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Chord Road and Rajajinagar Metro Station",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.9916,77.5518&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.9916,77.5518",
   },
   {
     slug: "sell-gold-malleshwaram",
@@ -36,6 +44,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918000000002",
     coordinates: { lat: 13.0035, lng: 77.5668 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Sankey Tank and Malleshwaram 18th Cross",
+    mapEmbed:
+      "https://maps.google.com/maps?q=13.0035,77.5668&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=13.0035,77.5668",
   },
   {
     slug: "sell-gold-vijayanagar",
@@ -47,6 +60,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918000000003",
     coordinates: { lat: 12.9719, lng: 77.5218 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near BEL Road junction and Vijayanagar Bus Stand",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.9719,77.5218&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.9719,77.5218",
   },
   {
     slug: "sell-gold-basaveshwaranagar",
@@ -58,6 +76,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918000000004",
     coordinates: { lat: 12.9803, lng: 77.5324 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Basaveshwaranagar Circle and Navarang Theatre",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.9803,77.5324&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.9803,77.5324",
   },
   {
     slug: "sell-gold-yeshwanthpur",
@@ -69,6 +92,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918000000005",
     coordinates: { lat: 13.0215, lng: 77.5485 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Yeshwanthpur Railway Station and ISRO Junction",
+    mapEmbed:
+      "https://maps.google.com/maps?q=13.0215,77.5485&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=13.0215,77.5485",
   },
   {
     slug: "sell-gold-jayanagar",
@@ -80,6 +108,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918000000006",
     coordinates: { lat: 12.9299, lng: 77.5832 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Jayanagar 4th Block Shopping Complex and South End Circle",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.9299,77.5832&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.9299,77.5832",
   },
   {
     slug: "sell-gold-indiranagar",
@@ -91,6 +124,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918000000007",
     coordinates: { lat: 12.9719, lng: 77.6412 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near 100 Feet Road and Indiranagar Metro Station",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.9719,77.6412&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.9719,77.6412",
   },
   {
     slug: "sell-gold-koramangala",
@@ -102,6 +140,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918000000008",
     coordinates: { lat: 12.9352, lng: 77.6245 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Forum Mall and Koramangala 1st Block",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.9352,77.6245&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.9352,77.6245",
   },
   {
     slug: "sell-gold-whitefield",
@@ -113,6 +156,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918000000009",
     coordinates: { lat: 12.9698, lng: 77.7500 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Phoenix Marketcity and Whitefield Railway Station",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.9698,77.7500&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.9698,77.7500",
   },
   {
     slug: "sell-gold-jp-nagar",
@@ -124,6 +172,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918000000010",
     coordinates: { lat: 12.9063, lng: 77.5857 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near JP Nagar 6th Phase and Bannerghatta Road",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.9063,77.5857&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.9063,77.5857",
   },
   // ─── Mysore ───────────────────────────────────────────────────
   {
@@ -136,6 +189,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918210000001",
     coordinates: { lat: 12.2958, lng: 76.6394 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Mysore Palace and Devaraja Market",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.2958,76.6394&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.2958,76.6394",
   },
   {
     slug: "sell-gold-gokulam",
@@ -147,6 +205,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918210000002",
     coordinates: { lat: 12.3215, lng: 76.6221 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Gokulam Park and Mysore Medical College",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.3215,76.6221&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.3215,76.6221",
   },
   {
     slug: "sell-gold-vijayanagar-mysore",
@@ -158,6 +221,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918210000003",
     coordinates: { lat: 12.3401, lng: 76.6105 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near CFTRI and Vijayanagar 4th Stage Bus Stand",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.3401,76.6105&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.3401,76.6105",
   },
   // ─── Mangalore ────────────────────────────────────────────────
   {
@@ -170,6 +238,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918240000001",
     coordinates: { lat: 12.8698, lng: 74.8431 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Hampankatta Circle and Mangalore Central Railway Station",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.8698,74.8431&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.8698,74.8431",
   },
   {
     slug: "sell-gold-kadri",
@@ -181,6 +254,11 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918240000002",
     coordinates: { lat: 12.8832, lng: 74.8457 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near Kadri Manjunatha Temple and Kadri Park",
+    mapEmbed:
+      "https://maps.google.com/maps?q=12.8832,74.8457&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=12.8832,74.8457",
   },
   // ─── Davangere ────────────────────────────────────────────────
   {
@@ -193,13 +271,20 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918192000001",
     coordinates: { lat: 14.4644, lng: 75.9218 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
+    landmarksNear: "Near PJ Extension and Davangere Bus Stand",
+    mapEmbed:
+      "https://maps.google.com/maps?q=14.4644,75.9218&z=15&output=embed",
+    googleMapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=14.4644,75.9218",
   },
 ];
 
 /** Haversine formula — distance in km between two lat/lng points */
 function haversineKm(
-  lat1: number, lng1: number,
-  lat2: number, lng2: number
+  lat1: number,
+  lng1: number,
+  lat2: number,
+  lng2: number,
 ): number {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -207,15 +292,25 @@ function haversineKm(
   const a =
     Math.sin(dLat / 2) ** 2 +
     Math.cos((lat1 * Math.PI) / 180) *
-    Math.cos((lat2 * Math.PI) / 180) *
-    Math.sin(dLng / 2) ** 2;
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 export function findNearestBranch(lat: number, lng: number): Branch {
   return BRANCHES.reduce((nearest, branch) => {
-    const distNearest = haversineKm(lat, lng, nearest.coordinates.lat, nearest.coordinates.lng);
-    const distBranch  = haversineKm(lat, lng, branch.coordinates.lat,  branch.coordinates.lng);
+    const distNearest = haversineKm(
+      lat,
+      lng,
+      nearest.coordinates.lat,
+      nearest.coordinates.lng,
+    );
+    const distBranch = haversineKm(
+      lat,
+      lng,
+      branch.coordinates.lat,
+      branch.coordinates.lng,
+    );
     return distBranch < distNearest ? branch : nearest;
   });
 }

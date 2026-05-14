@@ -11,6 +11,7 @@ import { MkCalculator } from '@/components/features/MkCalculator';
 import { MkSeal } from '@/components/ui/MkSeal';
 import { MkButton } from '@/components/ui/MkButton';
 import { MkLeadPopup } from '@/components/features/MkLeadPopup';
+import { MkEmergency } from '@/components/features/MkEmergency';
 import { BRANCHES, type Branch } from '@/lib/branch-router';
 
 /* ─── Hero banners ─────────────────────────────────────────────── */
@@ -1838,6 +1839,9 @@ export default function HomePage() {
 
       {/* ── How it works ────────────────────────────────────────── */}
       <LocalStepsSection />
+
+      {/* ── Emergency callout ───────────────────────────────────── */}
+      <MkEmergency />
 
       {/* ── Trust architecture ──────────────────────────────────── */}
       <LocalTrustSection flip1={trustFlip1} setFlip1={setTrustFlip1} />

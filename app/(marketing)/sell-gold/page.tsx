@@ -11,17 +11,18 @@ import { MkCtaBand } from '@/components/sections/MkCtaBand';
 import { MkRateWidget } from '@/components/features/MkRateWidget';
 import { MkCalculator } from '@/components/features/MkCalculator';
 import { MkBranchFinder } from '@/components/features/MkBranchFinder';
+import { MkEmergency } from '@/components/features/MkEmergency';
 import { howToSchema } from '@/lib/schema/how-to';
 
 /* ─── Metadata ────────────────────────────────────────────────── */
 
 export const metadata: Metadata = {
-  title: 'Sell Gold in Karnataka | Best Rate Today | MK Gold',
+  title: 'Sell Gold | Best Rate Today | MK Gold Karnataka',
   description:
     'Sell gold at MK Gold. Live MCX rates, XRF purity test, payment in 45 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere. Walk in today — no appointment needed.',
   alternates: { canonical: 'https://mkgold.in/sell-gold' },
   openGraph: {
-    title: 'Sell Gold in Karnataka | Best Rate Today | MK Gold',
+    title: 'Sell Gold | Best Rate Today | MK Gold Karnataka',
     description:
       'Sell gold at live MCX rates. XRF purity test. Payment in 45 minutes. 16 branches across Karnataka. Trusted since 2014.',
     url: 'https://mkgold.in/sell-gold',
@@ -417,6 +418,9 @@ export default function SellGoldPage() {
 
       {/* ── 4. 6-STEP PROCESS ───────────────────────────────────── */}
       <MkSteps />
+
+      {/* ── Emergency callout ───────────────────────────────────── */}
+      <MkEmergency />
 
       {/* ── 5. DOCUMENTS ────────────────────────────────────────── */}
       <section className="mk-bg-dark section">

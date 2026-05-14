@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Poppins, Anek_Kannada } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -22,10 +22,16 @@ const anekKannada = Anek_Kannada({
   display: "swap",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#3B1848",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://mkgold.in"),
   title: {
-    default: "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
+    default: "MK Gold — Sell Gold in Karnataka | Instant Cash | 11 Years Trusted",
     template: "%s | MK Gold",
   },
   description:
@@ -45,7 +51,7 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://mkgold.in",
     siteName: "MK Gold",
-    title: "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
+    title: "MK Gold — Sell Gold in Karnataka | Instant Cash | 11 Years Trusted",
     description:
       "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 45 minutes. 16 branches.",
   },

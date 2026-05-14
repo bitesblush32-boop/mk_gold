@@ -31,10 +31,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `Sell Gold in ${branch.area} | Best Rate Today | MK Gold ${branch.city}`,
-    description: `MK Gold ${branch.area} — Get instant cash for gold. Live MCX rates, XRF purity test, payment in 45 minutes. 11 years trusted. Call now.`,
+    description: `MK Gold ${branch.area}, ${branch.city} — ${branch.landmarksNear}. Live MCX rates, XRF purity test, payment in 45 minutes. Est. 2014.`,
     openGraph: {
-      title: `Sell Gold in ${branch.area} | MK Gold`,
-      description: `Live MCX rates, XRF purity test, payment in 45 minutes at MK Gold ${branch.area}.`,
+      title: `Sell Gold in ${branch.area} | MK Gold ${branch.city}`,
+      description: `${branch.landmarksNear}. Live MCX rates, XRF purity test, payment in 45 minutes at MK Gold ${branch.area}.`,
       url: `https://mkgold.in/${area}`,
       siteName: 'MK Gold',
       locale: 'en_IN',
@@ -146,10 +146,10 @@ export default async function BranchPage({ params }: Props) {
   const faqs         = buildFaqs(branch);
   const areaInfo     = AREA_DESCRIPTIONS[branch.slug];
 
-  const telHref       = `tel:${branch.phone.replace(/\s/g, '')}`;
-  const mapsUrl       = `https://www.google.com/maps/dir/?api=1&destination=${branch.coordinates.lat},${branch.coordinates.lng}`;
-  const mapsEmbedUrl  = `https://maps.google.com/maps?q=${branch.coordinates.lat},${branch.coordinates.lng}&z=15&output=embed`;
-  const citySlug      = `sell-gold-${branch.city.toLowerCase()}`;
+  const telHref      = `tel:${branch.phone.replace(/\s/g, '')}`;
+  const mapsUrl      = branch.googleMapsUrl;
+  const mapsEmbedUrl = branch.mapEmbed;
+  const citySlug     = `sell-gold-${branch.city.toLowerCase()}`;
 
   return (
     <>
@@ -214,7 +214,8 @@ export default async function BranchPage({ params }: Props) {
               >
                 Sell{' '}
                 <span style={{ color: 'var(--gold)' }}>Gold</span>
-                {' '}in {branch.area}
+                {' '}in {branch.area},{' '}
+                <span style={{ color: 'rgba(255,255,255,0.65)' }}>{branch.city}</span>
               </h1>
 
               <p
@@ -553,68 +554,66 @@ export default async function BranchPage({ params }: Props) {
         </div>
       </section>
 
-      {/* ── 6. NEARBY BRANCHES ──────────────────────────────────── */}
-      {cityBranches.length > 0 ? (
-        <section style={{ background: 'white' }} className="section">
-          <div className="mk-container">
-            <p
-              style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 'var(--t-xs)',
-                fontWeight: 700,
-                color: 'var(--mist)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                marginBottom: '1rem',
-                textAlign: 'center',
-              }}
-            >
-              Other MK Gold branches in {branch.city}
-            </p>
-            <div
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '0.625rem',
-                justifyContent: 'center',
-              }}
-            >
-              {cityBranches.map((b) => (
+      {/* ── 6. INTERNAL LINK GRAPH — F20 ────────────────────────── */}
+      <section style={{ background: 'white' }} className="section">
+        <div className="mk-container">
+          <p
+            style={{
+              fontFamily: 'Poppins, sans-serif',
+              fontSize: 'var(--t-xs)',
+              fontWeight: 700,
+              color: 'var(--mist)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              marginBottom: '1.25rem',
+              textAlign: 'center',
+            }}
+          >
+            Nearby MK Gold Branches
+          </p>
+
+          {cityBranches.length > 0 ? (
+            <>
+              <div
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '0.625rem',
+                  justifyContent: 'center',
+                  marginBottom: '1.5rem',
+                }}
+              >
+                {cityBranches.map((b) => (
+                  <MkButton key={b.slug} variant="outline-plum" size="sm" href={`/${b.slug}`}>
+                    {b.area}
+                  </MkButton>
+                ))}
+              </div>
+              <p style={{ textAlign: 'center', margin: 0 }}>
                 <a
-                  key={b.slug}
-                  href={`/${b.slug}`}
+                  href={`/${citySlug}`}
                   style={{
                     fontFamily: 'Poppins, sans-serif',
                     fontSize: 'var(--t-sm)',
                     fontWeight: 600,
                     color: 'var(--plum)',
-                    padding: '0.5rem 1.125rem',
-                    borderRadius: '9999px',
-                    border: '1.5px solid rgba(81,37,97,0.22)',
-                    background: 'rgba(81,37,97,0.04)',
                     textDecoration: 'none',
-                    transition: 'background var(--t-fast), border-color var(--t-fast)',
-                    whiteSpace: 'nowrap',
                   }}
                 >
-                  {b.area}
+                  View all branches in {branch.city} &rsaquo;
                 </a>
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : (
-        <section style={{ background: 'white', paddingBlock: '2rem' }}>
-          <div className="mk-container" style={{ textAlign: 'center' }}>
-            <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-sm)', color: 'var(--mist)' }}>
+              </p>
+            </>
+          ) : (
+            <p style={{ textAlign: 'center', fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-sm)', color: 'var(--mist)', margin: 0 }}>
               This is our only branch in {branch.city}.{' '}
-              <a href="/sell-gold" style={{ color: 'var(--plum)', fontWeight: 600, textDecoration: 'none' }}>
+              <a href="/contact" style={{ color: 'var(--plum)', fontWeight: 600, textDecoration: 'none' }}>
                 View all 16 branches across Karnataka &rsaquo;
               </a>
             </p>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
 
       {/* ── 7. FAQ ──────────────────────────────────────────────── */}
       <MkBranchFaq faqs={faqs} areaName={branch.area} />
