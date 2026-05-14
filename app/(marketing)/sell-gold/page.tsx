@@ -361,8 +361,7 @@ export default function SellGoldPage() {
             {GOLD_TYPES.map((type, i) => (
               <div
                 key={type.title}
-                className="mk-card mk-card--gallery reveal"
-                style={{ animationDelay: `${i * 0.08}s` }}
+                className={`mk-card reveal delay-${i + 1}`}
               >
                 <h3
                   style={{
@@ -581,8 +580,7 @@ export default function SellGoldPage() {
             {PAYMENT_METHODS.map((pm, i) => (
               <div
                 key={pm.method}
-                className="mk-card mk-card--gallery reveal"
-                style={{ animationDelay: `${i * 0.1}s` }}
+                className={`mk-card reveal delay-${i + 1}`}
               >
                 <div
                   style={{

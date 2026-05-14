@@ -595,6 +595,47 @@ function BranchFinder() {
         .sc-branch-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
         .sc-branch-action { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); font-weight: 600; color: var(--plum); text-decoration: none; border: 1px solid rgba(81,37,97,0.3); padding: 0.3rem 0.875rem; border-radius: 9999px; transition: background var(--t-fast), color var(--t-fast); }
         .sc-branch-action:hover { background: var(--plum); color: var(--white); }
+
+        /* ── Coming Soon city cards ───────────────────────── */
+        .sc-city-card--coming-soon { opacity: 0.72; }
+        .sc-city-card--coming-soon .sc-city-name { color: var(--mist); }
+        .sc-city-coming-badge {
+          position: absolute;
+          top: -4px; right: -8px;
+          background: var(--plum);
+          color: var(--gold);
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.55rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          padding: 2px 6px;
+          border-radius: 9999px;
+          white-space: nowrap;
+        }
+        .sc-coming-soon-panel {
+          background: var(--white);
+          border: 1.5px solid var(--gallery-dk);
+          border-radius: 16px;
+          padding: 2.5rem;
+          margin-bottom: 2rem;
+          animation: scPanelIn 380ms cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        .sc-coming-soon-inner {
+          display: flex;
+          align-items: center;
+          gap: 2.5rem;
+        }
+        .sc-coming-soon-art {
+          width: 120px;
+          flex-shrink: 0;
+          opacity: 0.5;
+        }
+        @media (max-width: 480px) {
+          .sc-coming-soon-inner { flex-direction: column; gap: 1.25rem; }
+          .sc-coming-soon-art { width: 80px; }
+          .sc-coming-soon-panel { padding: 1.5rem; }
+        }
       `}</style>
 
       <div className="mk-container">
@@ -606,28 +647,57 @@ function BranchFinder() {
         <div className="sc-city-grid reveal delay-2">
           {CITIES.map((city) => {
             const count = BRANCHES.filter(b => b.city.toLowerCase() === city.toLowerCase()).length;
+            const isComingSoon = city !== 'Bangalore';
             return (
               <button
                 key={city}
                 onClick={() => { setActiveCity(city); setActiveBranch(null); }}
-                className={`sc-city-card${activeCity === city ? ' sc-city-card--active' : ''}`}
+                className={`sc-city-card${activeCity === city ? ' sc-city-card--active' : ''}${isComingSoon ? ' sc-city-card--coming-soon' : ''}`}
               >
-                <div style={{ width: '100%', maxWidth: '96px', margin: '0 auto' }}>
+                <div style={{ width: '100%', maxWidth: '96px', margin: '0 auto', position: 'relative' }}>
                   {cityArt[city]}
+                  {isComingSoon && (
+                    <span className="sc-city-coming-badge">Coming Soon</span>
+                  )}
                 </div>
                 <p className="sc-city-name">{city}</p>
-                <p className="sc-city-count">{count} {count === 1 ? 'branch' : 'branches'}</p>
+                <p className="sc-city-count">{isComingSoon ? 'Coming Soon' : `${count} ${count === 1 ? 'branch' : 'branches'}`}</p>
               </button>
             );
           })}
         </div>
 
-        <GoogleCityMap
-          key={activeCity}
-          city={activeCity}
-          activeBranch={activeBranch}
-          setActiveBranch={setActiveBranch}
-        />
+        {activeCity === 'Bangalore' ? (
+          <GoogleCityMap
+            key={activeCity}
+            city={activeCity}
+            activeBranch={activeBranch}
+            setActiveBranch={setActiveBranch}
+          />
+        ) : (
+          <div className="sc-coming-soon-panel">
+            <div className="sc-coming-soon-inner">
+              <div className="sc-coming-soon-art" aria-hidden="true">
+                {cityArt[activeCity]}
+              </div>
+              <div>
+                <p className="mk-section-overline" style={{ marginBottom: '0.5rem' }}>Coming Soon</p>
+                <h3 style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h3)', color: 'var(--plum)', margin: '0 0 0.75rem', lineHeight: 1.1 }}>
+                  MK Gold {activeCity}
+                </h3>
+                <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-sm)', color: 'var(--ink-mid)', lineHeight: 1.65, margin: '0 0 1.25rem', maxWidth: '340px' }}>
+                  We are opening branches in {activeCity} soon. Get notified when we launch — leave your number and we will call you first.
+                </p>
+                <a
+                  href="tel:+917019500600"
+                  style={{ fontFamily: 'Poppins,sans-serif', fontWeight: 600, fontSize: 'var(--t-sm)', color: 'var(--plum)', textDecoration: 'none', borderBottom: '1.5px solid var(--plum)' }}
+                >
+                  +91 70195 00600
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -705,8 +775,34 @@ function LocalTrustSection({
               not through advertising, but through transparent process, fair rates,
               and respectful service.
             </p>
+
+            {/* 4.9 rating + 15+ years stat row */}
+            <div className="sc-trust-stats reveal delay-2">
+              {/* 4.9 Google Rating */}
+              <div className="sc-trust-stat sc-trust-stat--rating" style={{ animation: 'mk-rating-glow 2.5s ease-in-out infinite' }}>
+                <span className="sc-trust-stat__score">4.9</span>
+                <div className="sc-trust-stat__stars" aria-label="4.9 out of 5 stars">
+                  {[0,1,2,3,4].map(i => (
+                    <span key={i} className="sc-trust-star" style={{
+                      animation: 'mk-star-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both',
+                      animationDelay: `${i * 0.08}s`,
+                    }} aria-hidden="true" />
+                  ))}
+                </div>
+                <span className="sc-trust-stat__label">Google Rating</span>
+              </div>
+
+              <div className="sc-trust-stat-divider" aria-hidden="true" />
+
+              {/* 15+ Years */}
+              <div className="sc-trust-stat">
+                <span className="sc-trust-stat__score">15+</span>
+                <span className="sc-trust-stat__label">Years Trusted</span>
+                <span className="sc-trust-stat__sub">Est. 2014</span>
+              </div>
+            </div>
           </div>
-          <div className="mk-trust__badges reveal delay-2" aria-label="Certifications">
+          <div className="mk-trust__badges reveal delay-3" aria-label="Certifications">
             {TRUST_BADGES.map((b) => <span key={b} className="mk-trust__badge">{b}</span>)}
           </div>
         </div>
@@ -1557,6 +1653,66 @@ export default function HomePage() {
         /* ── Fix 1: global overflow prevention ─────────────────── */
         html { overflow-x: hidden; }
         body { overflow-x: hidden; }
+
+        /* ── Trust section — 4.9 + 15yr stat row ────────────────── */
+        .sc-trust-stats {
+          display: flex;
+          align-items: center;
+          gap: 1.5rem;
+          margin-top: 1.5rem;
+          flex-wrap: wrap;
+        }
+        .sc-trust-stat {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.25rem;
+        }
+        .sc-trust-stat--rating {
+          background: var(--plum);
+          border-radius: 14px;
+          padding: 0.875rem 1.125rem;
+          border: 1px solid rgba(223,193,96,0.25);
+        }
+        .sc-trust-stat__score {
+          font-family: 'Tanker', serif;
+          font-size: clamp(2rem, 4vw, 2.75rem);
+          color: var(--gold);
+          line-height: 1;
+          letter-spacing: -0.02em;
+        }
+        .sc-trust-stat__stars {
+          display: flex;
+          gap: 3px;
+          margin: 0.2rem 0;
+        }
+        .sc-trust-star {
+          display: inline-block;
+          width: 14px;
+          height: 14px;
+          background: var(--gold);
+          clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+        }
+        .sc-trust-stat__label {
+          font-family: 'Poppins', sans-serif;
+          font-size: var(--t-2xs);
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.7);
+        }
+        .sc-trust-stat__sub {
+          font-family: 'Poppins', sans-serif;
+          font-size: var(--t-xs);
+          color: rgba(255,255,255,0.45);
+          margin-top: 0.1rem;
+        }
+        .sc-trust-stat-divider {
+          width: 1px;
+          height: 56px;
+          background: rgba(255,255,255,0.15);
+          align-self: center;
+        }
 
         /* ── Gate section — two-state layout ────────────────────── */
         .sc-gate-copy {

@@ -241,17 +241,32 @@ export default function BannersPage() {
             <div className="mk-admin-form-grid mk-admin-form-grid--2">
               <div className="mk-admin-field">
                 <label className="mk-admin-label">Image file</label>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="mk-admin-file-input"
-                  required
-                />
-                {preview && (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={preview} alt="Preview" className="mk-admin-upload-preview" />
+                <label
+                  className={`mk-admin-drop-zone${file ? ' mk-admin-drop-zone--over' : ''}`}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    style={{ display: 'none' }}
+                    required
+                  />
+                  {preview ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={preview} alt="Preview" className="mk-admin-upload-preview" style={{ margin: '0 auto' }} />
+                  ) : (
+                    <>
+                      <p className="mk-admin-drop-zone__label">Click to choose image</p>
+                      <p className="mk-admin-drop-zone__sub">JPG, PNG or WebP · max 5MB</p>
+                    </>
+                  )}
+                </label>
+                {file && (
+                  <p className="mk-admin-muted" style={{ marginTop: '0.375rem' }}>
+                    {file.name} ({(file.size / 1024).toFixed(0)} KB)
+                  </p>
                 )}
               </div>
               <div className="mk-admin-field">
@@ -264,6 +279,9 @@ export default function BannersPage() {
                   className="mk-admin-input"
                   required
                 />
+                <p className="mk-admin-muted" style={{ marginTop: '0.5rem', fontSize: '0.7rem' }}>
+                  Describe the banner image for screen readers and Google image search.
+                </p>
               </div>
             </div>
             <div style={{ marginTop: 'var(--s-4)' }}>

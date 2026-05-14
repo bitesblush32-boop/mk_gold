@@ -123,15 +123,20 @@ export default function BlogListPage() {
                       <span className="mk-admin-category-tag">{post.category}</span>
                     </td>
                     <td>
-                      <label className="mk-admin-toggle" title={post.published ? 'Published' : 'Draft'}>
-                        <input
-                          type="checkbox"
-                          checked={post.published}
-                          onChange={() => handleTogglePublish(post)}
-                          className="mk-admin-toggle__input"
-                        />
-                        <span className="mk-admin-toggle__track" />
-                      </label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
+                        <span className={`mk-admin-status mk-admin-status--${post.published ? 'published' : 'draft'}`}>
+                          {post.published ? 'Live' : 'Draft'}
+                        </span>
+                        <label className="mk-admin-toggle" title={post.published ? 'Click to unpublish' : 'Click to publish'}>
+                          <input
+                            type="checkbox"
+                            checked={post.published}
+                            onChange={() => handleTogglePublish(post)}
+                            className="mk-admin-toggle__input"
+                          />
+                          <span className="mk-admin-toggle__track" />
+                        </label>
+                      </div>
                     </td>
                     <td className="mk-admin-muted">{fmtDate(post.published_at)}</td>
                     <td className="mk-admin-muted">{fmtDate(post.created_at)}</td>

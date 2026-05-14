@@ -405,6 +405,21 @@
   }
 }
 
+@keyframes mk-coin-wobble {
+  0%, 100% { transform: rotateZ(-2deg); }
+  50%       { transform: rotateZ(2deg); }
+}
+
+@keyframes mk-levitate {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+
+.mk-coin-wobble {
+  animation: mk-coin-wobble 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
 
 /* ═══════════════════════════════════════════════════════════════
    4. BASE RESET

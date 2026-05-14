@@ -13,6 +13,7 @@ const FOOTER_LINKS = {
     { href: '/testimonials', label: 'Reviews' },
     { href: '/contact',      label: 'All Branches' },
     { href: '/blog',         label: 'Blog' },
+    { href: '/referral',     label: 'Refer & Earn' },
   ],
   Cities: [
     { href: '/sell-gold-bangalore', label: 'Bangalore' },
@@ -79,7 +80,6 @@ export function MkFooter() {
               <a href="tel:+917019500600" className="mk-footer__contact-link" aria-label="Call MK Gold">
                 +91 70195 00600
               </a>
-              <span className="mk-footer__contact-sep" aria-hidden="true">&nbsp;&middot;&nbsp;</span>
               <a href="mailto:info@mkgold.in" className="mk-footer__contact-link">
                 info@mkgold.in
               </a>

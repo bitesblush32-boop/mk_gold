@@ -1,13 +1,14 @@
 import type { Metadata } from 'next';
 import { MkNavbar }        from '@/components/layout/MkNavbar';
 import { MkFooter }        from '@/components/layout/MkFooter';
-import { MkSeal }          from '@/components/ui/MkSeal';
 import { MkCard }          from '@/components/ui/MkCard';
+import { MkLogo }          from '@/components/ui/MkLogo';
 import { MkSectionHeader } from '@/components/ui/MkSectionHeader';
 import { MkTrustBlock }    from '@/components/ui/MkTrustBlock';
 import { MkButton }        from '@/components/ui/MkButton';
 import { MkStatBand }      from '@/components/sections/MkStatBand';
 import { MkCtaBand }       from '@/components/sections/MkCtaBand';
+import { FlippableSeal }   from '@/components/features/FlippableSeal';
 
 /* ─── Metadata ─────────────────────────────────────────────────── */
 
@@ -120,71 +121,92 @@ export default function AboutPage() {
             <span style={{ color: 'var(--gold)' }}>About Us</span>
           </nav>
 
-          {/* Eyebrow — year + decorative lines */}
-          <div
-            style={{
-              display: 'inline-flex',
+          {/* Two-column layout: copy left, animated logo right */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '3fr 2fr',
+            gap: 'var(--s-16)',
+            alignItems: 'center',
+          }}>
+
+            {/* Left — copy */}
+            <div>
+              {/* Eyebrow */}
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.875rem', marginBottom: '1.75rem' }}>
+                <div aria-hidden="true" style={{ width: '2.5rem', height: '1px', background: 'var(--gold)', opacity: 0.55 }} />
+                <p className="mk-section-overline" style={{ margin: 0 }}>Established 2014 · Karnataka</p>
+                <div aria-hidden="true" style={{ width: '2.5rem', height: '1px', background: 'var(--gold)', opacity: 0.55 }} />
+              </div>
+
+              {/* H1 */}
+              <h1 style={{
+                fontFamily: 'Tanker, serif',
+                fontSize: 'var(--t-h1)',
+                color: 'var(--white)',
+                lineHeight: 1.05,
+                margin: '0 0 1.25rem',
+                letterSpacing: 'var(--ls-tight)',
+              }}>
+                About MK Gold
+              </h1>
+
+              {/* Subtitle */}
+              <p style={{
+                fontFamily: 'Poppins, sans-serif',
+                fontSize: 'var(--t-lg)',
+                color: 'rgba(255,255,255,0.65)',
+                margin: '0 0 1.75rem',
+                lineHeight: 1.6,
+                maxWidth: '520px',
+              }}>
+                15+ years of building trust, one transaction at a time.
+              </p>
+
+              {/* Kannada tagline */}
+              <p lang="kn" style={{
+                fontFamily: 'Anek Kannada, sans-serif',
+                fontSize: 'var(--t-h4)',
+                fontWeight: 600,
+                color: 'var(--gold)',
+                margin: 0,
+                letterSpacing: '0.02em',
+              }}>
+                ತಕ್ಷಣ ಹಣ, ಶಾಶ್ವತ ವಿಶ್ವಾಸ
+              </p>
+            </div>
+
+            {/* Right — animated logo + coin (hidden on mobile) */}
+            <div className="mk-about-hero-visual" style={{
+              display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              gap: '0.875rem',
-              marginBottom: '1.75rem',
-            }}
-          >
-            <div
-              aria-hidden="true"
-              style={{ width: '2.5rem', height: '1px', background: 'var(--gold)', opacity: 0.55 }}
-            />
-            <p className="mk-section-overline" style={{ margin: 0 }}>
-              Established 2014 · Karnataka
-            </p>
-            <div
-              aria-hidden="true"
-              style={{ width: '2.5rem', height: '1px', background: 'var(--gold)', opacity: 0.55 }}
-            />
+              justifyContent: 'center',
+              gap: 'var(--s-6)',
+              position: 'relative',
+            }}>
+              {/* Radial gold glow behind logo */}
+              <div aria-hidden="true" style={{
+                position: 'absolute',
+                inset: '-20%',
+                background: 'radial-gradient(ellipse at center, rgba(223,193,96,0.10) 0%, transparent 68%)',
+                pointerEvents: 'none',
+              }} />
+
+              {/* Levitating logo */}
+              <div style={{ animation: 'mk-levitate 4s ease-in-out infinite', position: 'relative', zIndex: 1 }}>
+                <MkLogo variant="light" size="lg" href="" />
+              </div>
+
+              {/* Gold accent line */}
+              <div aria-hidden="true" style={{ width: '3rem', height: '2px', background: 'var(--gold)', opacity: 0.40 }} />
+
+              {/* Flipping seal coin */}
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <FlippableSeal size="lg" wobble />
+              </div>
+            </div>
+
           </div>
-
-          {/* H1 */}
-          <h1
-            style={{
-              fontFamily: 'Tanker, serif',
-              fontSize: 'var(--t-h1)',
-              color: 'var(--white)',
-              lineHeight: 1.05,
-              margin: '0 0 1.25rem',
-              letterSpacing: 'var(--ls-tight)',
-            }}
-          >
-            About MK Gold
-          </h1>
-
-          {/* Subtitle */}
-          <p
-            style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 'var(--t-lg)',
-              color: 'rgba(255,255,255,0.65)',
-              margin: '0 0 1.75rem',
-              lineHeight: 1.6,
-              maxWidth: '520px',
-            }}
-          >
-            15+ years of building trust, one transaction at a time.
-          </p>
-
-          {/* Kannada tagline */}
-          <p
-            lang="kn"
-            style={{
-              fontFamily: 'Anek Kannada, sans-serif',
-              fontSize: 'var(--t-h4)',
-              fontWeight: 600,
-              color: 'var(--gold)',
-              margin: 0,
-              letterSpacing: '0.02em',
-            }}
-          >
-            ತಕ್ಷಣ ಹಣ, ಶಾಶ್ವತ ವಿಶ್ವಾಸ
-          </p>
-
         </div>
       </section>
 
@@ -297,27 +319,9 @@ export default function AboutPage() {
             }}
           >
 
-            {/* Seals side by side */}
-            <div
-              className="reveal"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '3rem',
-                flexWrap: 'wrap',
-              }}
-            >
-              <MkSeal variant="en" size="lg" animate />
-              <div
-                aria-hidden="true"
-                style={{
-                  width: '1px',
-                  height: '80px',
-                  background: 'linear-gradient(to bottom, transparent, rgba(223,193,96,0.30), transparent)',
-                }}
-              />
-              <MkSeal variant="kn" size="lg" animate />
+            {/* Single flipping seal coin — EN front / KN back */}
+            <div className="reveal" style={{ display: 'flex', justifyContent: 'center' }}>
+              <FlippableSeal size="lg" wobble />
             </div>
 
             {/* Copy below seals */}
