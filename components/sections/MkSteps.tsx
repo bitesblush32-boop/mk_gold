@@ -31,7 +31,7 @@ const STEPS = [
   {
     n:     '06',
     title: 'Get Paid Instantly',
-    body:  'Accept and receive payment in cash, NEFT, or UPI within 45 minutes. Walk in with gold, walk out with money.',
+    body:  'Accept and receive payment in cash, NEFT, or UPI within 30 minutes. Walk in with gold, walk out with money.',
   },
 ] as const;
 
@@ -46,7 +46,7 @@ export function MkSteps() {
         <div className="mk-steps__header reveal">
           <p className="mk-section-overline">How It Works</p>
           <h2 className="mk-steps__title">
-            Six steps. 45 minutes.<br />
+            Six steps. 30 minutes.<br />
             That&apos;s all it takes.
           </h2>
           <p className="mk-steps__subtitle">
@@ -62,9 +62,14 @@ export function MkSteps() {
               key={step.n}
               className={`mk-step reveal delay-${(i % 3) + 1}`}
             >
-              <span className="mk-step__number" aria-hidden="true">
-                {step.n}
-              </span>
+              <div className="mk-step__circle-wrap">
+                <div className="mk-step__line" aria-hidden="true" />
+                <div className="mk-step__coin">
+                  <div className="mk-step__circle">
+                    <span className="mk-step__num">{step.n}</span>
+                  </div>
+                </div>
+              </div>
               <h3 className="mk-step__title">{step.title}</h3>
               <p className="mk-step__body">{step.body}</p>
             </li>

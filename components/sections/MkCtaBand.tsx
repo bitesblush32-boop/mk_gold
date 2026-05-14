@@ -1,6 +1,10 @@
+'use client';
 // Final CTA band — mk-bg-purple + pattern
 
 import { MkButton } from '@/components/ui/MkButton';
+import { trackCallConversion } from '@/lib/analytics';
+
+const MAIN_PHONE = '+917019500600';
 
 export function MkCtaBand() {
   return (
@@ -15,22 +19,27 @@ export function MkCtaBand() {
           </h2>
           <p className="mk-cta-band__sub">
             Get a certified XRF valuation at any MK Gold branch in Karnataka.
-            No appointment needed. Payment in 45 minutes.
+            No appointment needed. Payment in 30 minutes.
           </p>
         </div>
 
         <div className="mk-cta-band__actions reveal delay-2">
-          <MkButton variant="gold" href="/contact" size="lg">
+          <MkButton variant="gold" size="lg" onClick={() => window.dispatchEvent(new CustomEvent('mk:openPopup'))}>
             Book Appointment
           </MkButton>
-          <MkButton variant="outline-light" href="tel:+918000000001" size="lg">
+          <MkButton
+            variant="outline-light"
+            href={`tel:${MAIN_PHONE}`}
+            size="lg"
+            onClick={trackCallConversion}
+          >
             Call Us Now
           </MkButton>
         </div>
 
         <p className="mk-cta-band__note reveal delay-3">
           16 branches across Bangalore, Mysore, Mangalore &amp; Davangere
-          &nbsp;&middot;&nbsp; Open Mon–Sat, 9:30 AM – 7:00 PM
+          &nbsp;&middot;&nbsp; Open Mon–Sun, 10:00 AM – 8:00 PM
         </p>
 
       </div>

@@ -37,3 +37,6 @@ export type {
 } from "./MkInput";
 
 export { MkRevealObserver } from "./MkRevealObserver";
+
+export { MkSectionHeader } from "./MkSectionHeader";
+export type { MkSectionHeaderProps } from "./MkSectionHeader";
