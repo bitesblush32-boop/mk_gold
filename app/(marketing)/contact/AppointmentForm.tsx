@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { BRANCHES } from '@/lib/branch-router';
 import type { Branch } from '@/lib/branch-router';
+import { trackAppointmentBooked } from '@/lib/analytics';
 
 type City = Branch['city'];
 const CITIES: City[] = ['Bangalore', 'Mysore', 'Mangalore', 'Davangere'];
@@ -119,6 +120,7 @@ export function AppointmentForm() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data?.error || 'Something went wrong. Please try again.');
       }
+      trackAppointmentBooked(form.branch_slug);
       setSuccess(true);
     } catch (err) {
       setServerErr(err instanceof Error ? err.message : 'Something went wrong.');

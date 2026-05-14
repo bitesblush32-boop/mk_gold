@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { MkSeal } from '@/components/ui/MkSeal';
 import { MkButton } from '@/components/ui/MkButton';
+import { trackFormSubmit } from '@/lib/analytics';
 
 export function MkLeadPopup() {
   const [open, setOpen] = useState(false);
@@ -44,6 +45,7 @@ export function MkLeadPopup() {
         body: JSON.stringify({ ...form, source: 'popup-lead-form' }),
       });
       if (!res.ok) throw new Error();
+      trackFormSubmit({ source: 'popup' });
       setStatus('success');
     } catch {
       setStatus('error');

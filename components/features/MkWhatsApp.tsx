@@ -2,6 +2,7 @@
 // F03 — Floating WhatsApp button — Tanker "W" mark, no icon libraries
 
 import { useState, useEffect } from 'react';
+import { trackWhatsAppClick } from '@/lib/analytics';
 
 interface MkWhatsAppProps {
   number?: string;
@@ -9,7 +10,7 @@ interface MkWhatsAppProps {
 }
 
 export function MkWhatsApp({
-  number = process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT ?? '918000000000',
+  number = process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT ?? '917019500600',
   message = 'Hi, I want to sell my gold. Can you help?',
 }: MkWhatsAppProps) {
   const href = `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
@@ -55,6 +56,7 @@ export function MkWhatsApp({
       onMouseLeave={!isTouch ? () => setActive(false) : undefined}
       onTouchStart={isTouch ? () => setActive(true) : undefined}
       onTouchEnd={isTouch ? () => setActive(false) : undefined}
+      onClick={() => trackWhatsAppClick()}
     >
       <span
         aria-hidden="true"

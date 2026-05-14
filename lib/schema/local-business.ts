@@ -1,4 +1,5 @@
 import type { Branch } from "@/lib/branch-router";
+import { MK_SOCIAL_PROFILES } from "@/lib/schema/organization";
 
 export function localBusinessSchema(branch?: Branch) {
   if (branch) {
@@ -8,6 +9,7 @@ export function localBusinessSchema(branch?: Branch) {
       name: branch.name,
       url: `https://mkgold.in/${branch.slug}`,
       telephone: branch.phone,
+      image: "https://mkgold.in/mkgoldlogo.png",
       address: {
         "@type": "PostalAddress",
         streetAddress: branch.address,
@@ -22,31 +24,45 @@ export function localBusinessSchema(branch?: Branch) {
       },
       openingHoursSpecification: {
         "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        opens: "09:30",
-        closes: "19:00",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        opens: "10:00",
+        closes: "20:00",
       },
-      priceRange: "Fair market MCX rate",
+      priceRange: "₹₹",
       currenciesAccepted: "INR",
-      paymentAccepted: "Cash, Bank Transfer, NEFT, RTGS",
+      paymentAccepted: "Cash, Bank Transfer, NEFT, RTGS, UPI",
+      sameAs: [...MK_SOCIAL_PROFILES],
     };
   }
 
+  // Organisation-level LocalBusiness (homepage)
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "MK Gold",
-    url: "https://mkgold.in",
-    logo: "https://mkgold.in/brand/logo-primary-light.svg",
-    description:
-      "Karnataka's trusted gold buyer since 2014. 16 branches across Bangalore, Mysore, Mangalore and Davangere.",
-    foundingDate: "2014",
-    areaServed: "Karnataka",
-    sameAs: [],
-    contactPoint: {
-      "@type": "ContactPoint",
-      contactType: "customer service",
-      availableLanguage: ["English", "Kannada", "Hindi"],
+    "@type": "LocalBusiness",
+    name: "MKGOLD",
+    image: "https://mkgold.in/mkgoldlogo.png",
+    url: "https://www.mkgold.in/",
+    telephone: "+91-7019500600",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "Your Street Address",
+      addressLocality: "Bangalore",
+      addressRegion: "Karnataka",
+      postalCode: "560079",
+      addressCountry: "IN",
     },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: "12.9716",
+      longitude: "77.5946",
+    },
+    openingHoursSpecification: {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+      opens: "10:00",
+      closes: "20:00",
+    },
+    priceRange: "₹₹",
+    sameAs: [...MK_SOCIAL_PROFILES],
   };
 }
