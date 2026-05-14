@@ -12,13 +12,13 @@ import { MkCtaBand }       from '@/components/sections/MkCtaBand';
 /* ─── Metadata ─────────────────────────────────────────────────── */
 
 export const metadata: Metadata = {
-  title: 'About MK Gold | 11 Years Trusted | Karnataka Since 2014',
+  title: 'About MK Gold | 15 Years Trusted | Karnataka Since 2014',
   description:
     "MK Gold — established 2014. Karnataka's trusted gold buyer. 16 branches, ISO 9001:2015 certified, German XRF spectrometer, 10,000+ customers served.",
   openGraph: {
     title: "About MK Gold | Karnataka's Most Trusted Gold Buyer Since 2014",
     description:
-      'Learn about MK Gold — 11 years of transparent gold buying across Karnataka. 16 branches, ISO certified, XRF tested.',
+      'Learn about MK Gold — 15+ years of transparent gold buying across Karnataka. 16 branches, ISO certified, XRF tested.',
     url: 'https://mkgold.in/about',
     siteName: 'MK Gold',
     locale: 'en_IN',
@@ -78,7 +78,7 @@ const ABOUT_SCHEMA = {
   name: 'About MK Gold',
   url: 'https://mkgold.in/about',
   description:
-    "Learn about MK Gold — Karnataka's trusted gold buyer since 2014. 11 years of transparent gold buying across 16 branches.",
+    "Learn about MK Gold — Karnataka's trusted gold buyer since 2014. 15+ years of transparent gold buying across 16 branches.",
   publisher: { '@type': 'Organization', name: 'MK Gold', url: 'https://mkgold.in' },
 };
 
@@ -167,7 +167,7 @@ export default function AboutPage() {
               maxWidth: '520px',
             }}
           >
-            11 years of building trust, one transaction at a time.
+            15+ years of building trust, one transaction at a time.
           </p>
 
           {/* Kannada tagline */}
@@ -234,7 +234,7 @@ export default function AboutPage() {
               {[
                 'MK Gold was founded in Bangalore in 2014 with a clear observation: the people most in need of immediate liquidity from their gold were also the most vulnerable to unfair pricing.',
                 'Gold buying in Karnataka was largely informal. Rates varied arbitrarily. Customers had no way to verify the purity of their gold or the fairness of the rate they were offered. The process was opaque by design.',
-                'We set out to build something different — a gold buying company where the customer knows the formula, sees the MCX rate openly, and receives payment within 45 minutes. Transparent evaluation. Fair value. A respectful, non-judgmental experience.',
+                'We set out to build something different — a gold buying company where the customer knows the formula, sees the MCX rate openly, and receives payment within 30 minutes. Transparent evaluation. Fair value. A respectful, non-judgmental experience.',
               ].map((para, i) => (
                 <p
                   key={i}
@@ -278,7 +278,7 @@ export default function AboutPage() {
                 lineHeight: 1.5,
               }}
             >
-              11 years later, 10,000+ customers, 16 branches, and the same promise.
+              15+ years later, 10,000+ customers, 16 branches, and the same promise.
             </p>
           </div>
 
@@ -349,6 +349,49 @@ export default function AboutPage() {
                 This is not just a tagline. It is our founding promise — that the MK Gold name
                 stands for trust, in English and in Kannada, in every city and every branch.
               </p>
+            </div>
+
+            {/* Google rating highlight */}
+            <div
+              className="reveal delay-3"
+              style={{ display: 'flex', justifyContent: 'center' }}
+            >
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '1.25rem',
+                background: 'rgba(223,193,96,0.08)',
+                border: '1px solid rgba(223,193,96,0.25)',
+                borderRadius: 'var(--r-xl)',
+                padding: '1.25rem 2rem',
+              }}>
+                <div style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center',
+                  animation: 'mk-rating-glow 2.5s ease-in-out infinite',
+                }}>
+                  <span style={{ fontFamily: 'Tanker,serif', fontSize: '2.75rem', color: 'var(--gold)', lineHeight: 1 }}>4.9</span>
+                  <div style={{ display: 'flex', gap: '3px', margin: '4px 0' }}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <span key={i} style={{
+                        display: 'inline-block', width: '14px', height: '14px',
+                        animation: `mk-star-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both`,
+                        animationDelay: `${i * 0.08}s`,
+                        background: 'var(--gold)',
+                        clipPath: 'polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)',
+                      }} />
+                    ))}
+                  </div>
+                  <span style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-2xs)', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)' }}>
+                    Google Rating
+                  </span>
+                </div>
+                <div>
+                  <p style={{ fontFamily: 'Poppins,sans-serif', fontWeight: 600, fontSize: 'var(--t-base)', color: 'white', margin: 0, lineHeight: 1.3 }}>
+                    4.9 out of 5 stars
+                  </p>
+                  <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-sm)', color: 'rgba(255,255,255,0.55)', margin: '0.25rem 0 0' }}>
+                    Based on 200+ verified Google Reviews
+                  </p>
+                </div>
+              </div>
             </div>
 
           </div>

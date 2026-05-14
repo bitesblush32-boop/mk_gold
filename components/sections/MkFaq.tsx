@@ -21,7 +21,7 @@ const FAQS = [
   },
   {
     q: 'How long does the entire process take?',
-    a: 'From the moment you walk in to receiving payment, the process takes 30–45 minutes for most customers. Weighing takes 5 minutes, XRF testing takes 2 minutes, and payment is immediate once you accept the offer.',
+    a: 'From the moment you walk in to receiving payment, the process takes around 30 minutes for most customers. Weighing takes 5 minutes, XRF testing takes 2 minutes, and payment is immediate once you accept the offer.',
   },
   {
     q: 'What documents do I need to bring?',

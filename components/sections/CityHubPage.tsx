@@ -74,7 +74,7 @@ const CITY_TESTIMONIALS: Record<City, Testimonial[]> = {
       rating: 5,
       date: 'February 2025',
       quote:
-        '11 years in business really shows. Professional, honest, and fast. Got my money in 40 minutes. Would recommend to anyone in Mysore.',
+        '15+ years in business really shows. Professional, honest, and fast. Got my money in 30 minutes. Would recommend to anyone in Mysore.',
     },
   ],
   Mangalore: [
@@ -185,7 +185,7 @@ const CITY_FAQS: Record<City, FaqItem[]> = {
     },
     {
       q: 'Is MK Gold safe and certified in Mangalore?',
-      a: 'Yes. MK Gold is ISO 9001:2015 certified with over 11 years in operation. Our Mangalore branches use the same Bruker XRF spectrometer and live MCX rates that customers across Karnataka trust.',
+      a: 'Yes. MK Gold is ISO 9001:2015 certified with over 15 years in operation. Our Mangalore branches use the same Bruker XRF spectrometer and live MCX rates that customers across Karnataka trust.',
     },
   ],
   Davangere: [
@@ -203,7 +203,7 @@ const CITY_FAQS: Record<City, FaqItem[]> = {
     },
     {
       q: 'Is MK Gold a safe buyer in Davangere?',
-      a: 'Yes. MK Gold is ISO 9001:2015 certified and has 11 years of experience buying gold. The Davangere branch uses the same German XRF spectrometer and live MCX pricing as every other branch.',
+      a: 'Yes. MK Gold is ISO 9001:2015 certified and has 15+ years of experience buying gold. The Davangere branch uses the same German XRF spectrometer and live MCX pricing as every other branch.',
     },
   ],
 };
@@ -248,7 +248,7 @@ export function CityHubPage({ city }: CityHubPageProps) {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: `MK Gold ${city}`,
-    description: `MK Gold has ${n} ${n === 1 ? 'branch' : 'branches'} in ${city}. Sell gold at live MCX rates with XRF purity testing. Payment in 45 minutes.`,
+    description: `MK Gold has ${n} ${n === 1 ? 'branch' : 'branches'} in ${city}. Sell gold at live MCX rates with XRF purity testing. Payment in 30 minutes.`,
     url: `https://mkgold.in/sell-gold-${city.toLowerCase()}`,
     telephone: firstBranch?.phone,
     areaServed: city,

@@ -19,12 +19,12 @@ import { howToSchema } from '@/lib/schema/how-to';
 export const metadata: Metadata = {
   title: 'Sell Gold | Best Rate Today | MK Gold Karnataka',
   description:
-    'Sell gold at MK Gold. Live MCX rates, XRF purity test, payment in 45 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere. Walk in today — no appointment needed.',
+    'Sell gold at MK Gold. Live MCX rates, XRF purity test, payment in 30 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere. Walk in today — no appointment needed.',
   alternates: { canonical: 'https://mkgold.in/sell-gold' },
   openGraph: {
     title: 'Sell Gold | Best Rate Today | MK Gold Karnataka',
     description:
-      'Sell gold at live MCX rates. XRF purity test. Payment in 45 minutes. 16 branches across Karnataka. Trusted since 2014.',
+      'Sell gold at live MCX rates. XRF purity test. Payment in 30 minutes. 16 branches across Karnataka. Trusted since 2014.',
     url: 'https://mkgold.in/sell-gold',
     siteName: 'MK Gold',
     locale: 'en_IN',

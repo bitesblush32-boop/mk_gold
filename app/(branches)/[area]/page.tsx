@@ -31,10 +31,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `Sell Gold in ${branch.area} | Best Rate Today | MK Gold ${branch.city}`,
-    description: `MK Gold ${branch.area}, ${branch.city} — ${branch.landmarksNear}. Live MCX rates, XRF purity test, payment in 45 minutes. Est. 2014.`,
+    description: `MK Gold ${branch.area}, ${branch.city} — ${branch.landmarksNear}. Live MCX rates, XRF purity test, payment in 30 minutes. Est. 2014.`,
     openGraph: {
       title: `Sell Gold in ${branch.area} | MK Gold ${branch.city}`,
-      description: `${branch.landmarksNear}. Live MCX rates, XRF purity test, payment in 45 minutes at MK Gold ${branch.area}.`,
+      description: `${branch.landmarksNear}. Live MCX rates, XRF purity test, payment in 30 minutes at MK Gold ${branch.area}.`,
       url: `https://mkgold.in/${area}`,
       siteName: 'MK Gold',
       locale: 'en_IN',
@@ -200,7 +200,7 @@ export default async function BranchPage({ params }: Props) {
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
                 <MkBadge variant="gold">ISO 9001:2015</MkBadge>
                 <MkBadge variant="gold">XRF Certified</MkBadge>
-                <MkBadge variant="gold">Payment in 45 min</MkBadge>
+                <MkBadge variant="gold">Payment in 30 min</MkBadge>
               </div>
 
               <h1
@@ -227,7 +227,7 @@ export default async function BranchPage({ params }: Props) {
                   margin: '0 0 2rem',
                 }}
               >
-                Live MCX rates. XRF purity test. Payment in 45 minutes.
+                Live MCX rates. XRF purity test. Payment in 30 minutes.
                 Walk in today — no appointment needed.
               </p>
 
@@ -650,7 +650,7 @@ export default async function BranchPage({ params }: Props) {
               }}
             >
               No appointment. No forms. Bring your gold and one photo ID.
-              Payment in 45 minutes.
+              Payment in 30 minutes.
             </p>
 
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '1.75rem' }}>

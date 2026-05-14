@@ -91,8 +91,8 @@ export function MkNavbar() {
   const servicesActive = SERVICES_LINKS.some(
     (l) => pathname === l.href || pathname.startsWith(l.href.split('#')[0] + '/')
   );
-  const whatsappHref = `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT ?? '918000000000'}`;
-  const callHref = `tel:+${process.env.NEXT_PUBLIC_PHONE_DEFAULT ?? '918000000000'}`;
+  const whatsappHref = `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_DEFAULT ?? '917019500600'}`;
+  const callHref = `tel:${process.env.NEXT_PUBLIC_PHONE_DEFAULT ?? '+917019500600'}`;
 
   return (
     <>

@@ -17,9 +17,13 @@ export function MkLeadPopup() {
 
   useEffect(() => {
     setMounted(true);
-    if (sessionStorage.getItem('mk_popup_dismissed')) return;
     const t = setTimeout(() => setOpen(true), 2000);
-    return () => clearTimeout(t);
+    const onOpen = () => setOpen(true);
+    window.addEventListener('mk:openPopup', onOpen);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('mk:openPopup', onOpen);
+    };
   }, []);
 
   useEffect(() => {
@@ -32,7 +36,6 @@ export function MkLeadPopup() {
 
   function dismiss() {
     setOpen(false);
-    sessionStorage.setItem('mk_popup_dismissed', '1');
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -175,8 +178,6 @@ export function MkLeadPopup() {
                     <option value="" disabled>Select purity</option>
                     <option value="24k">24K (Pure / Coins)</option>
                     <option value="22k">22K (Most common)</option>
-                    <option value="20k">20K</option>
-                    <option value="18k">18K</option>
                     <option value="unknown">Not sure (we test free)</option>
                   </select>
                 </div>

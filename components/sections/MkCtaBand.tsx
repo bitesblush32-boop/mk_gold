@@ -19,12 +19,12 @@ export function MkCtaBand() {
           </h2>
           <p className="mk-cta-band__sub">
             Get a certified XRF valuation at any MK Gold branch in Karnataka.
-            No appointment needed. Payment in 45 minutes.
+            No appointment needed. Payment in 30 minutes.
           </p>
         </div>
 
         <div className="mk-cta-band__actions reveal delay-2">
-          <MkButton variant="gold" href="/contact" size="lg">
+          <MkButton variant="gold" size="lg" onClick={() => window.dispatchEvent(new CustomEvent('mk:openPopup'))}>
             Book Appointment
           </MkButton>
           <MkButton

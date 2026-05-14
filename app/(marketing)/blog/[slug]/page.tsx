@@ -250,7 +250,7 @@ export default async function BlogPostPage({ params }: Props) {
             <div className="mk-author-block__info">
               <p className="mk-author-block__name">MK Gold Editorial Team</p>
               <p className="mk-author-block__bio">
-                Our editorial team consists of gold market experts with 11 years of experience
+                Our editorial team consists of gold market experts with 15+ years of experience
                 in the Karnataka gold buying industry. We provide transparent, accurate
                 information to help you make confident decisions about selling your gold.
               </p>

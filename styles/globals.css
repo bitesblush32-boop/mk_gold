@@ -299,6 +299,18 @@
   }
 }
 
+/* Star scale-in — reviews rating animation */
+@keyframes mk-star-in {
+  from { transform: scale(0) rotate(-30deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0deg);  opacity: 1; }
+}
+
+/* Rating glow pulse — 4.9 score highlight */
+@keyframes mk-rating-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(223,193,96,0.4)); }
+  50%       { filter: drop-shadow(0 0 14px rgba(223,193,96,0.85)); }
+}
+
 /* Gold shimmer — loading skeletons */
 @keyframes shimmer {
   0% {

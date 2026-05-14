@@ -40,11 +40,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://mkgold.in"),
   title: {
-    default: "MK Gold — Sell Gold in Karnataka | Instant Cash | 11 Years Trusted",
+    default: "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
     template: "%s | MK Gold",
   },
   description:
-    "Karnataka's most trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 45 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere.",
+    "Karnataka's most trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere.",
   keywords: [
     "sell gold Karnataka",
     "gold buyer Bangalore",
@@ -63,9 +63,9 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: "https://mkgold.in",
     siteName: "MK Gold",
-    title: "MK Gold — Sell Gold in Karnataka | Instant Cash | 11 Years Trusted",
+    title: "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
     description:
-      "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 45 minutes. 16 branches.",
+      "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. 16 branches.",
     images: [{ url: "https://mkgold.in/mkgoldlogo.png", width: 400, height: 400, alt: "MK Gold" }],
   },
   twitter: {
@@ -119,7 +119,7 @@ const FAQ_SCHEMA = {
       name: "Do you provide instant payment for gold?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes, MK Gold provides payment within 45 minutes after gold evaluation — by cash, UPI, NEFT or RTGS. No hidden charges.",
+        text: "Yes, MK Gold provides payment within 30 minutes after gold evaluation — by cash, UPI, NEFT or RTGS. No hidden charges.",
       },
     },
     {

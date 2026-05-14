@@ -5,10 +5,10 @@ import { MkRateWidget } from '@/components/features/MkRateWidget';
 /* ─── Stats ──────────────────────────────────────────────────── */
 
 const STATS = [
-  { value: '11', label: 'Years of trust' },
+  { value: '15+', label: 'Years of trust' },
   { value: '16', label: 'Branches' },
   { value: '10K+', label: 'Customers served' },
-  { value: '45 min', label: 'Payment guarantee' },
+  { value: '30 min', label: 'Payment guarantee' },
 ] as const;
 
 /* ─── Component ───────────────────────────────────────────────── */
@@ -53,7 +53,7 @@ export function MkHero() {
           {/* Subtitle */}
           <p className="mk-hero__subtitle reveal delay-3">
             Sell gold at MCX-linked rates. XRF purity test.
-            Payment in 45 minutes. 16 branches across Karnataka.
+            Payment in 30 minutes. 16 branches across Karnataka.
           </p>
 
           {/* CTA row */}

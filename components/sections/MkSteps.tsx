@@ -31,7 +31,7 @@ const STEPS = [
   {
     n:     '06',
     title: 'Get Paid Instantly',
-    body:  'Accept and receive payment in cash, NEFT, or UPI within 45 minutes. Walk in with gold, walk out with money.',
+    body:  'Accept and receive payment in cash, NEFT, or UPI within 30 minutes. Walk in with gold, walk out with money.',
   },
 ] as const;
 
@@ -46,7 +46,7 @@ export function MkSteps() {
         <div className="mk-steps__header reveal">
           <p className="mk-section-overline">How It Works</p>
           <h2 className="mk-steps__title">
-            Six steps. 45 minutes.<br />
+            Six steps. 30 minutes.<br />
             That&apos;s all it takes.
           </h2>
           <p className="mk-steps__subtitle">

@@ -18,7 +18,7 @@ const PILLARS = [
     detail: 'Our buying rate is displayed beside the MCX rate so you can see exactly what we earn. Nothing hidden.',
   },
   {
-    label: 'Est. 2014 — 11 Years',
+    label: 'Est. 2014 — 15+ Years',
     detail: '10,000+ transactions across Karnataka. A business built on repeat customers and word-of-mouth alone.',
   },
   {
@@ -58,7 +58,7 @@ export function MkTrust() {
               Trust is built in <span className="mk-trust__accent">every detail.</span>
             </h2>
             <p className="mk-trust__intro">
-              We have spent 11 years earning the trust of Karnataka&apos;s gold sellers —
+              We have spent 15+ years earning the trust of Karnataka&apos;s gold sellers —
               not through advertising, but through transparent process, fair rates,
               and respectful service.
             </p>

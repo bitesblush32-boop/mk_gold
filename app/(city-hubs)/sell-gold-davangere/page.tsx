@@ -4,12 +4,12 @@ import { CityHubPage } from '@/components/sections/CityHubPage';
 export const metadata: Metadata = {
   title: 'Sell Gold in Davangere | Best Rate | MK Gold',
   description:
-    'Sell gold in Davangere at live MCX rates. MK Gold Davangere branch. XRF purity test. Payment in 45 minutes.',
+    'Sell gold in Davangere at live MCX rates. MK Gold Davangere branch. XRF purity test. Payment in 30 minutes.',
   alternates: { canonical: 'https://mkgold.in/sell-gold-davangere' },
   openGraph: {
     title: 'Sell Gold in Davangere | Best Rate | MK Gold',
     description:
-      'Sell gold in Davangere at live MCX rates. XRF purity test. Payment in 45 minutes.',
+      'Sell gold in Davangere at live MCX rates. XRF purity test. Payment in 30 minutes.',
     url: 'https://mkgold.in/sell-gold-davangere',
     siteName: 'MK Gold',
     locale: 'en_IN',

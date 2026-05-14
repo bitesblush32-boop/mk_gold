@@ -5,11 +5,11 @@ import React from 'react';
 /* ─── Data ────────────────────────────────────────────────────── */
 
 const STATS = [
-  { number: '11+',     label: 'Years of Trust' },
+  { number: '15+',     label: 'Years of Trust' },
   { number: '16',      label: 'Branches Across Karnataka' },
   { number: '10,000+', label: 'Customers Served' },
   { number: '₹100Cr+', label: 'Gold Purchased Value' },
-  { number: '45 min',  label: 'Average Payout Time' },
+  { number: '30 min',  label: 'Average Payout Time' },
 ] as const;
 
 /* ─── Helpers ────────────────────────────────────────────────── */
