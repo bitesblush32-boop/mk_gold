@@ -1,0 +1,308 @@
+/* ─── Buttons ────────────────────────────────────────────────── */
+.mk-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-size: var(--t-sm);
+  letter-spacing: 0.03em;
+  border-radius: var(--r-full);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0.65rem 1.6rem;
+  transition:
+    transform var(--t-base),
+    box-shadow var(--t-base),
+    opacity var(--t-base),
+    background-color var(--t-fast);
+  will-change: transform;
+  white-space: nowrap;
+  user-select: none;
+  line-height: 1.4;
+}
+
+.mk-btn:active {
+  transform: scale(0.97) !important;
+}
+
+.mk-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Gold — primary CTA */
+.mk-btn--gold {
+  background: var(--gold);
+  color: var(--plum);
+}
+
+.mk-btn--gold:hover {
+  background: var(--gold-light);
+  box-shadow: var(--shadow-gold);
+  transform: translateY(-2px);
+}
+
+/* Plum — secondary CTA */
+.mk-btn--plum {
+  background: var(--plum);
+  color: var(--white);
+}
+
+.mk-btn--plum:hover {
+  background: var(--purple);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(81, 37, 97, 0.35);
+}
+
+/* Ghost on dark backgrounds */
+.mk-btn--outline-light {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255, 255, 255, 0.38);
+}
+
+.mk-btn--outline-light:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.65);
+  transform: translateY(-2px);
+}
+
+/* Ghost on light backgrounds */
+.mk-btn--outline-plum {
+  background: transparent;
+  color: var(--plum);
+  border: 1.5px solid var(--plum);
+}
+
+.mk-btn--outline-plum:hover {
+  background: rgba(81, 37, 97, 0.06);
+  transform: translateY(-1px);
+}
+
+/* WhatsApp */
+.mk-btn--whatsapp {
+  background: #1BA448;
+  color: var(--white);
+}
+
+.mk-btn--whatsapp:hover {
+  background: #179c41;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(27, 164, 72, 0.35);
+}
+
+/* Sizes */
+.mk-btn--lg {
+  font-size: var(--t-base);
+  padding: 0.875rem 2.25rem;
+}
+
+.mk-btn--sm {
+  font-size: var(--t-xs);
+  padding: 0.45rem 1.1rem;
+}
+
+
+/* ─── Cards ──────────────────────────────────────────────────── */
+.mk-card {
+  border-radius: var(--r-xl);
+  background: var(--white);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  transition: transform var(--t-base), box-shadow var(--t-base);
+  will-change: transform;
+}
+
+.mk-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.mk-card--plum {
+  background: var(--plum);
+  color: var(--white);
+}
+
+.mk-card--gallery {
+  background: var(--gallery);
+}
+
+.mk-card--gold-border {
+  border: 1.5px solid var(--gold);
+}
+
+.mk-card--no-hover {
+  transition: none;
+}
+
+.mk-card--no-hover:hover {
+  transform: none;
+  box-shadow: var(--shadow-md);
+}
+
+
+/* ─── Badges ─────────────────────────────────────────────────── */
+.mk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-2xs);
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--r-full);
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.mk-badge--gold {
+  background: rgba(223, 193, 96, 0.14);
+  color: var(--gold-deep);
+  border: 1px solid rgba(223, 193, 96, 0.30);
+}
+
+.mk-badge--plum {
+  background: rgba(81, 37, 97, 0.10);
+  color: var(--plum);
+  border: 1px solid rgba(81, 37, 97, 0.20);
+}
+
+.mk-badge--white {
+  background: rgba(255, 255, 255, 0.10);
+  color: var(--gold);
+  border: 1px solid rgba(223, 193, 96, 0.25);
+}
+
+.mk-badge--green {
+  background: rgba(74, 222, 128, 0.12);
+  color: #16a34a;
+  border: 1px solid rgba(74, 222, 128, 0.30);
+}
+
+.mk-badge--gallery {
+  background: var(--gallery);
+  color: var(--ink-mid);
+  border: 1px solid var(--gallery-dk);
+}
+
+
+/* ─── Inputs ─────────────────────────────────────────────────── */
+.mk-input,
+.mk-select,
+.mk-textarea {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-sm);
+  font-weight: 400;
+  color: var(--ink);
+  background: var(--white);
+  border: 1.5px solid var(--gallery-dk);
+  border-radius: var(--r-lg);
+  padding: 0.7rem 1rem;
+  width: 100%;
+  outline: none;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.mk-input::placeholder,
+.mk-textarea::placeholder {
+  color: var(--mist);
+}
+
+.mk-input:focus,
+.mk-select:focus,
+.mk-textarea:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(223, 193, 96, 0.20);
+}
+
+.mk-input--error,
+.mk-select--error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.10);
+}
+
+/* Dark surface variant — on plum-deep / dark backgrounds */
+.mk-input--dark,
+.mk-select--dark,
+.mk-textarea--dark {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.90);
+}
+
+.mk-input--dark:focus,
+.mk-select--dark:focus,
+.mk-textarea--dark:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(223, 193, 96, 0.18);
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.mk-input--dark::placeholder,
+.mk-textarea--dark::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.mk-label--dark {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.mk-field-hint {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-xs);
+  color: var(--mist);
+  margin-top: var(--s-1);
+}
+
+.mk-field-hint--dark {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* TrustBlock */
+.mk-trust-block {
+  border-left: 3px solid var(--gold);
+  padding: 1.5rem 1.75rem;
+  background: rgba(223, 193, 96, 0.05);
+  border-radius: 0 var(--r-xl) var(--r-xl) 0;
+}
+
+.mk-trust-block__title {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-sm);
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: var(--s-1);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.mk-trust-block__body {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-sm);
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.65;
+}
+
+.mk-label {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-sm);
+  font-weight: 500;
+  color: var(--ink-mid);
+  display: block;
+  margin-bottom: var(--s-1-5);
+}
+
+.mk-field-error {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-xs);
+  color: #dc2626;
+  margin-top: var(--s-1);
+}
+

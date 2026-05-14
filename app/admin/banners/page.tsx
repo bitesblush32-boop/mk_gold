@@ -25,6 +25,8 @@ export default function BannersPage() {
   const [uploading, setUploading] = useState(false);
   const fileInputRef            = useRef<HTMLInputElement>(null);
 
+  const [resetting, setResetting] = useState(false);
+
   // Drag state
   const dragId = useRef<number | null>(null);
 
@@ -110,6 +112,26 @@ export default function BannersPage() {
     }
   }
 
+  async function handleReset() {
+    if (!window.confirm('Reset all banners to the 4 default images? This cannot be undone.')) return;
+    setResetting(true);
+    setMessage(null);
+    try {
+      const res  = await fetch('/api/admin/banners', { method: 'PUT' });
+      const data = await res.json();
+      if (res.ok) {
+        setBanners(data.banners ?? []);
+        setMessage({ type: 'ok', text: 'Banners reset to defaults.' });
+      } else {
+        setMessage({ type: 'err', text: data.error ?? 'Reset failed.' });
+      }
+    } catch {
+      setMessage({ type: 'err', text: 'Network error.' });
+    } finally {
+      setResetting(false);
+    }
+  }
+
   // HTML5 native drag-and-drop reordering
   function onDragStart(id: number) {
     dragId.current = id;
@@ -146,6 +168,14 @@ export default function BannersPage() {
     <div className="mk-admin-page">
       <div className="mk-admin-topbar">
         <h1 className="mk-admin-page-title">Hero Banners</h1>
+        <button
+          className="mk-admin-btn mk-admin-btn--outline"
+          onClick={handleReset}
+          disabled={resetting}
+          title="Wipe all DB rows and re-seed the 4 default banner images"
+        >
+          {resetting ? 'Resetting…' : 'Reset to defaults'}
+        </button>
       </div>
       <p className="mk-admin-subtitle">
         These appear in the homepage slideshow. Drag to reorder.
@@ -184,8 +214,37 @@ export default function BannersPage() {
                 <img
                   src={banner.src}
                   alt={banner.alt}
+                  title={banner.src}
                   className="mk-admin-banner-thumb"
+                  onError={e => {
+                    const img = e.currentTarget;
+                    img.style.display = 'none';
+                    const ph = img.nextElementSibling as HTMLElement | null;
+                    if (ph) ph.style.display = 'flex';
+                  }}
                 />
+                <div
+                  style={{
+                    display: 'none',
+                    width: 80,
+                    height: 45,
+                    flexShrink: 0,
+                    background: '#dddcdc',
+                    borderRadius: 4,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.55rem',
+                    color: '#8a7898',
+                    textAlign: 'center',
+                    padding: '0 4px',
+                    overflow: 'hidden',
+                    wordBreak: 'break-all',
+                    title: banner.src,
+                  }}
+                  title={banner.src}
+                >
+                  {banner.src.split('/').pop()}
+                </div>
 
                 {/* Alt text */}
                 <input

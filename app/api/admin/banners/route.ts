@@ -6,8 +6,11 @@ import {
   getAllBanners,
   createBanner,
   updateBannerOrder,
+  updateBannerAlt,
   toggleBanner,
   deleteBanner,
+  deleteAllBanners,
+  seedDefaultBanners,
 } from '@/lib/db/banners';
 
 /* ─── GET — list all banners (admin view) ────────────────────────── */
@@ -17,7 +20,12 @@ export async function GET(req: NextRequest) {
   if (deny) return deny;
 
   try {
-    const banners = await getAllBanners();
+    let banners = await getAllBanners();
+    // First-time setup: seed the existing public banner files into DB
+    if (banners.length === 0) {
+      await seedDefaultBanners();
+      banners = await getAllBanners();
+    }
     return NextResponse.json({ banners });
   } catch (err) {
     console.error('[api/admin/banners] GET error:', err);
@@ -92,14 +100,14 @@ export async function PATCH(req: NextRequest) {
   const deny = requireAdmin(req);
   if (deny) return deny;
 
-  let body: { id?: number; sort_order?: number; is_active?: boolean };
+  let body: { id?: number; sort_order?: number; is_active?: boolean; alt?: string };
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { id, sort_order, is_active } = body;
+  const { id, sort_order, is_active, alt } = body;
 
   if (!id) {
     return NextResponse.json({ error: 'id is required' }, { status: 400 });
@@ -108,6 +116,7 @@ export async function PATCH(req: NextRequest) {
   try {
     if (sort_order !== undefined) await updateBannerOrder(id, sort_order);
     if (is_active  !== undefined) await toggleBanner(id, is_active);
+    if (alt        !== undefined) await updateBannerAlt(id, alt);
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[api/admin/banners] PATCH error:', err);
@@ -137,6 +146,23 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[api/admin/banners] DELETE error:', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+/* ─── PUT — reset all banners to defaults ────────────────────────── */
+
+export async function PUT(req: NextRequest) {
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
+  try {
+    await deleteAllBanners();
+    await seedDefaultBanners();
+    const banners = await getAllBanners();
+    return NextResponse.json({ success: true, banners });
+  } catch (err) {
+    console.error('[api/admin/banners] PUT error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

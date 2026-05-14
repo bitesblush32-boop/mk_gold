@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface Lead {
   id:              number;
@@ -146,9 +146,8 @@ export default function LeadsPage() {
               </thead>
               <tbody>
                 {filtered.map(lead => (
-                  <>
+                  <React.Fragment key={lead.id}>
                     <tr
-                      key={lead.id}
                       className="mk-admin-table-row"
                       onClick={() => setExpandId(expandId === lead.id ? null : lead.id)}
                       style={{ cursor: 'pointer' }}
@@ -168,7 +167,7 @@ export default function LeadsPage() {
 
                     {/* Expanded row */}
                     {expandId === lead.id && (
-                      <tr key={`${lead.id}-expand`} className="mk-admin-expand-row">
+                      <tr className="mk-admin-expand-row">
                         <td colSpan={7}>
                           <div className="mk-admin-expand-grid">
                             <div><span className="mk-admin-expand-label">Email</span>{cell(lead.email)}</div>
@@ -186,7 +185,7 @@ export default function LeadsPage() {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>

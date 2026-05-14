@@ -13,65 +13,7 @@ import { MkButton } from '@/components/ui/MkButton';
 import { MkLeadPopup } from '@/components/features/MkLeadPopup';
 import { MkEmergency } from '@/components/features/MkEmergency';
 import { BRANCHES, type Branch } from '@/lib/branch-router';
-
-/* ─── Hero banners ─────────────────────────────────────────────── */
-
-const BANNERS = [
-  { src: '/Web Banners_Design 2.jpg.jpeg',    alt: 'Turn your gold into cash — MK Gold' },
-  { src: '/Web Banners_Design 6.jpg (1).jpeg', alt: 'We buy your gold at the right value — MK Gold' },
-  { src: '/Web Banners_Design 7.jpg.jpeg',    alt: 'ನಿಮ್ಮ ಚಿನ್ನಕ್ಕೆ ಸರಿಯಾದ ಬೆಲೆ, ತಕ್ಷಣ ಹಣ — MK Gold' },
-  { src: '/Home Page.png',                    alt: 'MK Gold branch — trusted gold buyers since 2014' },
-];
-
-
-/* ─── Testimonials ─────────────────────────────────────────────── */
-
-const TESTIMONIALS = [
-  {
-    name: 'Suresh Kumar',
-    area: 'Rajajinagar, Bangalore',
-    rating: 5,
-    text: 'Got the best rate for my 22K jewellery. The XRF test was done in front of me and payment was within 30 minutes. Very transparent process.',
-    initials: 'SK',
-  },
-  {
-    name: 'Kavitha Nair',
-    area: 'Gokulam, Mysore',
-    rating: 5,
-    text: 'MK Gold helped me release my pledged gold from the bank without any hassle. They handled everything professionally and confidentially.',
-    initials: 'KN',
-  },
-  {
-    name: 'Mohammed Rafiq',
-    area: 'Mangalore City',
-    rating: 5,
-    text: 'Excellent service. The staff explained the MCX rate and exactly how they calculated my gold value. Nothing hidden. Would recommend to everyone.',
-    initials: 'MR',
-  },
-  {
-    name: 'Anitha Reddy',
-    area: 'Koramangala, Bangalore',
-    rating: 5,
-    text: 'I was worried about getting a fair price but MK Gold showed me the live MCX rate and their margin side by side. Complete transparency.',
-    initials: 'AR',
-  },
-  {
-    name: 'Vijay Shetty',
-    area: 'Kadri, Mangalore',
-    rating: 5,
-    text: '15+ years in business means they know what they are doing. Fast, honest, professional. Got payment immediately after the test.',
-    initials: 'VS',
-  },
-  {
-    name: 'Priya Sharma',
-    area: 'Davangere',
-    rating: 5,
-    text: 'The branch team was very respectful and patient. They explained everything clearly. The German XRF machine gives accurate results instantly.',
-    initials: 'PS',
-  },
-];
-
-/* ─── City branch data ─────────────────────────────────────────── */
+import { FALLBACK_BANNERS, TESTIMONIALS } from '@/lib/data/home';
 
 const CITIES = ['Bangalore', 'Mysore', 'Mangalore', 'Davangere'] as const;
 type City = typeof CITIES[number];
@@ -968,6 +910,18 @@ export default function HomePage() {
   const [trustFlip1, setTrustFlip1] = useState(false);
   const [slide, setSlide] = useState(0);
   const [rateUnlocked, setRateUnlocked] = useState(false);
+  const [banners, setBanners] = useState<{ src: string; alt: string }[]>(FALLBACK_BANNERS);
+
+  useEffect(() => {
+    fetch('/api/banners')
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data.banners) && data.banners.length > 0) {
+          setBanners(data.banners.map((b: { src: string; alt: string }) => ({ src: b.src, alt: b.alt })));
+        }
+      })
+      .catch(() => { /* keep fallback */ });
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -980,9 +934,9 @@ export default function HomePage() {
 
   // Auto-advance banner every 5 seconds
   useEffect(() => {
-    const id = setInterval(() => setSlide(p => (p + 1) % BANNERS.length), 5000);
+    const id = setInterval(() => setSlide(p => (p + 1) % banners.length), 5000);
     return () => clearInterval(id);
-  }, []);
+  }, [banners.length]);
 
   function goToSlide(i: number) {
     setSlide(i);
@@ -1971,7 +1925,7 @@ export default function HomePage() {
 
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="sc-hero mk-bg-dark" aria-label="Hero">
-        {BANNERS.map((b, i) => (
+        {banners.map((b, i) => (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             key={b.src}
@@ -2024,7 +1978,7 @@ export default function HomePage() {
 
         {/* Slide dots */}
         <div className="sc-hero__dots" role="tablist" aria-label="Hero slides">
-          {BANNERS.map((_, i) => (
+          {banners.map((_, i) => (
             <button
               key={i}
               onClick={() => goToSlide(i)}
