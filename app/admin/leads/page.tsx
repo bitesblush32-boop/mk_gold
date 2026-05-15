@@ -43,6 +43,11 @@ export default function LeadsPage() {
   const [loading, setLoading]   = useState(true);
   const [expandId, setExpandId] = useState<number | null>(null);
 
+  // Remarks state per lead
+  const [remarks, setRemarks]   = useState<Record<number, string>>({});
+  const [savingId, setSavingId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
   // Filters
   const [city, setCity]         = useState<string>('All');
   const [dateFrom, setDateFrom] = useState('');
@@ -56,10 +61,45 @@ export default function LeadsPage() {
         const data = d.leads ?? [];
         setLeads(data);
         setFiltered(data);
+        // Pre-populate remarks from existing notes
+        const initial: Record<number, string> = {};
+        data.forEach((l: Lead) => { initial[l.id] = l.notes ?? ''; });
+        setRemarks(initial);
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  async function saveRemarks(lead: Lead) {
+    setSavingId(lead.id);
+    try {
+      await fetch('/api/leads', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: lead.id, notes: remarks[lead.id] ?? '' }),
+      });
+      // Update local state
+      setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, notes: remarks[lead.id] ?? '' } : l));
+      setFiltered(prev => prev.map(l => l.id === lead.id ? { ...l, notes: remarks[lead.id] ?? '' } : l));
+    } catch { /* silent */ }
+    finally { setSavingId(null); }
+  }
+
+  async function handleDelete(id: number) {
+    if (!confirm('Delete this lead permanently? This cannot be undone.')) return;
+    setDeletingId(id);
+    try {
+      await fetch('/api/leads', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      setLeads(prev => prev.filter(l => l.id !== id));
+      setFiltered(prev => prev.filter(l => l.id !== id));
+      if (expandId === id) setExpandId(null);
+    } catch { /* silent */ }
+    finally { setDeletingId(null); }
+  }
 
   function applyFilters() {
     let result = [...leads];
@@ -82,7 +122,7 @@ export default function LeadsPage() {
       <div className="mk-admin-topbar">
         <h1 className="mk-admin-page-title">Lead Viewer</h1>
       </div>
-      <p className="mk-admin-subtitle">All website leads — read only. {leads.length} total.</p>
+      <p className="mk-admin-subtitle">All website leads. {leads.length} total.</p>
 
       {/* Filter bar */}
       <div className="mk-admin-section">
@@ -202,7 +242,38 @@ export default function LeadsPage() {
                             <div><span className="mk-admin-expand-label">UTM Source</span>{cell(lead.utm_source)}</div>
                             <div><span className="mk-admin-expand-label">UTM Medium</span>{cell(lead.utm_medium)}</div>
                             <div><span className="mk-admin-expand-label">UTM Campaign</span>{cell(lead.utm_campaign)}</div>
-                            {lead.notes && <div style={{ gridColumn: '1/-1' }}><span className="mk-admin-expand-label">Notes</span>{lead.notes}</div>}
+
+                            {/* Remarks */}
+                            <div style={{ gridColumn: '1/-1', marginTop: '0.5rem' }}>
+                              <span className="mk-admin-expand-label">Remarks</span>
+                              <textarea
+                                className="mk-admin-input"
+                                rows={3}
+                                style={{ width: '100%', marginTop: '0.25rem', resize: 'vertical', fontFamily: 'inherit', fontSize: '0.85rem' }}
+                                placeholder="Add internal remarks about this lead…"
+                                value={remarks[lead.id] ?? ''}
+                                onChange={e => setRemarks(prev => ({ ...prev, [lead.id]: e.target.value }))}
+                                onClick={e => e.stopPropagation()}
+                              />
+                              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' }}>
+                                <button
+                                  className="mk-admin-btn mk-admin-btn--plum"
+                                  style={{ fontSize: '0.8rem', padding: '0.3rem 0.9rem' }}
+                                  disabled={savingId === lead.id}
+                                  onClick={e => { e.stopPropagation(); saveRemarks(lead); }}
+                                >
+                                  {savingId === lead.id ? 'Saving…' : 'Save Remarks'}
+                                </button>
+                                <button
+                                  className="mk-admin-btn"
+                                  style={{ fontSize: '0.8rem', padding: '0.3rem 0.9rem', background: '#c0392b', color: '#fff', marginLeft: 'auto' }}
+                                  disabled={deletingId === lead.id}
+                                  onClick={e => { e.stopPropagation(); handleDelete(lead.id); }}
+                                >
+                                  {deletingId === lead.id ? 'Deleting…' : 'Delete Lead'}
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </td>
                       </tr>

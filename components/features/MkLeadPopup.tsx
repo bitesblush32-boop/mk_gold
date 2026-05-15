@@ -15,6 +15,7 @@ export function MkLeadPopup() {
     name: '', phone: '', goldType: '', weight: '', purity: '', message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [phoneError, setPhoneError] = useState('');
 
   useEffect(() => {
     setMounted(true);
@@ -41,18 +42,45 @@ export function MkLeadPopup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setPhoneError('');
+
+    const cleanPhone = form.phone.replace(/\s/g, '');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setPhoneError('Enter a valid 10-digit Indian mobile number');
+      return;
+    }
+
     setStatus('loading');
+
+    const puritiyKarat = form.purity === '24k' ? 24 : form.purity === '22k' ? 22 : undefined;
+    const weightGrams  = form.weight ? parseFloat(form.weight) : undefined;
+
     try {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, source: 'popup-lead-form', ...getUtmParams() }),
+        body: JSON.stringify({
+          name:         form.name,
+          phone:        cleanPhone,
+          gold_type:    form.goldType || undefined,
+          weight_grams: weightGrams != null ? String(weightGrams) : undefined,
+          purity_karat: puritiyKarat,
+          notes:        form.message || undefined,
+          source:       'popup-lead-form',
+          ...getUtmParams(),
+        }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        if (data?.error?.toLowerCase().includes('phone') || data?.error?.toLowerCase().includes('mobile')) {
+          setPhoneError(data.error);
+        }
+        throw new Error();
+      }
       trackFormSubmit({ source: 'popup' });
       setStatus('success');
     } catch {
-      setStatus('error');
+      if (!phoneError) setStatus('error');
     }
   };
 
@@ -152,8 +180,21 @@ export function MkLeadPopup() {
                 </div>
                 <div>
                   <label className="lp-form-label">Phone Number</label>
-                  <input type="tel" className="mk-input" placeholder="+91 9xxxx xxxxx" required
-                    value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
+                  <input
+                    type="tel"
+                    className={`mk-input${phoneError ? ' mk-input--error' : ''}`}
+                    placeholder="10-digit mobile number"
+                    required
+                    inputMode="numeric"
+                    maxLength={10}
+                    value={form.phone}
+                    onChange={e => { setForm(f => ({ ...f, phone: e.target.value })); setPhoneError(''); }}
+                  />
+                  {phoneError && (
+                    <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: '0.72rem', color: '#dc2626', margin: '0.25rem 0 0' }}>
+                      {phoneError}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="lp-form-label">Gold Type</label>

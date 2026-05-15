@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createLead, getAllLeads } from '@/lib/db/leads';
+import { createLead, getAllLeads, updateLeadRemarks, deleteLead } from '@/lib/db/leads';
 import { getBranchBySlug } from '@/lib/branch-router';
 import { sendWhatsApp } from '@/lib/whatsapp';
 import { requireAdmin } from '@/lib/admin-auth';
@@ -41,6 +41,51 @@ export async function GET(req: NextRequest) {
     console.error('[api/leads] GET error:', err);
     // Return empty on DB failure (table may not exist yet)
     return NextResponse.json({ leads: [], count: 0 });
+  }
+}
+
+/* ─── PATCH /api/leads — update remarks (admin-protected) ───────── */
+
+export async function PATCH(req: NextRequest) {
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
+  let body: { id?: number; notes?: string };
+  try { body = await req.json(); } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  if (!body.id) return NextResponse.json({ error: 'id is required' }, { status: 400 });
+  if (body.notes === undefined) return NextResponse.json({ error: 'notes is required' }, { status: 400 });
+
+  try {
+    const row = await updateLeadRemarks(body.id, body.notes);
+    return NextResponse.json({ success: true, lead: row });
+  } catch (err) {
+    console.error('[api/leads] PATCH error:', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+/* ─── DELETE /api/leads — delete lead (admin-protected) ─────────── */
+
+export async function DELETE(req: NextRequest) {
+  const deny = requireAdmin(req);
+  if (deny) return deny;
+
+  let body: { id?: number };
+  try { body = await req.json(); } catch {
+    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+  }
+
+  if (!body.id) return NextResponse.json({ error: 'id is required' }, { status: 400 });
+
+  try {
+    await deleteLead(body.id);
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error('[api/leads] DELETE error:', err);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 

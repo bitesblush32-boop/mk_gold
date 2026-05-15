@@ -44,3 +44,18 @@ export async function updateLeadStatus(
     .returning();
   return row;
 }
+
+export async function updateLeadRemarks(id: number, notes: string) {
+  const [row] = await db
+    .update(leads)
+    .set({ notes, updated_at: new Date() })
+    .where(eq(leads.id, id))
+    .returning();
+  return row;
+}
+
+/* ─── Delete ─────────────────────────────────────────────────────── */
+
+export async function deleteLead(id: number) {
+  await db.delete(leads).where(eq(leads.id, id));
+}
