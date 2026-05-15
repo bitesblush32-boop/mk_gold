@@ -55,6 +55,13 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "MK Gold", url: "https://mkgold.in" }],
   creator: "MK Gold",
+  icons: {
+    icon: [
+      { url: '/favicon.png', type: 'image/png' },
+    ],
+    apple: { url: '/favicon.png', type: 'image/png' },
+    shortcut: '/favicon.png',
+  },
   verification: {
     google: "kngp9_6DxVztBM7nc2H8GtkFv6G2lvZEZc2EGZVW4xg",
   },

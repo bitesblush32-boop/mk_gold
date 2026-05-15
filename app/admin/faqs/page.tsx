@@ -128,7 +128,7 @@ export default function FaqsPage() {
       </p>
 
       {/* Tab bar */}
-      <div className="mk-admin-section" style={{ paddingBottom: 0, borderBottom: '1px solid #2e1a3b' }}>
+      <div className="mk-admin-section" style={{ paddingBottom: 0, borderBottom: '1px solid var(--gallery-dk)' }}>
         <div style={{ display: 'flex', gap: '0.25rem', flexWrap: 'wrap' }}>
           {TABS.map(t => (
             <button
@@ -154,11 +154,12 @@ export default function FaqsPage() {
               <div
                 key={faq.id}
                 style={{
-                  background: '#2a1438',
-                  border: '1px solid #3e1f50',
-                  borderRadius: '8px',
+                  background: 'white',
+                  border: '1px solid var(--gallery-dk)',
+                  borderRadius: '10px',
                   padding: '1rem 1.25rem',
-                  opacity: faq.is_active ? 1 : 0.5,
+                  opacity: faq.is_active ? 1 : 0.55,
+                  boxShadow: '0 1px 6px rgba(81,37,97,0.06)',
                 }}
               >
                 {editId === faq.id ? (
@@ -230,7 +231,7 @@ export default function FaqsPage() {
                         fontFamily: 'Poppins, sans-serif',
                         fontSize: 'var(--t-sm)',
                         fontWeight: 600,
-                        color: 'var(--white)',
+                        color: 'var(--ink)',
                         margin: '0 0 0.25rem',
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
@@ -241,7 +242,7 @@ export default function FaqsPage() {
                       <p style={{
                         fontFamily: 'Poppins, sans-serif',
                         fontSize: 'var(--t-xs)',
-                        color: 'var(--mist)',
+                        color: 'var(--ink-mid)',
                         margin: 0,
                         display: '-webkit-box',
                         WebkitLineClamp: 2,
@@ -265,12 +266,14 @@ export default function FaqsPage() {
                       </label>
                       <button
                         className="mk-admin-btn-text"
+                        style={{ color: '#C9A940' }}
                         onClick={() => startEdit(faq)}
                       >
                         Edit
                       </button>
                       <button
-                        className="mk-admin-btn-text mk-admin-btn-text--plum"
+                        className="mk-admin-btn-text"
+                        style={{ color: '#c0392b' }}
                         onClick={() => handleDelete(faq)}
                       >
                         Delete
@@ -287,13 +290,14 @@ export default function FaqsPage() {
         {addOpen ? (
           <div style={{
             marginTop: '1.25rem',
-            background: '#2a1438',
-            border: '1px solid var(--gold)',
-            borderRadius: '8px',
+            background: 'white',
+            border: '1.5px solid var(--gold)',
+            borderRadius: '10px',
             padding: '1.25rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.75rem',
+            boxShadow: '0 2px 12px rgba(223,193,96,0.12)',
           }}>
             <p className="mk-admin-label" style={{ margin: 0 }}>New FAQ — {TABS.find(t => t.key === tab)?.label}</p>
             <div>
@@ -336,7 +340,7 @@ export default function FaqsPage() {
           </div>
         ) : (
           <button
-            className="mk-admin-btn mk-admin-btn--plum"
+            className="mk-admin-btn mk-admin-btn--gold"
             style={{ marginTop: '1.25rem' }}
             onClick={() => { setAddOpen(true); setEditId(null); }}
           >

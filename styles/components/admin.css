@@ -330,7 +330,7 @@
 }
 
 .mk-admin-btn-text:hover { opacity: 0.70; }
-.mk-admin-btn-text--plum { color: #c0392b; }
+.mk-admin-btn-text--danger { color: #c0392b; }
 /* ── Tabs (FAQ manager, blog categories) ─────────────────────────── */
 
 .mk-admin-tab {
