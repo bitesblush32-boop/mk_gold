@@ -52,7 +52,7 @@ export function MkFooter() {
             </a>
 
             <p className="mk-footer__tagline-kn" lang="kn">
-              ತಕ್ಷಣ ಹಣ, ಶಾಶ್ವತ ವಿಶ್ವಾಸ
+              ತಕ್ಷಣ ಹಣ ನಿರಂತರ ನಂಬಿಕೆ
             </p>
 
             <p className="mk-footer__desc">

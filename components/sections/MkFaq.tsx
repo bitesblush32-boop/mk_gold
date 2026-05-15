@@ -9,7 +9,7 @@ import type { FaqItem } from '@/lib/db/faqs';
 
 const FALLBACK_FAQS: FaqItem[] = [
   { q: 'How is gold purity tested at MK Gold?', a: 'We use a Bruker S1 Titan XRF (X-Ray Fluorescence) spectrometer — a German instrument used by jewellers and refineries worldwide. It reads the exact elemental composition of your gold in under 2 minutes without any acid, scratching, or damage to your jewellery.' },
-  { q: 'What types of gold do you buy?', a: 'We buy gold jewellery (any design, any age), gold coins, gold bars, and broken or damaged gold pieces. We accept 18K, 20K, 22K, and 24K gold. We do not accept gold-plated items or gold-filled jewellery.' },
+  { q: 'What types of gold do you buy?', a: 'We buy gold jewellery (any design, any age), gold coins, gold bars, and broken or damaged gold pieces. We accept 22K and 24K gold. We do not accept gold-plated items or gold-filled jewellery.' },
   { q: 'How is the buying rate calculated?', a: 'Our rate is based on live MCX (Multi Commodity Exchange) gold prices, updated every 5 minutes. We pay 97.5% of the MCX rate — our 2.5% margin is shown openly next to the MCX rate so you can verify it yourself.' },
   { q: 'How long does the entire process take?', a: 'From the moment you walk in to receiving payment, the process takes around 30 minutes for most customers. Weighing takes 5 minutes, XRF testing takes 2 minutes, and payment is immediate once you accept the offer.' },
   { q: 'What documents do I need to bring?', a: 'You need any one valid government-issued photo ID: Aadhaar card, PAN card, Passport, Voter ID, or Driving Licence. No original purchase receipts or hallmark certificates are required.' },

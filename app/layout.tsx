@@ -135,7 +135,7 @@ const FAQ_SCHEMA = {
       name: "What gold can I sell at MK Gold?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "We buy all gold jewellery (18K, 20K, 22K, 24K), gold coins, gold bars, and broken or damaged gold pieces. No original receipts or hallmark certificates required.",
+        text: "We buy all gold jewellery (22K, 24K), gold coins, gold bars, and broken or damaged gold pieces. No original receipts or hallmark certificates required.",
       },
     },
   ],

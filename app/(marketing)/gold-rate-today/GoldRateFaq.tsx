@@ -16,7 +16,7 @@ const FALLBACK_FAQS: FaqItem[] = [
   },
   {
     q: 'Is the rate different for 22K vs 24K gold?',
-    a: 'Yes. The base MCX rate is always for 24K (pure) gold. For other purities, the rate is calculated by multiplying by the purity factor: 22K = 91.67%, 20K = 83.33%, 18K = 75.00%. Our Bruker XRF spectrometer tests the exact elemental purity of your gold — not the hallmark stamp — so you are always paid for what you actually have, not what is printed on the jewellery.',
+    a: 'Yes. The base MCX rate is always for 24K (pure) gold. For 22K gold, the rate is calculated by multiplying by the purity factor: 22K = 91.67%. Our Bruker XRF spectrometer tests the exact elemental purity of your gold — not the hallmark stamp — so you are always paid for what you actually have, not what is printed on the jewellery.',
   },
   {
     q: 'Can I lock in today\'s rate?',

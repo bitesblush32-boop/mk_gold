@@ -32,7 +32,7 @@ export function MkLeadPopup() {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') dismiss(); };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   function dismiss() {
@@ -152,7 +152,7 @@ export function MkLeadPopup() {
                 </div>
                 <div>
                   <label className="lp-form-label">Phone Number</label>
-                  <input type="tel" className="mk-input" placeholder="+91 98765 43210" required
+                  <input type="tel" className="mk-input" placeholder="+91 9xxxx xxxxx" required
                     value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} />
                 </div>
                 <div>

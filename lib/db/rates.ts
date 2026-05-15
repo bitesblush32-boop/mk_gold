@@ -31,8 +31,6 @@ export async function getGoldRateOverride() {
 export async function setGoldRateOverride(data: {
   rate_24k: string;
   rate_22k: string;
-  rate_20k: string;
-  rate_18k: string;
   override_until?: Date | null;
 }) {
   // Always insert a new row — the GET query reads latest
@@ -41,8 +39,6 @@ export async function setGoldRateOverride(data: {
     .values({
       rate_24k:       data.rate_24k,
       rate_22k:       data.rate_22k,
-      rate_20k:       data.rate_20k,
-      rate_18k:       data.rate_18k,
       is_manual:      true,
       override_until: data.override_until ?? null,
       updated_at:     new Date(),
@@ -73,8 +69,6 @@ export async function clearGoldRateOverride() {
     .values({
       rate_24k:       latest.rate_24k,
       rate_22k:       latest.rate_22k,
-      rate_20k:       latest.rate_20k,
-      rate_18k:       latest.rate_18k,
       is_manual:      false,
       override_until: now,
       updated_at:     now,

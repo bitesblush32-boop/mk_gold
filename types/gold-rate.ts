@@ -4,8 +4,8 @@
    Imported by: context, hooks, feature components, API routes.
    ═══════════════════════════════════════════════════════════════ */
 
-/** The four karat purities MK Gold buys */
-export type GoldKarat = 18 | 20 | 22 | 24;
+/** The two karat purities MK Gold buys */
+export type GoldKarat = 22 | 24;
 
 /** Physical condition of the gold being sold */
 export type GoldCondition = 'perfect' | 'broken';
@@ -49,8 +49,6 @@ export interface GoldRateContextValue {
 export interface UseGoldRateReturn {
   rate24K: number;
   rate22K: number;
-  rate20K: number;
-  rate18K: number;
   /** MK Gold's 22K buying rate = rate22K × 0.975 */
   mkRate22K: number;
   /** Raw MCX price in ₹/10g */

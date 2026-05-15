@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 
 interface KaratRate {
-  karat: 18 | 20 | 22 | 24;
+  karat: 22 | 24;
   value: number;   // ₹ per gram
   change?: number; // delta from yesterday, ₹
 }
@@ -16,15 +16,11 @@ interface MkTickerProps {
 const KARAT_LABELS: Record<number, string> = {
   24: '24K',
   22: '22K',
-  20: '20K',
-  18: '18K',
 };
 
 const DEFAULT_RATES: KaratRate[] = [
   { karat: 24, value: 7200 },
   { karat: 22, value: 6600 },
-  { karat: 20, value: 6000 },
-  { karat: 18, value: 5400 },
 ];
 
 function fmt(v: number) {

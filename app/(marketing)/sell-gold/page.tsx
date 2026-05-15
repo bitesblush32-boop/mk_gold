@@ -264,7 +264,7 @@ export default async function SellGoldPage() {
             tag="What We Buy"
             title="All Types of Gold"
             accentWord="Gold"
-            subtitle="18K to 24K — any type, any age, any condition."
+            subtitle="22K and 24K — any type, any age, any condition."
           />
 
           <div

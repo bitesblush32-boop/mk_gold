@@ -56,7 +56,7 @@ export async function generateMetadata(): Promise<Metadata> {
   });
   const title       = `Gold Rate Today in Karnataka | Live MCX Price | MK Gold — ${date}`;
   const description =
-    'Live gold rate today in Bangalore, Mysore, Mangalore and Davangere. 22K, 24K, 20K, 18K gold price per gram — updated every 5 minutes from MCX. Free XRF purity test at all 16 MK Gold branches.';
+    'Live gold rate today in Bangalore, Mysore, Mangalore and Davangere. 22K and 24K gold price per gram — updated every 5 minutes from MCX. Free XRF purity test at all 16 MK Gold branches.';
 
   return {
     title,
@@ -177,8 +177,6 @@ export default async function GoldRateTodayPage() {
             {[
               { label: '24K Gold', purity: '999 Fine',     r: rate.rate24k },
               { label: '22K Gold', purity: '916 Hallmark', r: rate.rate22k },
-              { label: '20K Gold', purity: '833 Purity',   r: rate.rate20k },
-              { label: '18K Gold', purity: '750 Purity',   r: rate.rate18k },
             ].map(({ label, purity, r }) => (
               <div key={label} className="mk-rate-cell">
                 <p className="mk-rate-cell__label">{label}</p>

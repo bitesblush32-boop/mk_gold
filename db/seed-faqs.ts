@@ -28,7 +28,7 @@ const SEED_DATA: { page: string; items: { q: string; a: string }[] }[] = [
       },
       {
         q: 'What types of gold do you buy?',
-        a: 'We buy gold jewellery (any design, any age), gold coins, gold bars, and broken or damaged gold pieces. We accept 18K, 20K, 22K, and 24K gold. We do not accept gold-plated items or gold-filled jewellery.',
+        a: 'We buy gold jewellery (any design, any age), gold coins, gold bars, and broken or damaged gold pieces. We accept 22K and 24K gold. We do not accept gold-plated items or gold-filled jewellery.',
       },
       {
         q: 'How is the buying rate calculated?',
@@ -90,7 +90,7 @@ const SEED_DATA: { page: string; items: { q: string; a: string }[] }[] = [
       },
       {
         q: 'Is the rate different for 22K vs 24K gold?',
-        a: 'Yes. The base MCX rate is always for 24K (pure) gold. For other purities, the rate is calculated by multiplying by the purity factor: 22K = 91.67%, 20K = 83.33%, 18K = 75.00%. Our Bruker XRF spectrometer tests the exact elemental purity of your gold — not the hallmark stamp — so you are always paid for what you actually have, not what is printed on the jewellery.',
+        a: 'Yes. The base MCX rate is always for 24K (pure) gold. For 22K gold, the rate is calculated by multiplying by the purity factor: 22K = 91.67%. Our Bruker XRF spectrometer tests the exact elemental purity of your gold — not the hallmark stamp — so you are always paid for what you actually have, not what is printed on the jewellery.',
       },
       {
         q: "Can I lock in today's rate?",

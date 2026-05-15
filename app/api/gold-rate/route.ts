@@ -12,14 +12,10 @@ export async function GET() {
     if (override && override.is_manual) {
       const r24 = Number(override.rate_24k);
       const r22 = Number(override.rate_22k);
-      const r20 = Number(override.rate_20k);
-      const r18 = Number(override.rate_18k);
       return NextResponse.json(
         {
           rate24K:    r24,
           rate22K:    r22,
-          rate20K:    r20,
-          rate18K:    r18,
           mcxRate:    Math.round(r24 * 10),
           updatedAt:  override.updated_at instanceof Date
             ? override.updated_at.toISOString()
@@ -28,8 +24,6 @@ export async function GET() {
           rates: [
             { karat: 24, value: r24 },
             { karat: 22, value: r22 },
-            { karat: 20, value: r20 },
-            { karat: 18, value: r18 },
           ],
         },
         {
@@ -46,16 +40,12 @@ export async function GET() {
       {
         rate24K:   rate.rate24k,
         rate22K:   rate.rate22k,
-        rate20K:   rate.rate20k,
-        rate18K:   rate.rate18k,
         mcxRate:   rate.mcxRate,
         updatedAt: rate.timestamp,
         source:    rate.source,
         rates: [
           { karat: 24, value: rate.rate24k },
           { karat: 22, value: rate.rate22k },
-          { karat: 20, value: rate.rate20k },
-          { karat: 18, value: rate.rate18k },
         ],
       },
       {

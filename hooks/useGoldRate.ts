@@ -22,8 +22,6 @@ export function useGoldRate(): UseGoldRateReturn {
   return {
     rate24K:     getRate(24),
     rate22K,
-    rate20K:     getRate(20),
-    rate18K:     getRate(18),
     mkRate22K:   Math.round(rate22K * 0.975),
     mcxRate,
     lastUpdated,

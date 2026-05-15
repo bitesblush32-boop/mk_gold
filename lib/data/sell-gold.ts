@@ -28,7 +28,7 @@ export const HOW_TO_STEPS = [
 export const GOLD_TYPES = [
   {
     title: 'Gold Jewellery',
-    purities: ['18K', '20K', '22K', '24K'] as string[],
+    purities: ['22K', '24K'] as string[],
     desc: 'Any design, any age, any jeweller. Necklaces, bangles, rings, earrings, chains. Condition does not reduce your price.',
   },
   {
@@ -43,7 +43,7 @@ export const GOLD_TYPES = [
   },
   {
     title: 'Broken Gold',
-    purities: ['18K', '20K', '22K', '24K'] as string[],
+    purities: ['22K', '24K'] as string[],
     desc: 'Bent, broken, melted, or damaged pieces. We test actual purity and pay accordingly — no penalty for condition.',
   },
 ];

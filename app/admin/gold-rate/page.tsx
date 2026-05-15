@@ -6,8 +6,6 @@ interface Override {
   id:             number;
   rate_24k:       string;
   rate_22k:       string;
-  rate_20k:       string;
-  rate_18k:       string;
   is_manual:      boolean;
   override_until: string | null;
   updated_at:     string;
@@ -16,8 +14,6 @@ interface Override {
 interface LiveRate {
   rate24K: number;
   rate22K: number;
-  rate20K: number;
-  rate18K: number;
 }
 
 const HOURS = [2, 4, 8, 24] as const;
@@ -33,7 +29,7 @@ export default function GoldRatePage() {
   const [override, setOverride]   = useState<Override | null>(null);
   const [liveRate, setLiveRate]   = useState<LiveRate | null>(null);
   const [hours, setHours]         = useState<number>(24);
-  const [rates, setRates]         = useState({ r24: '', r22: '', r20: '', r18: '' });
+  const [rates, setRates]         = useState({ r24: '', r22: '' });
   const [loading, setLoading]     = useState(true);
   const [saving, setSaving]       = useState(false);
   const [message, setMessage]     = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
@@ -54,15 +50,11 @@ export default function GoldRatePage() {
         setRates({
           r24: String(liveData.rate24K ?? ''),
           r22: String(liveData.rate22K ?? ''),
-          r20: String(liveData.rate20K ?? ''),
-          r18: String(liveData.rate18K ?? ''),
         });
       } else {
         setRates({
           r24: ovData.override.rate_24k,
           r22: ovData.override.rate_22k,
-          r20: ovData.override.rate_20k,
-          r18: ovData.override.rate_18k,
         });
       }
     } catch {
@@ -85,8 +77,6 @@ export default function GoldRatePage() {
         body:    JSON.stringify({
           rate_24k: rates.r24,
           rate_22k: rates.r22,
-          rate_20k: rates.r20,
-          rate_18k: rates.r18,
           hours,
         }),
       });
@@ -116,8 +106,6 @@ export default function GoldRatePage() {
           setRates({
             r24: String(liveRate.rate24K),
             r22: String(liveRate.rate22K),
-            r20: String(liveRate.rate20K),
-            r18: String(liveRate.rate18K),
           });
         }
       } else {
@@ -173,10 +161,6 @@ export default function GoldRatePage() {
                 <span className="mk-admin-rate-val">₹{Number(override!.rate_24k).toLocaleString('en-IN')}/g</span>
                 <span className="mk-admin-rate-karat" style={{ marginLeft: '1.5rem' }}>22K</span>
                 <span className="mk-admin-rate-val">₹{Number(override!.rate_22k).toLocaleString('en-IN')}/g</span>
-                <span className="mk-admin-rate-karat" style={{ marginLeft: '1.5rem' }}>20K</span>
-                <span className="mk-admin-rate-val">₹{Number(override!.rate_20k).toLocaleString('en-IN')}/g</span>
-                <span className="mk-admin-rate-karat" style={{ marginLeft: '1.5rem' }}>18K</span>
-                <span className="mk-admin-rate-val">₹{Number(override!.rate_18k).toLocaleString('en-IN')}/g</span>
               </div>
               <p className="mk-admin-muted" style={{ marginTop: '0.5rem' }}>
                 Expires: {fmtDateTime(override!.override_until)}
@@ -203,10 +187,8 @@ export default function GoldRatePage() {
         <form onSubmit={handleSet} noValidate>
           <div className="mk-admin-form-grid mk-admin-form-grid--2">
             {[
-              { label: '24K rate (₹/gram)', key: 'r24', field: 'rate_24k' as const },
-              { label: '22K rate (₹/gram)', key: 'r22', field: 'rate_22k' as const },
-              { label: '20K rate (₹/gram)', key: 'r20', field: 'rate_20k' as const },
-              { label: '18K rate (₹/gram)', key: 'r18', field: 'rate_18k' as const },
+              { label: '24K rate (₹/gram)', key: 'r24' },
+              { label: '22K rate (₹/gram)', key: 'r22' },
             ].map(({ label, key }) => (
               <div key={key} className="mk-admin-field">
                 <label className="mk-admin-label">{label}</label>

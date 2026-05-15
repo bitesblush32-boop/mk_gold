@@ -17,8 +17,6 @@ import type {
 const FALLBACK_RATES: KaratRate[] = [
   { karat: 24, value: 7200 },
   { karat: 22, value: 6600 },
-  { karat: 20, value: 6000 },
-  { karat: 18, value: 5400 },
 ];
 
 const FALLBACK_MCX = 72000;

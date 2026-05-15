@@ -15,7 +15,7 @@ interface MkRateWidgetProps {
 /* ─── Constants ──────────────────────────────────────────────── */
 
 const KARAT_LABELS: Record<number, string> = {
-  24: '24K', 22: '22K', 20: '20K', 18: '18K',
+  24: '24K', 22: '22K',
 };
 
 const PURITY_OPTIONS = [
@@ -52,9 +52,9 @@ function WidgetSkeleton() {
         <div className="mk-rw-skeleton__bar" style={{ width: '8rem', height: '0.875rem' }} />
         <div className="mk-rw-skeleton__bar" style={{ width: '4.5rem', height: '0.875rem' }} />
       </div>
-      {/* 2×2 grid placeholders */}
+      {/* 1×2 grid placeholders */}
       <div className="mk-rw-skeleton__grid">
-        {[0, 1, 2, 3].map((i) => (
+        {[0, 1].map((i) => (
           <div key={i} className="mk-rw-skeleton__cell">
             <div className="mk-rw-skeleton__bar" style={{ width: '2.5rem', height: '0.6rem' }} />
             <div className="mk-rw-skeleton__bar" style={{ width: '5rem',   height: '1.3rem' }} />

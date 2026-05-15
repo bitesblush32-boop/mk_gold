@@ -735,7 +735,7 @@ function LocalTrustSection({
               <div className="sc-trust-stat sc-trust-stat--rating" style={{ animation: 'mk-rating-glow 2.5s ease-in-out infinite' }}>
                 <span className="sc-trust-stat__score">4.9</span>
                 <div className="sc-trust-stat__stars" aria-label="4.9 out of 5 stars">
-                  {[0,1,2,3,4].map(i => (
+                  {[0, 1, 2, 3, 4].map(i => (
                     <span key={i} className="sc-trust-star" style={{
                       animation: 'mk-star-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both',
                       animationDelay: `${i * 0.08}s`,
@@ -930,10 +930,10 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
       .then(data => {
         if (Array.isArray(data.reviews) && data.reviews.length > 0) {
           setGoogleReviews(data.reviews.map((r: { author: string; quote: string; rating: number; date: string }) => ({
-            name:     r.author,
-            area:     r.date,
-            rating:   r.rating,
-            text:     r.quote,
+            name: r.author,
+            area: r.date,
+            rating: r.rating,
+            text: r.quote,
             initials: r.author.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase(),
           })));
         }
@@ -2096,21 +2096,21 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
       <BranchFinder />
 
       {/* ── Google Reviews: infinite scroll carousel ────────────── */}
-      {googleReviews.length > 0 && (
-        <section className="mk-bg-light section" id="reviews">
-          <div className="mk-container">
-            <div className="reveal" style={{ maxWidth: '42rem', marginBottom: '2rem' }}>
-              <p className="mk-section-overline">Google Reviews</p>
-              <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', marginBottom: '0.75rem' }}>
-                4.9 Stars Across All Branches
-              </h2>
-              <p className="reveal delay-2" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', marginBottom: 0, maxWidth: '540px' }}>
-                Real reviews from real customers — pulled live from Google.
-              </p>
-            </div>
+      <section className="mk-bg-light section" id="reviews">
+        <div className="mk-container">
+          <div className="reveal" style={{ maxWidth: '42rem', marginBottom: '2rem' }}>
+            <p className="mk-section-overline">Google Reviews</p>
+            <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', marginBottom: '0.75rem' }}>
+              4.9 Stars Across All Branches
+            </h2>
+            <p className="reveal delay-2" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', marginBottom: 0, maxWidth: '540px' }}>
+              Real reviews from real customers
+            </p>
           </div>
+        </div>
 
-          {/* Carousel — full bleed, no container constraint */}
+        {/* Carousel — only renders once reviews are fetched */}
+        {googleReviews.length > 0 && (
           <div style={{ overflow: 'hidden', paddingBottom: '0.5rem' }}>
             <div className="sc-reviews-track">
               {[...googleReviews, ...googleReviews].map((t, i) => (
@@ -2133,8 +2133,8 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
               ))}
             </div>
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {/* ── FAQ ─────────────────────────────────────────────────── */}
       <MkFaq faqs={homeFaqs} />
