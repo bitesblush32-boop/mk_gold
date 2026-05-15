@@ -29,13 +29,13 @@ export function MkRevealObserver() {
             }
           });
         },
-        { threshold: 0.1, rootMargin: '0px 0px -32px 0px' }
+        { threshold: 0, rootMargin: '0px 0px -16px 0px' }
       );
 
       els.forEach((el) => observer.observe(el));
       // Cleanup: disconnect observer when pathname changes again
       return () => observer.disconnect();
-    }, 50);
+    }, 150);
 
     return () => clearTimeout(timer);
   }, [pathname]);

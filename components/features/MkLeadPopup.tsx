@@ -6,6 +6,7 @@ import { createPortal } from 'react-dom';
 import { MkSeal } from '@/components/ui/MkSeal';
 import { MkButton } from '@/components/ui/MkButton';
 import { trackFormSubmit } from '@/lib/analytics';
+import { getUtmParams } from '@/lib/utm';
 
 export function MkLeadPopup() {
   const [open, setOpen] = useState(false);
@@ -45,7 +46,7 @@ export function MkLeadPopup() {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, source: 'popup-lead-form' }),
+        body: JSON.stringify({ ...form, source: 'popup-lead-form', ...getUtmParams() }),
       });
       if (!res.ok) throw new Error();
       trackFormSubmit({ source: 'popup' });

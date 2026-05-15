@@ -1,10 +1,11 @@
 'use client';
+import type { FaqItem } from '@/lib/db/faqs';
 
 import { useState, useRef } from 'react';
 
 /* ─── Data ──────────────────────────────────────────────────────── */
 
-const FAQS = [
+const FALLBACK_FAQS: FaqItem[] = [
   {
     q: 'What is the MCX gold rate?',
     a: 'MCX (Multi Commodity Exchange of India) is the regulated exchange where gold is traded in futures contracts. The MCX gold rate is the benchmark price in Indian Rupees per 10 grams for 24K (999 purity) gold. It updates continuously during market hours (9:00 AM to 11:30 PM on trading days) and is the most trusted reference point for gold pricing in India.',
@@ -21,30 +22,32 @@ const FAQS = [
     q: 'Can I lock in today\'s rate?',
     a: 'Gold rates are live and fluctuate during market hours. We are unable to lock a rate in advance. However, once you visit a branch and accept our offer, the agreed rate is binding and payment is made immediately. If the rate moves between the time you check online and when you arrive, the branch will quote based on the live MCX rate at that moment — both rates are shown to you openly.',
   },
-] as const;
+];
 
 /* ─── Schema ─────────────────────────────────────────────────────── */
 
-const FAQ_SCHEMA = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: FAQS.map(f => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.a },
-  })),
-};
+
 
 /* ─── Component ─────────────────────────────────────────────────── */
 
-export function GoldRateFaq() {
+export function GoldRateFaq({ faqs }: { faqs?: FaqItem[] }) {
+  const items = faqs && faqs.length > 0 ? faqs : FALLBACK_FAQS;
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map(f => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
   const [open, setOpen] = useState<number | null>(null);
   const triggerRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const toggle = (i: number) => setOpen(open === i ? null : i);
 
   function handleKeyDown(e: React.KeyboardEvent, i: number) {
-    const count = FAQS.length;
+    const count = items.length;
     if (e.key === 'ArrowDown') { e.preventDefault(); triggerRefs.current[(i + 1) % count]?.focus(); }
     if (e.key === 'ArrowUp')   { e.preventDefault(); triggerRefs.current[(i - 1 + count) % count]?.focus(); }
     if (e.key === 'Home')      { e.preventDefault(); triggerRefs.current[0]?.focus(); }
@@ -55,7 +58,7 @@ export function GoldRateFaq() {
     <section className="mk-faq mk-bg-light section" id="faq">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <div className="mk-container">
 
@@ -69,7 +72,7 @@ export function GoldRateFaq() {
           role="group"
           aria-label="Gold rate frequently asked questions"
         >
-          {FAQS.map((item, i) => {
+          {items.map((item, i) => {
             const isOpen = open === i;
             return (
               <div

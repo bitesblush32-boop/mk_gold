@@ -7,7 +7,8 @@
     "build": "next build",
     "postbuild": "next-sitemap",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:seed-faqs": "tsx db/seed-faqs.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.96.0",

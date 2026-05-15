@@ -1,4 +1,5 @@
 'use client';
+import { getUtmParams } from '@/lib/utm';
 
 import { useId, useState } from 'react';
 import { useGoldRate } from '@/hooks/useGoldRate';
@@ -62,7 +63,7 @@ export function MkCalculator({
       await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...gateForm, source: 'calculator-gate' }),
+        body: JSON.stringify({ ...gateForm, source: 'calculator-gate', ...getUtmParams() }),
       });
     } catch { /* non-blocking */ }
     setUnlocked(true);

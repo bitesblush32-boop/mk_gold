@@ -7,6 +7,7 @@ import { MkSectionHeader } from '@/components/ui/MkSectionHeader';
 import { MkSteps } from '@/components/sections/MkSteps';
 import { MkTrust } from '@/components/sections/MkTrust';
 import { MkFaq } from '@/components/sections/MkFaq';
+import { getFaqsByPage } from '@/lib/db/faqs';
 import { MkCtaBand } from '@/components/sections/MkCtaBand';
 import { MkRateWidget } from '@/components/features/MkRateWidget';
 import { MkCalculator } from '@/components/features/MkCalculator';
@@ -62,7 +63,8 @@ const SERVICE_SCHEMA = {
 
 /* ─── Page ────────────────────────────────────────────────────── */
 
-export default function SellGoldPage() {
+export default async function SellGoldPage() {
+  const faqs = await getFaqsByPage('general');
   const howToJson = howToSchema(
     HOW_TO_STEPS,
     'How to Sell Gold at MK Gold',
@@ -544,7 +546,7 @@ export default function SellGoldPage() {
       <MkBranchFinder />
 
       {/* ── 9. FAQ ──────────────────────────────────────────────── */}
-      <MkFaq variant="sell-gold" />
+      <MkFaq variant="sell-gold" faqs={faqs} />
 
       {/* ── 10. CTA BAND ────────────────────────────────────────── */}
       <MkCtaBand />

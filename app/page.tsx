@@ -2,6 +2,7 @@
 // The actual page UI lives in HomeClient.tsx ('use client')
 import type { Metadata } from 'next';
 import HomeClient from './HomeClient';
+import { getFaqsByPage } from '@/lib/db/faqs';
 
 export const metadata: Metadata = {
   title: 'MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted',
@@ -42,6 +43,7 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function HomePage() {
-  return <HomeClient />;
+export default async function HomePage() {
+  const faqs = await getFaqsByPage('general');
+  return <HomeClient homeFaqs={faqs} />;
 }

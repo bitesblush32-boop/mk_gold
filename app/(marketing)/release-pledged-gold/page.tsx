@@ -7,6 +7,7 @@ import { MkSectionHeader } from '@/components/ui/MkSectionHeader';
 import { MkTrustBlock } from '@/components/ui/MkTrustBlock';
 import { MkPledgedCalculator } from '@/components/features/MkPledgedCalculator';
 import { MkPledgedFaq } from '@/components/sections/MkPledgedFaq';
+import { getFaqsByPage } from '@/lib/db/faqs';
 import { HOW_IT_WORKS, LENDERS, PAYMENT_METHODS } from '@/lib/data/pledged-gold';
 
 /* ─── Metadata ────────────────────────────────────────────────── */
@@ -52,7 +53,8 @@ const SERVICE_SCHEMA = {
 
 /* ─── Page ────────────────────────────────────────────────────── */
 
-export default function PledgedGoldPage() {
+export default async function PledgedGoldPage() {
+  const faqs = await getFaqsByPage('pledged-gold');
   return (
     <>
       <script
@@ -452,7 +454,7 @@ export default function PledgedGoldPage() {
       </section>
 
       {/* ── 7. FAQ ──────────────────────────────────────────────── */}
-      <MkPledgedFaq />
+      <MkPledgedFaq faqs={faqs} />
 
       {/* ── 8. CTA BAND ─────────────────────────────────────────── */}
       <section className="mk-bg-dark section" aria-labelledby="pledged-cta-headline">

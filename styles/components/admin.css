@@ -331,6 +331,29 @@
 
 .mk-admin-btn-text:hover { opacity: 0.70; }
 .mk-admin-btn-text--plum { color: #c0392b; }
+/* ── Tabs (FAQ manager, blog categories) ─────────────────────────── */
+
+.mk-admin-tab {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-sm);
+  font-weight: 500;
+  padding: 0.5rem 1.1rem;
+  border-radius: 6px 6px 0 0;
+  border: none;
+  background: transparent;
+  color: var(--mist);
+  cursor: pointer;
+  transition: color 0.18s, background 0.18s;
+  white-space: nowrap;
+}
+.mk-admin-tab:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+.mk-admin-tab--active {
+  color: var(--gold);
+  background: rgba(223,193,96,0.08);
+  box-shadow: inset 0 -2px 0 var(--gold);
+}
+
+
 
 /* ── Form fields ─────────────────────────────────────────────────── */
 

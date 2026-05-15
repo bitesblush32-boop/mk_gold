@@ -1,4 +1,5 @@
 'use client';
+import { getUtmParams } from '@/lib/utm';
 
 import { useState, useRef, useCallback } from 'react';
 import { useGoldRateContext } from '@/context/GoldRateContext';
@@ -161,7 +162,7 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
       await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...gateForm, source: 'calculator-gate' }),
+        body: JSON.stringify({ ...gateForm, source: 'calculator-gate', ...getUtmParams() }),
       });
     } catch { /* non-blocking */ }
     setCalcUnlocked(true);

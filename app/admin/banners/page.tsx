@@ -239,7 +239,6 @@ export default function BannersPage() {
                     padding: '0 4px',
                     overflow: 'hidden',
                     wordBreak: 'break-all',
-                    title: banner.src,
                   }}
                   title={banner.src}
                 >

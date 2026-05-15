@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { getChannel } from '@/lib/utm';
 
 interface Lead {
   id:              number;
@@ -139,8 +140,9 @@ export default function LeadsPage() {
                   <th>Phone</th>
                   <th>City</th>
                   <th>Gold Type</th>
-                  <th>Weight (g)</th>
-                  <th>Source</th>
+                  <th>Purity</th>
+                  <th>Weight</th>
+                  <th>Channel</th>
                   <th>Date</th>
                 </tr>
               </thead>
@@ -160,15 +162,35 @@ export default function LeadsPage() {
                       </td>
                       <td>{cell(lead.city)}</td>
                       <td>{cell(lead.gold_type)}</td>
-                      <td>{cell(lead.weight_grams)}</td>
-                      <td>{lead.source}</td>
+                      <td>{lead.purity_karat ? `${lead.purity_karat}K` : '—'}</td>
+                      <td>{lead.weight_grams ? `${lead.weight_grams}g` : '—'}</td>
+                      <td>
+                        {(() => {
+                          const ch = getChannel(lead);
+                          return (
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '2px 8px',
+                              borderRadius: '9999px',
+                              fontSize: '0.7rem',
+                              fontWeight: 600,
+                              background: ch.color + '22',
+                              color: ch.color,
+                              border: `1px solid ${ch.color}44`,
+                              whiteSpace: 'nowrap',
+                            }}>
+                              {ch.label}
+                            </span>
+                          );
+                        })()}
+                      </td>
                       <td>{fmtDate(lead.created_at)}</td>
                     </tr>
 
                     {/* Expanded row */}
                     {expandId === lead.id && (
                       <tr className="mk-admin-expand-row">
-                        <td colSpan={7}>
+                        <td colSpan={8}>
                           <div className="mk-admin-expand-grid">
                             <div><span className="mk-admin-expand-label">Email</span>{cell(lead.email)}</div>
                             <div><span className="mk-admin-expand-label">Area</span>{cell(lead.area)}</div>

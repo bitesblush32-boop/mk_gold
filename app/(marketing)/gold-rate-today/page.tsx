@@ -7,6 +7,7 @@ import { MkCtaBand } from '@/components/sections/MkCtaBand';
 import { MkSectionHeader } from '@/components/ui/MkSectionHeader';
 import { GoldRateChart } from './GoldRateChart';
 import { GoldRateFaq } from './GoldRateFaq';
+import { getFaqsByPage } from '@/lib/db/faqs';
 
 /* ─── ISR — revalidate every 5 minutes ──────────────────────────── */
 export const revalidate = 300;
@@ -84,6 +85,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /* ─── Page ─────────────────────────────────────────────────────── */
 export default async function GoldRateTodayPage() {
+  const faqItems = await getFaqsByPage('gold-rate');
   const rate = await fetchGoldRate();
 
   const formattedDate = new Date().toLocaleDateString('en-IN', {
@@ -457,7 +459,7 @@ export default async function GoldRateTodayPage() {
       </section>
 
       {/* ══ 6. FAQ ════════════════════════════════════════════════════ */}
-      <GoldRateFaq />
+      <GoldRateFaq faqs={faqItems} />
 
       {/* ══ 7. CTA BAND ══════════════════════════════════════════════ */}
       <MkCtaBand />

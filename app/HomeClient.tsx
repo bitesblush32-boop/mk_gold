@@ -14,6 +14,8 @@ import { MkLeadPopup } from '@/components/features/MkLeadPopup';
 import { MkEmergency } from '@/components/features/MkEmergency';
 import { BRANCHES, type Branch } from '@/lib/branch-router';
 import { FALLBACK_BANNERS, TESTIMONIALS } from '@/lib/data/home';
+import { getUtmParams } from '@/lib/utm';
+import type { FaqItem } from '@/lib/db/faqs';
 
 const CITIES = ['Bangalore', 'Mysore', 'Mangalore', 'Davangere'] as const;
 type City = typeof CITIES[number];
@@ -119,7 +121,7 @@ function CallbackForm({ onSuccess }: { onSuccess?: () => void }) {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, source: 'sample-c-callback' }),
+        body: JSON.stringify({ ...form, source: 'sample-c-callback', ...getUtmParams() }),
       });
       if (res.ok) { setStatus('success'); if (onSuccess) onSuccess(); }
       else setStatus('error');
@@ -216,10 +218,17 @@ function loadMapsSDK(): Promise<void> {
   if (typeof window === 'undefined') return Promise.reject(new Error('SSR'));
   if (_mapsReady) return _mapsReady;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ((window as any).google?.maps) { _mapsReady = Promise.resolve(); return _mapsReady; }
+  const win = window as any;
+
+  // If already loaded (e.g. HMR or second mount), resolve immediately
+  if (win.google?.maps?.Map) { _mapsReady = Promise.resolve(); return _mapsReady; }
+
+  // Classic loading (no loading=async): all requested libraries are fully
+  // populated on google.maps.* by the time onload fires — no importLibrary needed.
   _mapsReady = new Promise<void>((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&loading=async&libraries=marker`;
+    s.src = 'https://maps.googleapis.com/maps/api/js?key=' +
+      (process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? '') + '&libraries=marker';
     s.async = true;
     s.defer = true;
     s.onload = () => resolve();
@@ -282,63 +291,65 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
   const markersRef = useRef<{ branch: Branch; marker: any }[]>([]);
   const activeBranchRef = useRef(activeBranch);
   const [mapError, setMapError] = useState(false);
+  const [mapsReady, setMapsReady] = useState(false);
 
   // Keep ref in sync so marker click handlers always see latest value
   useEffect(() => { activeBranchRef.current = activeBranch; }, [activeBranch]);
 
-  // Initialize / re-initialize map when city changes
+  // Load the Maps SDK once on mount — sets mapsReady when done
   useEffect(() => {
-    if (!mapDivRef.current) return;
+    loadMapsSDK()
+      .then(() => setMapsReady(true))
+      .catch(() => setMapError(true));
+  }, []);
+
+  // Initialize / re-initialize map when city changes OR SDK becomes ready
+  useEffect(() => {
+    if (!mapsReady || !mapDivRef.current) return;
     const cityBranches = BRANCHES.filter(b => b.city === city);
     const center = CITY_CENTERS[city];
 
-    loadMapsSDK()
-      .then(() => {
-        if (!mapDivRef.current) return;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const g = (window as any).google.maps;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const g = (window as any).google.maps;
 
-        // Clear old markers
-        markersRef.current.forEach(({ marker }) => { marker.map = null; });
-        markersRef.current = [];
+    // Clear old markers
+    markersRef.current.forEach(({ marker }) => { marker.map = null; });
+    markersRef.current = [];
 
-        const map = new g.Map(mapDivRef.current, {
-          center: { lat: center.lat, lng: center.lng },
-          zoom: center.zoom,
-          mapId: process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID || 'DEMO_MAP_ID',
-          styles: MAP_STYLES,
-          disableDefaultUI: true,
-          zoomControl: true,
-          gestureHandling: 'cooperative',
-          clickableIcons: false,
-        });
+    const map = new g.Map(mapDivRef.current, {
+      center: { lat: center.lat, lng: center.lng },
+      zoom: center.zoom,
+      mapId: process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID || 'DEMO_MAP_ID',
+      styles: MAP_STYLES,
+      disableDefaultUI: true,
+      zoomControl: true,
+      gestureHandling: 'cooperative',
+      clickableIcons: false,
+    });
 
-        markersRef.current = cityBranches.map(branch => {
-          const isActive = activeBranchRef.current?.slug === branch.slug;
-          const pin = makePinElement(g, isActive);
-          const marker = new g.marker.AdvancedMarkerElement({
-            position: { lat: branch.coordinates.lat, lng: branch.coordinates.lng },
-            map,
-            title: branch.name,
-            content: pin.element,
-          });
+    markersRef.current = cityBranches.map(branch => {
+      const isActive = activeBranchRef.current?.slug === branch.slug;
+      const pin = makePinElement(g, isActive);
+      const marker = new g.marker.AdvancedMarkerElement({
+        position: { lat: branch.coordinates.lat, lng: branch.coordinates.lng },
+        map,
+        title: branch.name,
+        content: pin.element,
+      });
 
-          marker.addListener('click', () => {
-            const cur = activeBranchRef.current;
-            setActiveBranch(cur?.slug === branch.slug ? null : branch);
-          });
+      marker.addListener('click', () => {
+        const cur = activeBranchRef.current;
+        setActiveBranch(cur?.slug === branch.slug ? null : branch);
+      });
 
-          return { branch, marker };
-        });
-      })
-      .catch(() => setMapError(true));
+      return { branch, marker };
+    });
 
     return () => {
       markersRef.current.forEach(({ marker }) => { marker.map = null; });
       markersRef.current = [];
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city]);
+  }, [city, mapsReady]);
 
   // Update marker pin colours when activeBranch changes (no map re-init)
   useEffect(() => {
@@ -904,7 +915,7 @@ function BottomNav() {
 
 /* ─── Page ─────────────────────────────────────────────────────── */
 
-export default function HomePage() {
+export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
   const [scrollPct, setScrollPct] = useState(0);
   const [sealFlipped, setSealFlipped] = useState(false);
   const [trustFlip1, setTrustFlip1] = useState(false);
@@ -2106,7 +2117,7 @@ export default function HomePage() {
       </section>
 
       {/* ── FAQ ─────────────────────────────────────────────────── */}
-      <MkFaq />
+      <MkFaq faqs={homeFaqs} />
 
       {/* ── CTA Band ─────────────────────────────────────────────── */}
       <div className="mk-bg-light sc-light-cta">
