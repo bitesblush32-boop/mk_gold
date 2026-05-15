@@ -306,7 +306,7 @@ export default async function BranchPage({ params }: Props) {
             subtitle={`Live MCX rate at MK Gold ${branch.area}. Updated every 5 minutes.`}
           />
           <div style={{ marginTop: '3rem', maxWidth: '480px', margin: '3rem auto 0' }}>
-            <MkRateWidget />
+            <MkRateWidget variant="page" />
           </div>
         </div>
       </section>

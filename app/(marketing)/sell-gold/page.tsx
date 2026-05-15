@@ -214,7 +214,7 @@ export default async function SellGoldPage() {
               marginTop: '3rem',
             }}
           >
-            <MkRateWidget />
+            <MkRateWidget variant="page" />
             <MkCalculator />
           </div>
 

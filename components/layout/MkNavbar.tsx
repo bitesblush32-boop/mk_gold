@@ -8,24 +8,18 @@ import { cn } from '@/lib/utils';
 
 /* ─── Services dropdown items ─────────────────────────────────── */
 const SERVICES_LINKS = [
-  { href: '/sell-gold',              label: 'Sell Gold' },
-  { href: '/sell-gold-for-cash',     label: 'Sell Gold for Cash' },
-  { href: '/release-pledged-gold',   label: 'Release Pledged Gold' },
-  { href: '/exchange-gold-for-cash', label: 'Exchange Gold for Cash' },
-  { href: '/sell-old-gold',          label: 'Sell Old Gold' },
-  { href: '/sell-gold-jewellery',    label: 'Sell Gold Jewellery' },
-  { href: '/sell-gold-coins',        label: 'Sell Gold Coins' },
-  { href: '/sell-gold-bars',         label: 'Sell Gold Bars' },
-  { href: '/sell-gold-by-purity',    label: 'Sell Gold by Purity' },
-  { href: '/sell-gold#calculator',   label: 'Sell Gold Calculator' },
+  { href: '/sell-gold',            label: 'Sell Gold' },
+  { href: '/release-pledged-gold', label: 'Release Pledged Gold' },
+  { href: '/gold-rate-today',      label: 'Gold Rate Today' },
+  { href: '/sell-gold#calculator', label: 'Gold Calculator' },
 ];
 
 /* ─── Regular nav links ───────────────────────────────────────── */
 const NAV_LINKS = [
-  { href: '/#gold-rate',    label: 'Gold Rate' },
-  { href: '/#why-mk-gold',  label: 'About' },
-  { href: '/#branches',     label: 'Branches' },
-  { href: '/blog',          label: 'Blog' },
+  { href: '/gold-rate-today', label: 'Gold Rate' },
+  { href: '/about',           label: 'About' },
+  { href: '/contact',         label: 'Branches' },
+  { href: '/blog',            label: 'Blog' },
 ];
 
 export function MkNavbar() {

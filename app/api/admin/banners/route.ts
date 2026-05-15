@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
+import { put } from '@vercel/blob';
 import { requireAdmin } from '@/lib/admin-auth';
 import {
   getAllBanners,
@@ -60,22 +61,11 @@ export async function POST(req: NextRequest) {
   try {
     let src: string;
 
-    const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
-
-    if (blobToken) {
-      // Vercel Blob REST API
+    if (process.env.BLOB_READ_WRITE_TOKEN) {
+      // Vercel Blob SDK — uploads to CDN and returns public URL
       const filename = `banners/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-      const blobRes  = await fetch(`https://blob.vercel-storage.com/${filename}`, {
-        method:  'PUT',
-        headers: {
-          Authorization:  `Bearer ${blobToken}`,
-          'Content-Type': file.type,
-        },
-        body: file.stream(),
-      });
-      if (!blobRes.ok) throw new Error(`Blob upload failed: ${blobRes.status}`);
-      const blobData = await blobRes.json() as { url: string };
-      src = blobData.url;
+      const blob = await put(filename, file, { access: 'public' });
+      src = blob.url;
     } else {
       // Local dev — save to public/banners/
       const filename  = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
