@@ -13,7 +13,7 @@ import { MkButton } from '@/components/ui/MkButton';
 import { MkLeadPopup } from '@/components/features/MkLeadPopup';
 import { MkEmergency } from '@/components/features/MkEmergency';
 import { BRANCHES, type Branch } from '@/lib/branch-router';
-import { FALLBACK_BANNERS, TESTIMONIALS } from '@/lib/data/home';
+import { FALLBACK_BANNERS } from '@/lib/data/home';
 import { getUtmParams } from '@/lib/utm';
 import type { FaqItem } from '@/lib/db/faqs';
 
@@ -922,6 +922,24 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
   const [slide, setSlide] = useState(0);
   const [rateUnlocked, setRateUnlocked] = useState(false);
   const [banners, setBanners] = useState<{ src: string; alt: string }[]>(FALLBACK_BANNERS);
+  const [googleReviews, setGoogleReviews] = useState<{ name: string; area: string; rating: number; text: string; initials: string }[]>([]);
+
+  useEffect(() => {
+    fetch('/api/reviews')
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data.reviews) && data.reviews.length > 0) {
+          setGoogleReviews(data.reviews.map((r: { author: string; quote: string; rating: number; date: string }) => ({
+            name:     r.author,
+            area:     r.date,
+            rating:   r.rating,
+            text:     r.quote,
+            initials: r.author.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase(),
+          })));
+        }
+      })
+      .catch(() => { /* keep empty — section shows loading state */ });
+  }, []);
 
   useEffect(() => {
     fetch('/api/banners')
@@ -2077,44 +2095,46 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
       {/* ── Branch finder ───────────────────────────────────────── */}
       <BranchFinder />
 
-      {/* ── Testimonials: infinite scroll carousel ──────────────── */}
-      <section className="mk-bg-light section" id="reviews">
-        <div className="mk-container">
-          <div className="reveal" style={{ maxWidth: '42rem', marginBottom: '2rem' }}>
-            <p className="mk-section-overline">Google Reviews</p>
-            <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', marginBottom: '0.75rem' }}>
-              4.9 Stars Across All Branches
-            </h2>
-            <p className="reveal delay-2" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', marginBottom: 0, maxWidth: '540px' }}>
-              Real reviews from real customers — pulled live from Google.
-            </p>
+      {/* ── Google Reviews: infinite scroll carousel ────────────── */}
+      {googleReviews.length > 0 && (
+        <section className="mk-bg-light section" id="reviews">
+          <div className="mk-container">
+            <div className="reveal" style={{ maxWidth: '42rem', marginBottom: '2rem' }}>
+              <p className="mk-section-overline">Google Reviews</p>
+              <h2 className="reveal delay-1" style={{ fontFamily: 'Tanker,serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', marginBottom: '0.75rem' }}>
+                4.9 Stars Across All Branches
+              </h2>
+              <p className="reveal delay-2" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', marginBottom: 0, maxWidth: '540px' }}>
+                Real reviews from real customers — pulled live from Google.
+              </p>
+            </div>
           </div>
-        </div>
 
-        {/* Carousel — full bleed, no container constraint */}
-        <div style={{ overflow: 'hidden', paddingBottom: '0.5rem' }}>
-          <div className="sc-reviews-track">
-            {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
-              <div key={i} className="sc-review-card sc-review-card--carousel">
-                <span className="sc-google-badge">Google</span>
-                <div className="sc-review-stars" aria-label={`${t.rating} out of 5 stars`}>
-                  {Array.from({ length: t.rating }).map((_, j) => (
-                    <div key={j} className="sc-review-star" />
-                  ))}
-                </div>
-                <p className="sc-review-text">&ldquo;{t.text}&rdquo;</p>
-                <div className="sc-review-author">
-                  <div className="sc-review-avatar" aria-hidden="true">{t.initials}</div>
-                  <div>
-                    <p className="sc-review-name">{t.name}</p>
-                    <p className="sc-review-area">{t.area}</p>
+          {/* Carousel — full bleed, no container constraint */}
+          <div style={{ overflow: 'hidden', paddingBottom: '0.5rem' }}>
+            <div className="sc-reviews-track">
+              {[...googleReviews, ...googleReviews].map((t, i) => (
+                <div key={i} className="sc-review-card sc-review-card--carousel">
+                  <span className="sc-google-badge">Google</span>
+                  <div className="sc-review-stars" aria-label={`${t.rating} out of 5 stars`}>
+                    {Array.from({ length: t.rating }).map((_, j) => (
+                      <div key={j} className="sc-review-star" />
+                    ))}
+                  </div>
+                  <p className="sc-review-text">&ldquo;{t.text}&rdquo;</p>
+                  <div className="sc-review-author">
+                    <div className="sc-review-avatar" aria-hidden="true">{t.initials}</div>
+                    <div>
+                      <p className="sc-review-name">{t.name}</p>
+                      <p className="sc-review-area">{t.area}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── FAQ ─────────────────────────────────────────────────── */}
       <MkFaq faqs={homeFaqs} />
