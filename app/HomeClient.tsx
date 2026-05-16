@@ -669,55 +669,30 @@ const TRUST_PILLARS = [
 
 const TRUST_BADGES = ['GST Registered', 'ISO 9001:2015', 'XRF Certified', '16 Physical Branches'] as const;
 
-/* ─── Flippable trust coins ────────────────────────────────────── */
+/* ─── Auto-spinning trust coin ──────────────────────────────────── */
 
-function FlippableTrustSeals({
-  flip1, setFlip1,
-}: {
-  flip1: boolean; setFlip1: (v: (p: boolean) => boolean) => void;
-}) {
-  const coinStyle = { width: '130px', height: '130px', perspective: '600px', cursor: 'pointer', position: 'relative' as const };
-  const innerStyle = (flipped: boolean) => ({
-    width: '100%', height: '100%', position: 'relative' as const,
-    transformStyle: 'preserve-3d' as const,
-    transition: 'transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-    transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-    willChange: 'transform' as const,
-  });
-  const faceStyle: React.CSSProperties = { position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden' };
-  const backStyle: React.CSSProperties = { ...faceStyle, transform: 'rotateY(180deg)' };
-
+function TrustCoin() {
+  const faceStyle: React.CSSProperties = { position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' };
   return (
     <div className="mk-trust__seals reveal">
-      {/* Single coin — EN front / KN back */}
-      <div
-        style={coinStyle}
-        onClick={() => setFlip1(f => !f)}
-        role="button" tabIndex={0}
-        aria-label={flip1 ? 'Showing Kannada — tap for English' : 'Showing English — tap for Kannada'}
-        onKeyDown={(e) => e.key === 'Enter' && setFlip1(f => !f)}
-      >
-        <div style={innerStyle(flip1)}>
-          <div style={faceStyle}><MkSeal variant="en" size="lg" animate={!flip1} /></div>
-          <div style={backStyle}><MkSeal variant="kn" size="lg" /></div>
+      <div style={{ width: '130px', height: '130px', perspective: '600px', position: 'relative' }}>
+        <div className="mk-coin-spin" style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d' }}>
+          <div style={faceStyle}><MkSeal variant="en" size="lg" /></div>
+          <div style={{ ...faceStyle, transform: 'rotateY(180deg)' }}><MkSeal variant="kn" size="lg" /></div>
         </div>
       </div>
     </div>
   );
 }
 
-/* ─── Local trust section with flippable coins ──────────────────── */
+/* ─── Local trust section ───────────────────────────────────────── */
 
-function LocalTrustSection({
-  flip1, setFlip1,
-}: {
-  flip1: boolean; setFlip1: (v: (p: boolean) => boolean) => void;
-}) {
+function LocalTrustSection() {
   return (
     <section className="mk-trust mk-bg-dark section" id="why-mk-gold">
       <div className="mk-container mk-trust__inner">
         <div className="mk-trust__left">
-          <FlippableTrustSeals flip1={flip1} setFlip1={setFlip1} />
+          <TrustCoin />
           <div className="reveal delay-1">
             <p className="mk-section-overline">Why MK Gold</p>
             <h2 className="mk-trust__headline">
@@ -917,8 +892,7 @@ function BottomNav() {
 
 export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
   const [scrollPct, setScrollPct] = useState(0);
-  const [sealFlipped, setSealFlipped] = useState(false);
-  const [trustFlip1, setTrustFlip1] = useState(false);
+
   const [slide, setSlide] = useState(0);
   const [rateUnlocked, setRateUnlocked] = useState(false);
   const [banners, setBanners] = useState<{ src: string; alt: string }[]>(FALLBACK_BANNERS);
@@ -1300,7 +1274,6 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
         }
         .sc-coin-perspective {
           perspective: 700px;
-          cursor: pointer;
           position: relative;
           width: 220px;
           height: 220px;
@@ -1970,29 +1943,19 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
 
         {/* ── Overlapping coin anchor — 70% hero / 30% below ── */}
         <div className="sc-coin-anchor">
-          {/* Outer: constant 3D wobble + gold glow */}
+          {/* Outer: gold glow */}
           <div className="sc-coin-wobble">
             {/* Perspective wrapper */}
-            <div
-              onClick={() => setSealFlipped(f => !f)}
-              role="button"
-              tabIndex={0}
-              aria-label={sealFlipped ? 'Showing Kannada — tap for English' : 'Showing English — tap for Kannada'}
-              onKeyDown={(e) => e.key === 'Enter' && setSealFlipped(f => !f)}
-              className="sc-coin-perspective"
-            >
-              {/* Inner: EN ↔ KN flip */}
-              <div style={{
+            <div className="sc-coin-perspective" aria-label="MK Gold seal — MK Andare Nambike">
+              {/* Inner: auto-spinning EN front / KN back */}
+              <div className="mk-coin-spin" style={{
                 width: '100%',
                 height: '100%',
                 position: 'relative',
                 transformStyle: 'preserve-3d',
-                transition: 'transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-                transform: sealFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                willChange: 'transform',
               }}>
                 <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <MkSeal variant="en" size="lg" animate={!sealFlipped} />
+                  <MkSeal variant="en" size="lg" />
                 </div>
                 <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', transform: 'rotateY(180deg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <MkSeal variant="kn" size="lg" />
@@ -2000,9 +1963,6 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
               </div>
             </div>
           </div>
-          <span className="sc-coin-hint">
-            {sealFlipped ? 'MK ಅಂದರೆ ನಂಬಿಕೆ' : 'Tap to flip'}
-          </span>
         </div>
 
         {/* Slide dots */}
@@ -2090,7 +2050,7 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
       <MkEmergency />
 
       {/* ── Trust architecture ──────────────────────────────────── */}
-      <LocalTrustSection flip1={trustFlip1} setFlip1={setTrustFlip1} />
+      <LocalTrustSection />
 
       {/* ── Branch finder ───────────────────────────────────────── */}
       <BranchFinder />

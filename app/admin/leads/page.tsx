@@ -26,7 +26,14 @@ interface Lead {
   created_at:      string | Date;
 }
 
-const CITIES = ['All', 'Bangalore', 'Mysore', 'Mangalore', 'Davangere'] as const;
+const CITIES     = ['All', 'Bangalore', 'Mysore', 'Mangalore', 'Davangere'] as const;
+const GOLD_TYPES = ['jewellery', 'coins', 'bars', 'broken', 'mixed'] as const;
+const PURITIES   = [24, 22, 20, 18] as const;
+
+const BLANK_FORM = {
+  name: '', phone: '', email: '', city: '', area: '',
+  gold_type: '', purity_karat: '', weight_grams: '', notes: '',
+};
 
 function fmtDate(val: string | Date): string {
   return new Date(val as string).toLocaleDateString('en-IN', {
@@ -38,14 +45,43 @@ function cell(v: string | number | null | undefined): string {
   return v != null && v !== '' ? String(v) : '—';
 }
 
-export default function LeadsPage() {
-  const [leads, setLeads]       = useState<Lead[]>([]);
-  const [loading, setLoading]   = useState(true);
-  const [expandId, setExpandId] = useState<number | null>(null);
+function downloadCSV(rows: Lead[]) {
+  const headers = [
+    'ID', 'Name', 'Phone', 'Email', 'City', 'Area', 'Branch',
+    'Gold Type', 'Purity (K)', 'Weight (g)', 'Est. Value (Rs)',
+    'Source', 'Source Page', 'UTM Source', 'UTM Medium', 'UTM Campaign',
+    'Status', 'Notes', 'Date',
+  ];
+  const escape = (v: string | number | null | undefined) =>
+    `"${String(v ?? '').replace(/"/g, '""')}"`;
 
-  // Remarks state per lead
-  const [remarks, setRemarks]   = useState<Record<number, string>>({});
-  const [savingId, setSavingId] = useState<number | null>(null);
+  const data = rows.map(l => [
+    l.id, l.name, l.phone, l.email ?? '', l.city ?? '', l.area ?? '',
+    l.branch_slug ?? '', l.gold_type ?? '', l.purity_karat ?? '',
+    l.weight_grams ?? '', l.estimated_value ?? '', l.source,
+    l.source_page ?? '', l.utm_source ?? '', l.utm_medium ?? '',
+    l.utm_campaign ?? '', l.status, l.notes ?? '', fmtDate(l.created_at),
+  ]);
+
+  const csv = [headers, ...data]
+    .map(row => row.map(escape).join(','))
+    .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `mk-gold-leads-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export default function LeadsPage() {
+  const [leads, setLeads]         = useState<Lead[]>([]);
+  const [loading, setLoading]     = useState(true);
+  const [expandId, setExpandId]   = useState<number | null>(null);
+  const [remarks, setRemarks]     = useState<Record<number, string>>({});
+  const [savingId, setSavingId]   = useState<number | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   // Filters
@@ -54,6 +90,12 @@ export default function LeadsPage() {
   const [dateTo, setDateTo]     = useState('');
   const [filtered, setFiltered] = useState<Lead[]>([]);
 
+  // Add lead form
+  const [showAdd, setShowAdd]   = useState(false);
+  const [addForm, setAddForm]   = useState({ ...BLANK_FORM });
+  const [addError, setAddError] = useState('');
+  const [addSaving, setAddSaving] = useState(false);
+
   useEffect(() => {
     fetch('/api/leads?limit=500')
       .then(r => r.json())
@@ -61,7 +103,6 @@ export default function LeadsPage() {
         const data = d.leads ?? [];
         setLeads(data);
         setFiltered(data);
-        // Pre-populate remarks from existing notes
         const initial: Record<number, string> = {};
         data.forEach((l: Lead) => { initial[l.id] = l.notes ?? ''; });
         setRemarks(initial);
@@ -78,7 +119,6 @@ export default function LeadsPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: lead.id, notes: remarks[lead.id] ?? '' }),
       });
-      // Update local state
       setLeads(prev => prev.map(l => l.id === lead.id ? { ...l, notes: remarks[lead.id] ?? '' } : l));
       setFiltered(prev => prev.map(l => l.id === lead.id ? { ...l, notes: remarks[lead.id] ?? '' } : l));
     } catch { /* silent */ }
@@ -117,12 +157,241 @@ export default function LeadsPage() {
     setFiltered(result);
   }
 
+  async function handleAddLead(e: React.FormEvent) {
+    e.preventDefault();
+    setAddError('');
+    if (!addForm.name.trim() || !addForm.phone.trim()) {
+      setAddError('Name and phone are required.');
+      return;
+    }
+    setAddSaving(true);
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...addForm,
+          source: 'admin',
+          purity_karat: addForm.purity_karat ? Number(addForm.purity_karat) : undefined,
+          weight_grams: addForm.weight_grams || undefined,
+          email:        addForm.email || undefined,
+          city:         addForm.city || undefined,
+          area:         addForm.area || undefined,
+          gold_type:    addForm.gold_type || undefined,
+          notes:        addForm.notes || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setAddError(data.error ?? 'Failed to add lead.');
+        return;
+      }
+      // Prepend the new lead to local state
+      const newLead: Lead = {
+        id:              data.id,
+        name:            addForm.name,
+        phone:           addForm.phone,
+        email:           addForm.email || null,
+        city:            addForm.city || null,
+        area:            addForm.area || null,
+        branch_slug:     null,
+        gold_type:       addForm.gold_type || null,
+        weight_grams:    addForm.weight_grams || null,
+        purity_karat:    addForm.purity_karat ? Number(addForm.purity_karat) : null,
+        estimated_value: null,
+        source:          'admin',
+        source_page:     null,
+        utm_source:      null,
+        utm_medium:      null,
+        utm_campaign:    null,
+        utm_content:     null,
+        status:          'new',
+        notes:           addForm.notes || null,
+        created_at:      new Date().toISOString(),
+      };
+      setLeads(prev => [newLead, ...prev]);
+      setFiltered(prev => [newLead, ...prev]);
+      setRemarks(prev => ({ ...prev, [data.id]: addForm.notes ?? '' }));
+      setAddForm({ ...BLANK_FORM });
+      setShowAdd(false);
+    } catch {
+      setAddError('Network error. Please try again.');
+    } finally {
+      setAddSaving(false);
+    }
+  }
+
   return (
     <div className="mk-admin-page">
       <div className="mk-admin-topbar">
         <h1 className="mk-admin-page-title">Lead Viewer</h1>
+        <div style={{ display: 'flex', gap: '0.6rem', marginLeft: 'auto' }}>
+          <button
+            className="mk-admin-btn"
+            style={{ fontSize: '0.85rem', padding: '0.45rem 1.1rem', background: 'transparent', border: '1.5px solid var(--plum)', color: 'var(--plum)' }}
+            onClick={() => downloadCSV(filtered)}
+            disabled={filtered.length === 0}
+          >
+            Download CSV {filtered.length > 0 && `(${filtered.length})`}
+          </button>
+          <button
+            className="mk-admin-btn mk-admin-btn--plum"
+            style={{ fontSize: '0.85rem', padding: '0.45rem 1.1rem' }}
+            onClick={() => { setShowAdd(v => !v); setAddError(''); }}
+          >
+            {showAdd ? 'Cancel' : '+ Add Lead'}
+          </button>
+        </div>
       </div>
       <p className="mk-admin-subtitle">All website leads. {leads.length} total.</p>
+
+      {/* Add Lead Form */}
+      {showAdd && (
+        <div className="mk-admin-section" style={{ marginBottom: 'var(--s-4)', borderLeft: '3px solid var(--plum)' }}>
+          <h2 style={{ fontFamily: 'Poppins, sans-serif', fontSize: '1rem', fontWeight: 600, color: 'var(--ink)', marginBottom: 'var(--s-4)' }}>
+            Add Lead Manually
+          </h2>
+          <form onSubmit={handleAddLead}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1rem' }}>
+
+              <div className="mk-admin-field">
+                <label className="mk-admin-label">Name *</label>
+                <input
+                  className="mk-admin-input"
+                  value={addForm.name}
+                  onChange={e => setAddForm(f => ({ ...f, name: e.target.value }))}
+                  placeholder="Customer name"
+                  required
+                />
+              </div>
+
+              <div className="mk-admin-field">
+                <label className="mk-admin-label">Phone *</label>
+                <input
+                  className="mk-admin-input"
+                  value={addForm.phone}
+                  onChange={e => setAddForm(f => ({ ...f, phone: e.target.value }))}
+                  placeholder="10-digit mobile"
+                  required
+                />
+              </div>
+
+              <div className="mk-admin-field">
+                <label className="mk-admin-label">Email</label>
+                <input
+                  className="mk-admin-input"
+                  type="email"
+                  value={addForm.email}
+                  onChange={e => setAddForm(f => ({ ...f, email: e.target.value }))}
+                  placeholder="Optional"
+                />
+              </div>
+
+              <div className="mk-admin-field">
+                <label className="mk-admin-label">City</label>
+                <select
+                  className="mk-admin-select"
+                  value={addForm.city}
+                  onChange={e => setAddForm(f => ({ ...f, city: e.target.value }))}
+                >
+                  <option value="">Select city</option>
+                  {CITIES.filter(c => c !== 'All').map(c => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mk-admin-field">
+                <label className="mk-admin-label">Area</label>
+                <input
+                  className="mk-admin-input"
+                  value={addForm.area}
+                  onChange={e => setAddForm(f => ({ ...f, area: e.target.value }))}
+                  placeholder="e.g. Rajajinagar"
+                />
+              </div>
+
+              <div className="mk-admin-field">
+                <label className="mk-admin-label">Gold Type</label>
+                <select
+                  className="mk-admin-select"
+                  value={addForm.gold_type}
+                  onChange={e => setAddForm(f => ({ ...f, gold_type: e.target.value }))}
+                >
+                  <option value="">Select type</option>
+                  {GOLD_TYPES.map(t => (
+                    <option key={t} value={t} style={{ textTransform: 'capitalize' }}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mk-admin-field">
+                <label className="mk-admin-label">Purity</label>
+                <select
+                  className="mk-admin-select"
+                  value={addForm.purity_karat}
+                  onChange={e => setAddForm(f => ({ ...f, purity_karat: e.target.value }))}
+                >
+                  <option value="">Select purity</option>
+                  {PURITIES.map(p => (
+                    <option key={p} value={p}>{p}K</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mk-admin-field">
+                <label className="mk-admin-label">Weight (grams)</label>
+                <input
+                  className="mk-admin-input"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  value={addForm.weight_grams}
+                  onChange={e => setAddForm(f => ({ ...f, weight_grams: e.target.value }))}
+                  placeholder="e.g. 12.5"
+                />
+              </div>
+
+            </div>
+
+            <div className="mk-admin-field" style={{ marginBottom: '1rem' }}>
+              <label className="mk-admin-label">Notes</label>
+              <textarea
+                className="mk-admin-input"
+                rows={2}
+                style={{ width: '100%', resize: 'vertical', fontFamily: 'inherit', fontSize: '0.85rem' }}
+                value={addForm.notes}
+                onChange={e => setAddForm(f => ({ ...f, notes: e.target.value }))}
+                placeholder="Walk-in, referral source, any context…"
+              />
+            </div>
+
+            {addError && (
+              <p style={{ color: '#c0392b', fontSize: '0.82rem', marginBottom: '0.75rem', fontFamily: 'Poppins, sans-serif' }}>
+                {addError}
+              </p>
+            )}
+
+            <div style={{ display: 'flex', gap: '0.6rem' }}>
+              <button
+                type="submit"
+                className="mk-admin-btn mk-admin-btn--plum"
+                disabled={addSaving}
+              >
+                {addSaving ? 'Saving…' : 'Save Lead'}
+              </button>
+              <button
+                type="button"
+                className="mk-admin-btn"
+                style={{ background: 'transparent', border: '1.5px solid var(--gallery-dk)', color: 'var(--ink-mid)' }}
+                onClick={() => { setShowAdd(false); setAddForm({ ...BLANK_FORM }); setAddError(''); }}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Filter bar */}
       <div className="mk-admin-section">

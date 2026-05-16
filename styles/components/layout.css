@@ -41,7 +41,7 @@
 
 .mk-ticker__live-label {
   font-family: 'Poppins', sans-serif;
-  font-size: 0.6rem;
+  font-size: 0.9125rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -67,7 +67,7 @@
   display: inline-flex;
   align-items: center;
   font-family: 'Poppins', sans-serif;
-  font-size: 0.6875rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--gold);
   padding: 0 1.5rem;
@@ -79,7 +79,7 @@
 .mk-ticker__karat {
   color: rgba(255, 255, 255, 0.45);
   font-weight: 400;
-  font-size: 0.625rem;
+  font-size: 0.9375rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -90,7 +90,7 @@
 }
 
 .mk-ticker__change {
-  font-size: 0.625rem;
+  font-size: 0.9375rem;
   font-weight: 600;
 }
 
@@ -104,13 +104,13 @@
 
 .mk-ticker__sep {
   color: rgba(255, 255, 255, 0.18);
-  font-size: 0.625rem;
+  font-size: 0.9375rem;
   user-select: none;
 }
 
 .mk-ticker__note {
   font-family: 'Poppins', sans-serif;
-  font-size: 0.625rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.50);
   letter-spacing: 0.04em;
