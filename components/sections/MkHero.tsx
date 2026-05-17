@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import { MkButton } from '@/components/ui/MkButton';
 import { MkRateWidget } from '@/components/features/MkRateWidget';
 
@@ -18,22 +17,7 @@ export function MkHero() {
   return (
     <section className="mk-hero mk-bg-dark" aria-label="Homepage hero">
 
-      {/* Background image slideshow — CSS crossfade, no JS */}
-      <div className="mk-hero__slides" aria-hidden="true">
-        <div className="mk-hero__slide" style={{ animationDelay: '-1s' }}>
-          <Image src="/bg-2.jpg" alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} priority />
-        </div>
-        <div className="mk-hero__slide" style={{ animationDelay: '4s' }}>
-          <Image src="/bg3.jpg" alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} loading="lazy" />
-        </div>
-        <div className="mk-hero__slide" style={{ animationDelay: '9s' }}>
-          <Image src="/bg-4.jpg" alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} loading="lazy" />
-        </div>
-        <div className="mk-hero__slide" style={{ animationDelay: '14s' }}>
-          <Image src="/bg-5.webp" alt="" fill sizes="100vw" style={{ objectFit: 'cover' }} loading="lazy" />
-        </div>
-        <div className="mk-hero__overlay" />
-      </div>
+      <div className="mk-hero__slides" aria-hidden="true" />
 
       {/* Purple atmospheric glow — radial, no hard edges */}
       <div className="mk-hero__glow" aria-hidden="true" />

@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+
+export const revalidate = 3600; // ISR: content changes infrequently
+
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkFooter } from '@/components/layout/MkFooter';
 import { MkButton } from '@/components/ui/MkButton';

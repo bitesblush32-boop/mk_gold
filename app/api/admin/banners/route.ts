@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { put } from '@vercel/blob';
+import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/admin-auth';
 import {
   getAllBanners,
@@ -77,6 +78,7 @@ export async function POST(req: NextRequest) {
     }
 
     const banner = await createBanner({ src, alt, order: 99 });
+    revalidatePath('/');
     return NextResponse.json({ success: true, banner }, { status: 201 });
   } catch (err) {
     console.error('[api/admin/banners] POST error:', err);
@@ -107,6 +109,7 @@ export async function PATCH(req: NextRequest) {
     if (sort_order !== undefined) await updateBannerOrder(id, sort_order);
     if (is_active  !== undefined) await toggleBanner(id, is_active);
     if (alt        !== undefined) await updateBannerAlt(id, alt);
+    revalidatePath('/');
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[api/admin/banners] PATCH error:', err);
@@ -133,6 +136,7 @@ export async function DELETE(req: NextRequest) {
 
   try {
     await deleteBanner(body.id);
+    revalidatePath('/');
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[api/admin/banners] DELETE error:', err);
@@ -150,6 +154,7 @@ export async function PUT(req: NextRequest) {
     await deleteAllBanners();
     await seedDefaultBanners();
     const banners = await getAllBanners();
+    revalidatePath('/');
     return NextResponse.json({ success: true, banners });
   } catch (err) {
     console.error('[api/admin/banners] PUT error:', err);

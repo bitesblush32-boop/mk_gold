@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+export const revalidate = 3600; // ISR: testimonials change infrequently
+
 export const metadata: Metadata = {
   title: "Customer Reviews | MK Gold | 4.9 Star Rated",
   description:

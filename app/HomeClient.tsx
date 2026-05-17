@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkTicker } from '@/components/layout/MkTicker';
 import { MkFooter } from '@/components/layout/MkFooter';
@@ -13,7 +14,6 @@ import { MkButton } from '@/components/ui/MkButton';
 import { MkLeadPopup } from '@/components/features/MkLeadPopup';
 import { MkEmergency } from '@/components/features/MkEmergency';
 import { BRANCHES, type Branch } from '@/lib/branch-router';
-import { FALLBACK_BANNERS } from '@/lib/data/home';
 import { getUtmParams } from '@/lib/utm';
 import type { FaqItem } from '@/lib/db/faqs';
 
@@ -845,7 +845,7 @@ function BottomNav() {
           transform: pastHero
             ? 'translateX(-50%) translateY(0)'
             : 'translateX(-50%) translateY(120%)',
-          transition: 'all 420ms cubic-bezier(0.34, 1.2, 0.64, 1)',
+          transition: 'opacity 420ms cubic-bezier(0.34, 1.2, 0.64, 1), transform 420ms cubic-bezier(0.34, 1.2, 0.64, 1)',
         }}
         aria-hidden={!pastHero}
       >
@@ -870,7 +870,7 @@ function BottomNav() {
           </a>
           <span className="sc-bn-sep" aria-hidden="true" />
           <a href={`tel:${process.env.NEXT_PUBLIC_PHONE_DEFAULT ?? '+917019500600'}`} className="sc-bn-phone sc-bn-hide-360">
-            <img src="/phone_icon.png" alt="" width={22} height={22} className="sc-bn-icon" aria-hidden="true" />
+            <Image src="/phone_icon.png" alt="" width={22} height={22} className="sc-bn-icon" loading="lazy" aria-hidden={true} />
             <span className="sc-bn-phone-text sc-bn-hide-900">+91 70195 00600</span>
           </a>
           <a
@@ -879,7 +879,7 @@ function BottomNav() {
             rel="noopener noreferrer"
             className="sc-bn-btn sc-bn-btn--whatsapp"
           >
-            <img src="/whatsapp_icon.png" alt="" width={22} height={22} className="sc-bn-icon" aria-hidden="true" />
+            <Image src="/whatsapp_icon.png" alt="" width={22} height={22} className="sc-bn-icon" loading="lazy" aria-hidden={true} />
             WhatsApp
           </a>
         </div>
@@ -890,12 +890,15 @@ function BottomNav() {
 
 /* ─── Page ─────────────────────────────────────────────────────── */
 
-export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
-  const [scrollPct, setScrollPct] = useState(0);
+export default function HomePage({ homeFaqs, initialBanners = [] }: {
+  homeFaqs?: FaqItem[];
+  initialBanners?: { src: string; alt: string }[];
+}) {
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
   const [slide, setSlide] = useState(0);
   const [rateUnlocked, setRateUnlocked] = useState(false);
-  const [banners, setBanners] = useState<{ src: string; alt: string }[]>(FALLBACK_BANNERS);
+  const [banners, setBanners] = useState<{ src: string; alt: string }[]>(initialBanners);
   const [googleReviews, setGoogleReviews] = useState<{ name: string; area: string; rating: number; text: string; initials: string }[]>([]);
 
   useEffect(() => {
@@ -923,13 +926,16 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
           setBanners(data.banners.map((b: { src: string; alt: string }) => ({ src: b.src, alt: b.alt })));
         }
       })
-      .catch(() => { /* keep fallback */ });
+      .catch(() => { /* keep current banners */ });
   }, []);
 
   useEffect(() => {
+    const el = progressBarRef.current;
     const handleScroll = () => {
+      if (!el) return;
       const docH = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollPct(docH > 0 ? (window.scrollY / docH) * 100 : 0);
+      const pct = docH > 0 ? window.scrollY / docH : 0;
+      el.style.transform = `scaleX(${pct})`;
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -937,6 +943,7 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
 
   // Auto-advance banner every 5 seconds
   useEffect(() => {
+    if (banners.length < 2) return;
     const id = setInterval(() => setSlide(p => (p + 1) % banners.length), 5000);
     return () => clearInterval(id);
   }, [banners.length]);
@@ -1886,40 +1893,22 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
         }
       `}</style>
 
-      {/* ── Scroll progress bar ─────────────────────────────────── */}
+      {/* ── Scroll progress bar — direct DOM update, no React re-render ── */}
       <div
         aria-hidden="true"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '4px',
-          zIndex: 999,
-          background: 'rgba(40,12,56,0.85)',
-        }}
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '4px', zIndex: 999, background: 'rgba(40,12,56,0.85)' }}
       >
-        <div style={{
-          height: '100%',
-          width: `${scrollPct}%`,
-          background: 'linear-gradient(90deg, #512561 0%, #7B2C91 40%, #DFC160 80%, #EDD47A 100%)',
-          boxShadow: '0 1px 8px rgba(223,193,96,0.55), 0 2px 4px rgba(123,44,145,0.4)',
-          borderRadius: '0 2px 2px 0',
-          transition: 'width 80ms linear',
-          position: 'relative',
-        }}>
-          <div style={{
-            position: 'absolute',
-            right: 0,
-            top: '-3px',
-            width: '16px',
-            height: '10px',
-            background: 'radial-gradient(ellipse at right, rgba(223,193,96,0.9) 0%, transparent 70%)',
-            borderRadius: '50%',
-            filter: 'blur(2px)',
-            pointerEvents: 'none',
-          }} />
-        </div>
+        <div
+          ref={progressBarRef}
+          style={{
+            height: '100%',
+            width: '100%',
+            transformOrigin: 'left center',
+            transform: 'scaleX(0)',
+            background: 'linear-gradient(90deg, #512561 0%, #7B2C91 40%, #DFC160 80%, #EDD47A 100%)',
+            boxShadow: '0 1px 8px rgba(223,193,96,0.55), 0 2px 4px rgba(123,44,145,0.4)',
+          }}
+        />
       </div>
 
       <MkTicker />
@@ -1928,14 +1917,18 @@ export default function HomePage({ homeFaqs }: { homeFaqs?: FaqItem[] }) {
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="sc-hero mk-bg-dark" aria-label="Hero">
         {banners.map((b, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             key={b.src}
             src={b.src}
             alt={b.alt}
+            fill
+            sizes="100vw"
+            quality={85}
+            priority={i === 0}
             className={`sc-hero__banner${i === slide ? ' sc-hero__banner--active' : ''}`}
             aria-hidden={i !== slide}
             draggable={false}
+            style={{ objectFit: 'cover' }}
           />
         ))}
         <div className="sc-hero__overlay" />

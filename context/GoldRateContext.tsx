@@ -3,9 +3,10 @@
 import {
   createContext,
   useContext,
+  useState,
+  useEffect,
   type ReactNode,
 } from 'react';
-import useSWR from 'swr';
 import type {
   GoldRateContextValue,
   GoldRateData,
@@ -31,46 +32,34 @@ const GoldRateContext = createContext<GoldRateContextValue>({
   isError:     false,
 });
 
-/* ─── Fetcher ────────────────────────────────────────────────── */
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fetcher = (url: string): Promise<any> =>
-  fetch(url).then((r) => {
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    return r.json();
-  });
-
 /* ─── Provider ───────────────────────────────────────────────── */
 
-/**
- * Wrap your app (or a subtree) with this provider.
- * All children can call useGoldRateContext() or useGoldRate()
- * instead of making independent SWR fetches.
- *
- * Add to app/layout.tsx:
- *   import { GoldRateProvider } from '@/context/GoldRateContext';
- *   <GoldRateProvider>{children}</GoldRateProvider>
- */
 export function GoldRateProvider({ children }: { children: ReactNode }) {
-  const { data, isLoading, error } = useSWR<GoldRateData>(
-    '/api/gold-rate',
-    fetcher,
-    {
-      refreshInterval:  300_000, // 5 minutes — matches ISR on /api/gold-rate
-      revalidateOnFocus: false,
-      // No fallbackData — so isLoading = true on first fetch (enables skeleton)
-      dedupingInterval: 60_000,
-    }
-  );
+  const [data, setData]         = useState<GoldRateData | null>(null);
+  const [isLoading, setLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    const load = () => {
+      setHasError(false);
+      fetch('/api/gold-rate')
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        .then((d: GoldRateData) => { setData(d); setLoading(false); })
+        .catch(() => { setHasError(true); setLoading(false); });
+    };
+    load();
+    const id = setInterval(load, 300_000); // 5 minutes — matches ISR on /api/gold-rate
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <GoldRateContext.Provider
       value={{
-        rates:       data?.rates       ?? FALLBACK_RATES,
-        mcxRate:     data?.mcxRate     ?? FALLBACK_MCX,
-        lastUpdated: data?.updatedAt   ?? null,
+        rates:       data?.rates     ?? FALLBACK_RATES,
+        mcxRate:     data?.mcxRate   ?? FALLBACK_MCX,
+        lastUpdated: data?.updatedAt ?? null,
         isLoading,
-        isError:     !!error && !data,
+        isError:     hasError && !data,
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Poppins, Anek_Kannada } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react";
+import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MkRevealObserver } from "@/components/ui/MkRevealObserver";
 import { MkSocialProof } from "@/components/features/MkSocialProof";
@@ -85,17 +85,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://mkgold.in" },
 };
 
-/* ─── Site-wide JSON-LD (rendered once, in layout) ─────────────── */
-
-const SERVICE_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "Service",
-  serviceType: "Gold Buying Service",
-  provider: { "@type": "LocalBusiness", name: "MKGOLD" },
-  areaServed: { "@type": "City", name: "Bangalore" },
-  description:
-    "Sell your old gold for instant cash at the best price in Bangalore with transparent gold testing and zero hidden charges.",
-};
+/* ─── Site-wide JSON-LD (layout — every page) ───────────────────── */
 
 const WEBSITE_SCHEMA = {
   "@context": "https://schema.org",
@@ -109,45 +99,6 @@ const WEBSITE_SCHEMA = {
   },
 };
 
-const FAQ_SCHEMA = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "How can I sell gold in Bangalore?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Visit any MK Gold branch in Bangalore to get instant cash for your gold with transparent XRF testing and the best MCX-linked market price. No appointment needed.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Do you provide instant payment for gold?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, MK Gold provides payment within 30 minutes after gold evaluation — by cash, UPI, NEFT or RTGS. No hidden charges.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Is gold testing free at MK Gold?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, gold purity testing using our German XRF spectrometer is 100% free and transparent. The result is shown on the machine screen before any price is quoted.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What gold can I sell at MK Gold?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "We buy all gold jewellery (22K, 24K), gold coins, gold bars, and broken or damaged gold pieces. No original receipts or hallmark certificates required.",
-      },
-    },
-  ],
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -156,6 +107,18 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Google Maps — preconnect so SDK download starts before JS injects the script */}
+        <link rel="preconnect" href="https://maps.googleapis.com" />
+        <link rel="dns-prefetch" href="https://maps.googleapis.com" />
+        <link rel="preconnect" href="https://maps.gstatic.com" crossOrigin="anonymous" />
+        {/* Tanker display font — preload + async apply (non-blocking); Poppins + Anek via next/font */}
+        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Tanker&display=swap" />
+        <Script id="tanker-font" strategy="afterInteractive">{`
+          var l=document.createElement('link');
+          l.rel='stylesheet';
+          l.href='https://fonts.googleapis.com/css2?family=Tanker&display=swap';
+          document.head.appendChild(l);
+        `}</Script>
 
         {/* ── Google Tag Manager ── */}
         {GTM_ID && (
@@ -212,12 +175,10 @@ export default function RootLayout({
           `}</Script>
         )}
 
-        {/* ── Site-wide JSON-LD ── */}
+        {/* ── Site-wide JSON-LD (every page) ── */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema()) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema()) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_SCHEMA) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_SCHEMA) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }} />
       </head>
       <body className="min-h-screen flex flex-col antialiased">
         {/* Google Tag Manager (noscript) */}

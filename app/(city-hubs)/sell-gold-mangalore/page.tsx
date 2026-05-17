@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+
+export const revalidate = 3600; // ISR: city hub content changes infrequently
+
 import { CityHubPage } from '@/components/sections/CityHubPage';
 
 export const metadata: Metadata = {

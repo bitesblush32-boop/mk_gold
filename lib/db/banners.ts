@@ -3,13 +3,13 @@ import { eq, asc } from 'drizzle-orm';
 
 export type { HeroBanner } from '@/db/schema';
 
-/* ─── Default banners (seeded from existing /public files) ──────── */
+/* ─── Default banners (Vercel Blob CDN) ─────────────────────────── */
 
 const DEFAULT_BANNERS = [
-  { src: '/Web Banners_Design 2.jpg.jpeg',     alt: 'Turn your gold into cash — MK Gold',                         order: 0 },
-  { src: '/Web Banners_Design 6.jpg (1).jpeg', alt: 'We buy your gold at the right value — MK Gold',             order: 1 },
-  { src: '/Web Banners_Design 7.jpg.jpeg',     alt: 'ನಿಮ್ಮ ಚಿನ್ನಕ್ಕೆ ಸರಿಯಾದ ಬೆಲೆ, ತಕ್ಷಣ ಹಣ — MK Gold',        order: 2 },
-  { src: '/Home Page.png',                     alt: 'MK Gold branch — trusted gold buyers since 2014',           order: 3 },
+  { src: 'https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828487004-banner1.jpeg', alt: 'Turn your gold into instant cash - MK Gold Karnataka',    order: 0 },
+  { src: 'https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828526733-banner.jpeg',  alt: 'We buy your gold at the right value - MK Gold',            order: 1 },
+  { src: 'https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828536536-banner3.jpeg', alt: 'MK Gold - Instant Cash for Gold in Karnataka',              order: 2 },
+  { src: 'https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828917372-banner2.jpeg', alt: 'MK Gold branch - trusted gold buyers since 2014',           order: 3 },
 ];
 
 export async function seedDefaultBanners() {

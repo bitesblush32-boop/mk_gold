@@ -14,7 +14,6 @@
     "@anthropic-ai/sdk": "^0.96.0",
     "@sanity/client": "^7.22.0",
     "@sanity/image-url": "^2.1.1",
-    "@supabase/supabase-js": "^2.105.4",
     "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.3.3",
     "@vercel/speed-insights": "^2.0.0",
@@ -27,8 +26,7 @@
     "postgres": "^3.4.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "sharp": "^0.34.5",
-    "swr": "^2.4.1"
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

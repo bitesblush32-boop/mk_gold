@@ -7,7 +7,7 @@ import { MkCtaBand }       from '@/components/sections/MkCtaBand';
 import { getPublishedPosts } from '@/lib/db/blog';
 import { BlogPostGrid }    from './BlogPostGrid';
 
-export const revalidate = 60;
+export const revalidate = 300; // ISR: blog is manually published, 5-min cadence is sufficient
 
 export const metadata: Metadata = {
   title: 'Gold Buying Guide | Expert Insights | MK Gold',

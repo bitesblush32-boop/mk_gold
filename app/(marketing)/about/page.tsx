@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
+
+export const revalidate = false; // Static at build — content from local data only
+
 import { MkNavbar }        from '@/components/layout/MkNavbar';
 import { MkFooter }        from '@/components/layout/MkFooter';
 import { MkCard }          from '@/components/ui/MkCard';
-import { MkLogo }          from '@/components/ui/MkLogo';
+import { AboutHeroLogo }   from '@/components/features/AboutHeroLogo';
 import { MkSectionHeader } from '@/components/ui/MkSectionHeader';
 import { MkTrustBlock }    from '@/components/ui/MkTrustBlock';
 import { MkButton }        from '@/components/ui/MkButton';
@@ -132,7 +135,7 @@ export default function AboutPage() {
                 lineHeight: 1.6,
                 maxWidth: '520px',
               }}>
-                15+ years of building trust, one transaction at a time.
+                A name customers turn to during some of life&apos;s most important financial moments.
               </p>
 
               {/* Kannada tagline */}
@@ -165,9 +168,9 @@ export default function AboutPage() {
                 pointerEvents: 'none',
               }} />
 
-              {/* Levitating logo */}
-              <div style={{ animation: 'mk-levitate 4s ease-in-out infinite', position: 'relative', zIndex: 1 }}>
-                <MkLogo variant="light" size="lg" href="" />
+              {/* Bilingual animated logo */}
+              <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
+                <AboutHeroLogo />
               </div>
 
               {/* Gold accent line */}
@@ -216,38 +219,55 @@ export default function AboutPage() {
                   letterSpacing: 'var(--ls-tight)',
                 }}
               >
-                When we started in 2014, gold buying in Karnataka was dominated by opaque
-                processes. We decided to change that.
+                Trust is not built overnight — it is earned through years of honesty,
+                transparency, and respect.
               </blockquote>
             </div>
 
             {/* Vertical divider */}
             <div className="mk-about-split__divider" aria-hidden="true" />
 
-            {/* Right — founder story */}
+            {/* Right — brand story */}
             <div className="mk-about-split__right">
-              {[
-                'MK Gold was founded in Bangalore in 2014 with a clear observation: the people most in need of immediate liquidity from their gold were also the most vulnerable to unfair pricing.',
-                'Gold buying in Karnataka was largely informal. Rates varied arbitrarily. Customers had no way to verify the purity of their gold or the fairness of the rate they were offered. The process was opaque by design.',
-                'We set out to build something different — a gold buying company where the customer knows the formula, sees the MCX rate openly, and receives payment within 30 minutes. Transparent evaluation. Fair value. A respectful, non-judgmental experience.',
-              ].map((para, i) => (
-                <p
-                  key={i}
-                  style={{
+              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', lineHeight: 1.8, margin: '0 0 1.25rem' }}>
+                At MK Gold, trust is not built overnight — it is earned through years of honesty, transparency, and respect. With a legacy of over 15 years in Bengaluru, MK Gold has become a name customers turn to during some of life&apos;s most important financial moments.
+              </p>
+              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', lineHeight: 1.8, margin: '0 0 1.5rem' }}>
+                Selling gold is often an emotional decision. Many people walk into traditional gold-buying stores feeling anxious, uncertain, or even judged. MK Gold was built to change that experience completely.
+              </p>
+
+              {/* "We believe every customer deserves" list */}
+              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-sm)', fontWeight: 600, color: 'var(--plum)', margin: '0 0 0.75rem', letterSpacing: '0.01em' }}>
+                We believe every customer deserves:
+              </p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.5rem' }}>
+                {[
+                  'Transparent gold testing done openly in front of them',
+                  'A clear explanation of purity and weight',
+                  'Fair valuation without hidden deductions',
+                  'A professional, respectful environment that protects their dignity',
+                ].map((item) => (
+                  <li key={item} style={{
                     fontFamily: 'Poppins, sans-serif',
-                    fontSize: 'var(--t-base)',
+                    fontSize: 'var(--t-sm)',
                     color: 'var(--ink-mid)',
-                    lineHeight: 1.8,
-                    margin: i < 2 ? '0 0 1.25rem' : 0,
-                  }}
-                >
-                  {para}
-                </p>
-              ))}
+                    lineHeight: 1.7,
+                    padding: '0.35rem 0 0.35rem 1rem',
+                    borderLeft: '2px solid var(--gold)',
+                    marginBottom: '0.5rem',
+                  }}>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', lineHeight: 1.8, margin: 0 }}>
+                Our purpose goes beyond buying gold. We exist to provide immediate financial support with honesty, empathy, and trust — helping customers convert their gold into instant liquidity with complete confidence.
+              </p>
             </div>
           </div>
 
-          {/* Closing stat line */}
+          {/* Closing ambition line */}
           <div
             className="reveal delay-2"
             style={{
@@ -273,14 +293,51 @@ export default function AboutPage() {
                 lineHeight: 1.5,
               }}
             >
-              15+ years later, 10,000+ customers, 16 branches, and the same promise.
+              Today, MK Gold is evolving with a larger ambition: to become Karnataka&apos;s most trusted organised gold buying brand and the first name people think of whenever they need a fair and reliable gold-selling experience.
             </p>
           </div>
 
         </div>
       </section>
 
-      {/* ══ 3. SEAL SHOWCASE ══════════════════════════════════════ */}
+      {/* ══ 3. VISION & MISSION ═══════════════════════════════════ */}
+      <section className="mk-bg-dark section">
+        <div className="mk-container">
+
+          <div className="reveal" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <p className="mk-section-overline">Who We Are</p>
+            <h2 style={{
+              fontFamily: 'Tanker, serif',
+              fontSize: 'var(--t-h2)',
+              color: 'var(--white)',
+              margin: '0.5rem 0 0',
+              lineHeight: 1.15,
+            }}>
+              Vision &amp; Mission
+            </h2>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '1.5rem',
+          }}>
+            <MkTrustBlock title="Our Vision" className="reveal delay-1">
+              To become the most trusted gold buying brand across Karnataka and South India
+              by setting new standards in transparency, fairness, and customer trust.
+            </MkTrustBlock>
+
+            <MkTrustBlock title="Our Mission" className="reveal delay-2">
+              To provide immediate liquidity against gold through transparent evaluation,
+              fair pricing, and a respectful, non-judgmental customer experience that values
+              people as much as their gold.
+            </MkTrustBlock>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ══ 4. SEAL SHOWCASE ══════════════════════════════════════ */}
       <section className="mk-bg-dark section">
         <div className="mk-container">
           <div
@@ -375,14 +432,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ══ 4. VALUES ═════════════════════════════════════════════ */}
+      {/* ══ 5. VALUES ═════════════════════════════════════════════ */}
       <section className="mk-bg-light section">
         <div className="mk-container">
           <MkSectionHeader
             tag="Our Values"
             title="What guides every transaction"
             accentWord="every"
-            subtitle="Four principles. Non-negotiable at all 16 branches."
+            subtitle="What we believe every customer deserves."
           />
 
           <div
@@ -457,7 +514,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ══ 5. CERTIFICATIONS ════════════════════════════════════ */}
+      {/* ══ 6. CERTIFICATIONS ════════════════════════════════════ */}
       <section className="mk-bg-dark section">
         <div className="mk-container">
 
@@ -498,7 +555,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ══ 6. CITY PRESENCE ══════════════════════════════════════ */}
+      {/* ══ 7. CITY PRESENCE ══════════════════════════════════════ */}
       <section className="mk-bg-dark section">
         <div className="mk-container">
 
@@ -553,10 +610,10 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ══ 7. STAT BAND ══════════════════════════════════════════ */}
+      {/* ══ 8. STAT BAND ══════════════════════════════════════════ */}
       <MkStatBand />
 
-      {/* ══ 8. CTA + FOOTER ═══════════════════════════════════════ */}
+      {/* ══ 9. CTA + FOOTER ═══════════════════════════════════════ */}
       <MkCtaBand />
       <MkFooter />
     </>

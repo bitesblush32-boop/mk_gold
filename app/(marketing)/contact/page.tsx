@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+
+export const revalidate = 3600; // ISR: branch data changes infrequently
+
 import { BRANCHES } from '@/lib/branch-router';
 import type { Branch } from '@/lib/branch-router';
 import { MkNavbar }        from '@/components/layout/MkNavbar';

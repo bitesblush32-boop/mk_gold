@@ -13,8 +13,7 @@
  * app/admin/layout.tsx — never loads on marketing pages.
  */
 
-/* ── 1. Google Fonts ─────────────────────────────────────────── */
-@import url("https://fonts.googleapis.com/css2?family=Tanker&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Anek+Kannada:wght@400;600;700&display=swap");
+/* ── 1. Google Fonts — loaded via <link> in layout.tsx (non-blocking) ─ */
 
 /* ── 2. Design System (tokens, reset, patterns, reveal, layout) ─ */
 @import "../styles/globals.css";

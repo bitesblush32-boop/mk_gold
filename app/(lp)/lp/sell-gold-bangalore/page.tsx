@@ -1,4 +1,5 @@
 // Landing page: Sell Gold Bangalore — paid ads, no nav/footer
+export const revalidate = false; // Static at build
 export default function LpSellGoldBangalorePage() {
   return (
     <main>

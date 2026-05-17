@@ -1,6 +1,6 @@
 'use client';
 
-import useSWR from 'swr';
+import { useState, useEffect } from 'react';
 
 interface KaratRate {
   karat: 22 | 24;
@@ -9,7 +9,7 @@ interface KaratRate {
 }
 
 interface MkTickerProps {
-  /** Pass rates from server to hydrate immediately; SWR refreshes every 5 min */
+  /** Pass rates from server to hydrate immediately */
   rates?: KaratRate[];
 }
 
@@ -32,21 +32,19 @@ function fmt(v: number) {
   }).format(v);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
 export function MkTicker({ rates: initialRates }: MkTickerProps) {
-  const { data } = useSWR<{ rates: KaratRate[] }>(
-    '/api/gold-rate',
-    fetcher,
-    {
-      refreshInterval: 5 * 60 * 1000,
-      fallbackData: initialRates ? { rates: initialRates } : undefined,
-      revalidateOnFocus: false,
-    }
-  );
+  const [rates, setRates] = useState<KaratRate[]>(initialRates ?? DEFAULT_RATES);
 
-  const rates: KaratRate[] = data?.rates ?? initialRates ?? DEFAULT_RATES;
+  useEffect(() => {
+    const load = () =>
+      fetch('/api/gold-rate')
+        .then(r => r.json())
+        .then(d => { if (d.rates) setRates(d.rates); })
+        .catch(() => {});
+    load();
+    const id = setInterval(load, 5 * 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
 
   // Separator text between karat items
   const SEP = <span className="mk-ticker__sep" aria-hidden="true">·</span>;
