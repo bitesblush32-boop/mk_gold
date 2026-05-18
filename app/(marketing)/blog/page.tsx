@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image               from 'next/image';
 import { MkNavbar }        from '@/components/layout/MkNavbar';
 import { MkFooter }        from '@/components/layout/MkFooter';
 import { MkBadge }         from '@/components/ui/MkBadge';
@@ -100,11 +101,13 @@ export default async function BlogPage() {
               {/* Cover image / placeholder */}
               <div className="mk-blog-featured__img">
                 {featured.cover_image_url ? (
-                  /* eslint-disable-next-line @next/next/no-img-element */
-                  <img
+                  <Image
                     src={featured.cover_image_url}
                     alt={featured.title}
-                    className="mk-blog-featured__img-actual"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 60vw"
+                    style={{ objectFit: 'cover' }}
+                    priority
                   />
                 ) : (
                   <div className="mk-blog-featured__placeholder mk-bg-dark">

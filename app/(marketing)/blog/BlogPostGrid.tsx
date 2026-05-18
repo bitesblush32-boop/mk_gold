@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import type { BlogPost } from '@/lib/db/blog';
 import { MkBadge } from '@/components/ui/MkBadge';
 
@@ -65,6 +66,35 @@ export function BlogPostGrid({ posts }: BlogPostGridProps) {
                 key={post.slug}
                 className={`mk-card mk-card--gallery mk-blog-card reveal delay-${Math.min(i + 1, 6)}`}
               >
+                {/* Cover image thumbnail */}
+                <a
+                  href={`/blog/${post.slug}`}
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  style={{ display: 'block', position: 'relative', height: 180, overflow: 'hidden', borderRadius: '8px 8px 0 0' }}
+                >
+                  {post.cover_image_url ? (
+                    <Image
+                      src={post.cover_image_url}
+                      alt={post.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: '100%', height: '100%',
+                        background: 'var(--plum-deep)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}
+                    >
+                      <span style={{ fontFamily: 'Tanker, serif', fontSize: '3rem', color: 'rgba(223,193,96,0.25)' }}>
+                        MK
+                      </span>
+                    </div>
+                  )}
+                </a>
                 <div className="mk-blog-card__inner">
                   <MkBadge
                     variant={BADGE_VARIANT[post.category] ?? 'gallery'}
