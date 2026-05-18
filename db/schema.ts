@@ -60,6 +60,8 @@ export const goldRateOverride = pgTable('gold_rate_override', {
   id:              serial('id').primaryKey(),
   rate_24k:        numeric('rate_24k').notNull(),
   rate_22k:        numeric('rate_22k').notNull(),
+  rate_20k:        numeric('rate_20k').notNull(),
+  rate_18k:        numeric('rate_18k').notNull(),
   is_manual:       boolean('is_manual').notNull().default(true),
   override_until:  timestamp('override_until'),       // null = active until manually cleared
   updated_at:      timestamp('updated_at').defaultNow().notNull(),

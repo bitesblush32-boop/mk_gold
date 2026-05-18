@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { fetchGoldRate } from '@/lib/gold-rate';
+import { getEffectiveGoldRate } from '@/lib/gold-rate';
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkFooter } from '@/components/layout/MkFooter';
 import { MkCalculator } from '@/components/features/MkCalculator';
@@ -86,7 +86,7 @@ export async function generateMetadata(): Promise<Metadata> {
 /* ─── Page ─────────────────────────────────────────────────────── */
 export default async function GoldRateTodayPage() {
   const faqItems = await getFaqsByPage('gold-rate');
-  const rate = await fetchGoldRate();
+  const rate = await getEffectiveGoldRate();
 
   const formattedDate = new Date().toLocaleDateString('en-IN', {
     weekday: 'long',

@@ -3,7 +3,7 @@ export interface GoldRate {
   rate24k: number;             // per gram, INR
   rate22k: number;
   mcxRate: number;             // MCX per 10g
-  source: "goldapi" | "fallback";
+  source: "goldapi" | "fallback" | "manual";
 }
 
 const FALLBACK_RATE_24K = 7200; // fallback per gram (update periodically)
@@ -16,6 +16,34 @@ function buildRates(rate24kPerGram: number): GoldRate {
     mcxRate: Math.round(rate24kPerGram * 10),
     source: "goldapi",
   };
+}
+
+/**
+ * Returns the active manual override rate if one is set in the DB,
+ * otherwise fetches the live rate. Use this in all Server Components
+ * instead of calling fetchGoldRate() directly.
+ */
+export async function getEffectiveGoldRate(): Promise<GoldRate> {
+  try {
+    const { getGoldRateOverride } = await import('@/lib/db/rates');
+    const override = await getGoldRateOverride();
+    if (override?.is_manual) {
+      const r24 = Number(override.rate_24k);
+      const r22 = Number(override.rate_22k);
+      return {
+        timestamp: override.updated_at instanceof Date
+          ? override.updated_at.toISOString()
+          : String(override.updated_at),
+        rate24k: r24,
+        rate22k: r22,
+        mcxRate: Math.round(r24 * 10),
+        source: 'manual',
+      };
+    }
+  } catch {
+    // DB not ready or no override — fall through to live rate
+  }
+  return fetchGoldRate();
 }
 
 export async function fetchGoldRate(): Promise<GoldRate> {

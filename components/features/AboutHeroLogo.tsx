@@ -77,14 +77,9 @@ export function AboutHeroLogo() {
         <Image
           src="/brand/logo_light_eng.png"
           alt="MK Gold — Instant Money, Lasting Trust"
-          width={1456}
-          height={816}
+          fill
           priority
           style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
             objectFit: 'contain',
             opacity: lang === 'en' ? 1 : 0,
             transition: imgTransition,
@@ -96,13 +91,8 @@ export function AboutHeroLogo() {
         <Image
           src="/brand/logo_light_kan.png"
           alt="MK Gold — ತಕ್ಷಣ ಹಣ, ನಿರಂತರ ನಂಬಿಕೆ"
-          width={1456}
-          height={816}
+          fill
           style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
             objectFit: 'contain',
             opacity: lang === 'kn' ? 1 : 0,
             transition: imgTransition,
