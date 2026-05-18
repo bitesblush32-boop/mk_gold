@@ -2,8 +2,6 @@ export interface GoldRate {
   timestamp: string;           // ISO string
   rate24k: number;             // per gram, INR
   rate22k: number;
-  rate20k: number;
-  rate18k: number;
   mcxRate: number;             // MCX per 10g
   source: "goldapi" | "fallback";
 }
@@ -15,8 +13,6 @@ function buildRates(rate24kPerGram: number): GoldRate {
     timestamp: new Date().toISOString(),
     rate24k: Math.round(rate24kPerGram),
     rate22k: Math.round(rate24kPerGram * (22 / 24)),
-    rate20k: Math.round(rate24kPerGram * (20 / 24)),
-    rate18k: Math.round(rate24kPerGram * (18 / 24)),
     mcxRate: Math.round(rate24kPerGram * 10),
     source: "goldapi",
   };

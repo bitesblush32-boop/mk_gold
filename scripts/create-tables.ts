@@ -69,8 +69,6 @@ async function main() {
       id              SERIAL PRIMARY KEY,
       rate_24k        NUMERIC NOT NULL,
       rate_22k        NUMERIC NOT NULL,
-      rate_20k        NUMERIC NOT NULL,
-      rate_18k        NUMERIC NOT NULL,
       is_manual       BOOLEAN NOT NULL DEFAULT TRUE,
       override_until  TIMESTAMPTZ,
       updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()

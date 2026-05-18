@@ -116,7 +116,7 @@ function buildFaqs(branch: Branch): FaqItem[] {
     },
     {
       question: `What gold can I sell at the ${branch.area} branch?`,
-      answer: `We buy gold jewellery (18K, 20K, 22K, and 24K), gold coins, gold bars, and broken or damaged gold pieces. No original purchase receipts or hallmark certificates required. Bring one valid government photo ID — Aadhaar, PAN, Passport, Voter ID, or Driving Licence.`,
+      answer: `We buy gold jewellery (22K and 24K), gold coins, gold bars, and broken or damaged gold pieces. No original purchase receipts or hallmark certificates required. Bring one valid government photo ID — Aadhaar, PAN, Passport, Voter ID, or Driving Licence.`,
     },
   ];
 }
@@ -306,7 +306,7 @@ export default async function BranchPage({ params }: Props) {
             subtitle={`Live MCX rate at MK Gold ${branch.area}. Updated every 5 minutes.`}
           />
           <div style={{ marginTop: '3rem', maxWidth: '480px', margin: '3rem auto 0' }}>
-            <MkRateWidget />
+            <MkRateWidget variant="page" />
           </div>
         </div>
       </section>

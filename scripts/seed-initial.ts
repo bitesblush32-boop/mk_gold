@@ -85,10 +85,10 @@ const BLOG_POSTS = [
 /* ─── Hero banners ────────────────────────────────────────────── */
 
 const HERO_BANNERS = [
-  { src: '/brand/logo-dark.svg',    alt: 'MK Gold — Sell Gold Karnataka',            order: 1, is_active: true },
-  { src: '/brand/logo-light.svg',   alt: 'MK Gold Instant Cash for Gold Karnataka',  order: 2, is_active: true },
-  { src: '/brand/seal-en.svg',      alt: 'MK Gold — Trusted Gold Buyers Since 2014', order: 3, is_active: true },
-  { src: '/brand/seal-kn.svg',      alt: 'MK Gold — ತಕ್ಷಣ ಹಣ ಶಾಶ್ವತ ವಿಶ್ವಾಸ',        order: 4, is_active: true },
+  { src: '/Web Banners_Design 2.jpg.jpeg',     alt: 'Turn your gold into cash — MK Gold',                         order: 0, is_active: true },
+  { src: '/Web Banners_Design 6.jpg (1).jpeg', alt: 'We buy your gold at the right value — MK Gold',             order: 1, is_active: true },
+  { src: '/Web Banners_Design 7.jpg.jpeg',     alt: 'ನಿಮ್ಮ ಚಿನ್ನಕ್ಕೆ ಸರಿಯಾದ ಬೆಲೆ, ತಕ್ಷಣ ಹಣ — MK Gold',        order: 2, is_active: true },
+  { src: '/Home Page.png',                     alt: 'MK Gold branch — trusted gold buyers since 2014',           order: 3, is_active: true },
 ];
 
 /* ─── Main ────────────────────────────────────────────────────── */
@@ -119,9 +119,13 @@ async function main() {
     postsInserted++;
   }
 
-  // Seed banners only if table is empty
+  // Check if existing banners have the old wrong src paths (brand logos instead of actual images)
+  const wrongSrcs = ['/brand/logo-dark.svg', '/brand/logo-light.svg', '/brand/seal-en.svg', '/brand/seal-kn.svg'];
+  const wrongRows = await sql`SELECT id FROM hero_banners WHERE src = ANY(${wrongSrcs})`;
+
   let bannersInserted = 0;
   if (parseInt(existingBanners[0].n) === 0) {
+    // Table empty — insert defaults
     for (const banner of HERO_BANNERS) {
       await sql`
         INSERT INTO hero_banners (src, alt, "order", is_active)
@@ -130,8 +134,20 @@ async function main() {
       bannersInserted++;
     }
     console.log(`  ✓ ${bannersInserted} hero banners inserted`);
+  } else if (wrongRows.length > 0) {
+    // Wrong paths detected — wipe and re-seed with correct banner images
+    console.log(`  ! Found ${wrongRows.length} banners with wrong src paths (brand logos). Resetting…`);
+    await sql`DELETE FROM hero_banners`;
+    for (const banner of HERO_BANNERS) {
+      await sql`
+        INSERT INTO hero_banners (src, alt, "order", is_active)
+        VALUES (${banner.src}, ${banner.alt}, ${banner.order}, ${banner.is_active})
+      `;
+      bannersInserted++;
+    }
+    console.log(`  ✓ Reset complete. ${bannersInserted} correct hero banners inserted.`);
   } else {
-    console.log(`  - Skipping banners (already seeded)`);
+    console.log(`  - Skipping banners (already seeded with correct paths)`);
   }
 
   // Confirm gold_rate_override is empty (intentional — use live MCX)

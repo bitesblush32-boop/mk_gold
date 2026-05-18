@@ -137,7 +137,9 @@ export async function GET(req: NextRequest) {
       available: (bookedMap[time] ?? 0) < MAX_PER_SLOT,
     }));
 
-    return NextResponse.json({ slots });
+    return NextResponse.json({ slots }, {
+      headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120' },
+    });
   } catch (err) {
     console.error('[api/appointments] GET error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

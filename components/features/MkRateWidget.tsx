@@ -1,4 +1,5 @@
 'use client';
+import { getUtmParams } from '@/lib/utm';
 
 import { useState, useRef, useCallback } from 'react';
 import { useGoldRateContext } from '@/context/GoldRateContext';
@@ -14,7 +15,7 @@ interface MkRateWidgetProps {
 /* ─── Constants ──────────────────────────────────────────────── */
 
 const KARAT_LABELS: Record<number, string> = {
-  24: '24K', 22: '22K', 20: '20K', 18: '18K',
+  24: '24K', 22: '22K',
 };
 
 const PURITY_OPTIONS = [
@@ -51,9 +52,9 @@ function WidgetSkeleton() {
         <div className="mk-rw-skeleton__bar" style={{ width: '8rem', height: '0.875rem' }} />
         <div className="mk-rw-skeleton__bar" style={{ width: '4.5rem', height: '0.875rem' }} />
       </div>
-      {/* 2×2 grid placeholders */}
+      {/* 1×2 grid placeholders */}
       <div className="mk-rw-skeleton__grid">
-        {[0, 1, 2, 3].map((i) => (
+        {[0, 1].map((i) => (
           <div key={i} className="mk-rw-skeleton__cell">
             <div className="mk-rw-skeleton__bar" style={{ width: '2.5rem', height: '0.6rem' }} />
             <div className="mk-rw-skeleton__bar" style={{ width: '5rem',   height: '1.3rem' }} />
@@ -123,7 +124,8 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
   // Hero-only: calculator gate
   const [calcUnlocked, setCalcUnlocked] = useState(false);
   const [gateForm, setGateForm] = useState({ name: '', phone: '', goldType: '', weight: '', purity: '' });
-  const [gateStatus, setGateStatus] = useState<'idle' | 'loading'>('idle');
+  const [gateStatus, setGateStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [phoneError, setPhoneError] = useState('');
 
   // Hero-only: calculator state
   const [purity, setPurity] = useState('22');
@@ -156,14 +158,47 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
 
   async function handleGateSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setPhoneError('');
+
+    const cleanPhone = gateForm.phone.replace(/\s/g, '');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setPhoneError('Enter a valid 10-digit Indian mobile number');
+      return;
+    }
+
     setGateStatus('loading');
+
+    const puritiyKarat = gateForm.purity === '24k' ? 24 : gateForm.purity === '22k' ? 22 : undefined;
+    const weightGrams  = gateForm.weight ? parseFloat(gateForm.weight) : undefined;
+    const estRate      = puritiyKarat ? rates.find(r => r.karat === puritiyKarat)?.value : undefined;
+    const estimatedValue = estRate && weightGrams ? Math.round(estRate * weightGrams * 0.975) : undefined;
+
     try {
-      await fetch('/api/leads', {
+      const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...gateForm, source: 'calculator-gate' }),
+        body: JSON.stringify({
+          name:            gateForm.name,
+          phone:           cleanPhone,
+          gold_type:       gateForm.goldType || undefined,
+          weight_grams:    weightGrams != null ? String(weightGrams) : undefined,
+          purity_karat:    puritiyKarat,
+          estimated_value: estimatedValue != null ? String(estimatedValue) : undefined,
+          source:          'calculator-gate',
+          ...getUtmParams(),
+        }),
       });
-    } catch { /* non-blocking */ }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setPhoneError(data?.error ?? 'Something went wrong. Please try again.');
+        setGateStatus('error');
+        return;
+      }
+    } catch {
+      setPhoneError('Network error. Please check your connection.');
+      setGateStatus('error');
+      return;
+    }
     setCalcUnlocked(true);
     setGateStatus('idle');
   }
@@ -265,7 +300,23 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
               </p>
               <form onSubmit={handleGateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
                 <input type="text" className="mk-input mk-input--dark" placeholder="Full Name" required value={gateForm.name} onChange={e => setGateForm(f => ({ ...f, name: e.target.value }))} />
-                <input type="tel" className="mk-input mk-input--dark" placeholder="Phone Number" required value={gateForm.phone} onChange={e => setGateForm(f => ({ ...f, phone: e.target.value }))} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                  <input
+                    type="tel"
+                    className="mk-input mk-input--dark"
+                    placeholder="10-digit mobile number"
+                    required
+                    inputMode="numeric"
+                    maxLength={10}
+                    value={gateForm.phone}
+                    onChange={e => { setGateForm(f => ({ ...f, phone: e.target.value })); setPhoneError(''); }}
+                  />
+                  {phoneError && (
+                    <span style={{ fontFamily: 'Poppins,sans-serif', fontSize: '0.72rem', color: '#fca5a5' }}>
+                      {phoneError}
+                    </span>
+                  )}
+                </div>
                 <select className="mk-select mk-select--dark" required value={gateForm.goldType} onChange={e => setGateForm(f => ({ ...f, goldType: e.target.value }))}>
                   <option value="" disabled>Gold Type</option>
                   <option value="jewellery">Gold Jewellery</option>

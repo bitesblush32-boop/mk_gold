@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { BRANCHES, findNearestBranch, getBranchesByCity } from '@/lib/branch-router';
 import type { Branch } from '@/lib/branch-router';
 
+export const revalidate = 86400; // Data is static — recheck once per day
+
+const CACHE = { headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' } };
+
 /* ─── Karnataka pincode → lat/lng lookup ────────────────────────── */
 // Covers pincodes for areas where MK Gold branches are located.
 const PINCODE_COORDS: Record<string, { lat: number; lng: number }> = {
@@ -122,7 +126,7 @@ export async function GET(req: NextRequest) {
       );
     }
     const branches = getBranchesByCity(cityKey);
-    return NextResponse.json({ branches });
+    return NextResponse.json({ branches }, CACHE);
   }
 
   // ?lat=X&lng=Y
@@ -133,7 +137,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'lat and lng must be numbers' }, { status: 400 });
     }
     const branch = findNearestBranch(lat, lng);
-    return NextResponse.json({ branch });
+    return NextResponse.json({ branch }, CACHE);
   }
 
   // ?pincode=560010
@@ -141,10 +145,10 @@ export async function GET(req: NextRequest) {
     const coords = PINCODE_COORDS[pincode.trim()];
     if (!coords) {
       // Unknown pincode — return all branches as fallback
-      return NextResponse.json({ branches: BRANCHES, note: 'Pincode not found — showing all branches' });
+      return NextResponse.json({ branches: BRANCHES, note: 'Pincode not found — showing all branches' }, CACHE);
     }
     const branch = findNearestBranch(coords.lat, coords.lng);
-    return NextResponse.json({ branch });
+    return NextResponse.json({ branch }, CACHE);
   }
 
   return NextResponse.json(

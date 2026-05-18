@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+
+export const revalidate = false; // Static at build — legal content never changes without redeploy
+
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkFooter } from '@/components/layout/MkFooter';
 

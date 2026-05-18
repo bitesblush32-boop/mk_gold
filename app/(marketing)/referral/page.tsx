@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+export const revalidate = false; // Static at build — content never changes without redeploy
+
 export const metadata: Metadata = {
   title: "Refer & Earn | MK Gold Referral Programme",
   description:

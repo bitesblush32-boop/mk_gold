@@ -1,4 +1,5 @@
 // Landing page: Emergency Cash for Gold — calm language, C2 journey
+export const revalidate = false; // Static at build
 export default function LpEmergencyCashGoldPage() {
   return (
     <main>

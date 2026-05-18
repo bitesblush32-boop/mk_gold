@@ -1,30 +1,26 @@
 'use client';
 
-import useSWR from 'swr';
+import { useState, useEffect } from 'react';
 
 interface KaratRate {
-  karat: 18 | 20 | 22 | 24;
+  karat: 22 | 24;
   value: number;   // ₹ per gram
   change?: number; // delta from yesterday, ₹
 }
 
 interface MkTickerProps {
-  /** Pass rates from server to hydrate immediately; SWR refreshes every 5 min */
+  /** Pass rates from server to hydrate immediately */
   rates?: KaratRate[];
 }
 
 const KARAT_LABELS: Record<number, string> = {
   24: '24K',
   22: '22K',
-  20: '20K',
-  18: '18K',
 };
 
 const DEFAULT_RATES: KaratRate[] = [
   { karat: 24, value: 7200 },
   { karat: 22, value: 6600 },
-  { karat: 20, value: 6000 },
-  { karat: 18, value: 5400 },
 ];
 
 function fmt(v: number) {
@@ -36,21 +32,19 @@ function fmt(v: number) {
   }).format(v);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
 export function MkTicker({ rates: initialRates }: MkTickerProps) {
-  const { data } = useSWR<{ rates: KaratRate[] }>(
-    '/api/gold-rate',
-    fetcher,
-    {
-      refreshInterval: 5 * 60 * 1000,
-      fallbackData: initialRates ? { rates: initialRates } : undefined,
-      revalidateOnFocus: false,
-    }
-  );
+  const [rates, setRates] = useState<KaratRate[]>(initialRates ?? DEFAULT_RATES);
 
-  const rates: KaratRate[] = data?.rates ?? initialRates ?? DEFAULT_RATES;
+  useEffect(() => {
+    const load = () =>
+      fetch('/api/gold-rate')
+        .then(r => r.json())
+        .then(d => { if (d.rates) setRates(d.rates); })
+        .catch(() => {});
+    load();
+    const id = setInterval(load, 5 * 60 * 1000);
+    return () => clearInterval(id);
+  }, []);
 
   // Separator text between karat items
   const SEP = <span className="mk-ticker__sep" aria-hidden="true">·</span>;

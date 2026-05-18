@@ -1,4 +1,4 @@
-// F05 — Google Reviews section (fetches from /api/reviews with Places API; seed fallback)
+// F05 — Google Reviews section (fetches directly from Google Places API)
 
 /* ─── Types ───────────────────────────────────────────────────── */
 
@@ -16,44 +16,41 @@ interface ReviewsData {
   reviews: Review[];
 }
 
-/* ─── Seed fallback ───────────────────────────────────────────── */
-
-const SEED_REVIEWS: Review[] = [
-  {
-    author:   'Priya Sharma',
-    location: 'Rajajinagar, Bangalore',
-    rating:   5,
-    date:     'March 2025',
-    quote:    'Got ₹87,000 for my old jewellery in under 30 minutes. The XRF test result was shown to me on screen — no guessing game at all. Staff were professional and friendly.',
-  },
-  {
-    author:   'Rajesh Kumar',
-    location: 'Mysore City',
-    rating:   5,
-    date:     'January 2025',
-    quote:    'I was nervous about selling gold for the first time. The team explained every step patiently. The rate was fair and matched what the calculator showed. Zero surprises.',
-  },
-  {
-    author:   'Meena Patil',
-    location: 'Koramangala, Bangalore',
-    rating:   5,
-    date:     'February 2025',
-    quote:    'My pledged gold was stuck at a bank. MK Gold handled everything — they paid the lender directly in front of me and gave me the balance. Very professional and completely confidential.',
-  },
-];
-
-/* ─── Data fetch ──────────────────────────────────────────────── */
+/* ─── Data fetch (direct Places API — no HTTP self-call) ──────── */
 
 async function getReviews(): Promise<ReviewsData> {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/api/reviews`, {
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) throw new Error('reviews api failed');
-    return res.json();
-  } catch {
-    return { rating: 4.9, total: 200, reviews: SEED_REVIEWS };
+  const apiKey  = process.env.GOOGLE_PLACES_API_KEY;
+  const placeId = process.env.GOOGLE_PLACE_ID;
+
+  if (!apiKey || !placeId) {
+    throw new Error('GOOGLE_PLACES_API_KEY or GOOGLE_PLACE_ID not configured');
   }
+
+  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=rating,reviews,user_ratings_total&key=${apiKey}&reviews_sort=most_relevant`;
+  const res = await fetch(url, { next: { revalidate: 3600 } });
+
+  if (!res.ok) throw new Error(`Places API HTTP ${res.status}`);
+
+  const data = await res.json();
+  if (data.status !== 'OK') throw new Error(`Places API status: ${data.status}`);
+
+  const result = data.result;
+  const reviews: Review[] = (result.reviews ?? [])
+    .filter((r: { rating: number }) => r.rating >= 4)
+    .slice(0, 6)
+    .map((r: { author_name: string; text: string; rating: number; time: number }) => ({
+      author:   r.author_name,
+      location: 'Google Reviewer',
+      rating:   r.rating,
+      date:     new Date(r.time * 1000).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }),
+      quote:    r.text,
+    }));
+
+  return {
+    rating:  result.rating  ?? 4.9,
+    total:   result.user_ratings_total ?? 0,
+    reviews,
+  };
 }
 
 /* ─── Star renderer ───────────────────────────────────────────── */
@@ -80,7 +77,13 @@ function Stars({ rating, animated = false }: { rating: number; animated?: boolea
 /* ─── Component ───────────────────────────────────────────────── */
 
 export async function MkReviews() {
-  const data = await getReviews();
+  let data: ReviewsData;
+  try {
+    data = await getReviews();
+  } catch (err) {
+    console.error('[MkReviews] failed to fetch reviews:', err);
+    return null;
+  }
   const reviews = data.reviews.slice(0, 3);
   const rating = data.rating ?? 4.9;
   const total  = data.total  ?? 200;

@@ -9,6 +9,7 @@ const NAV = [
   { href: '/admin/gold-rate',  label: 'Gold Rate' },
   { href: '/admin/banners',    label: 'Banners' },
   { href: '/admin/blog',       label: 'Blog' },
+  { href: '/admin/faqs',       label: 'FAQs' },
   { href: '/admin/leads',      label: 'Leads' },
 ];
 

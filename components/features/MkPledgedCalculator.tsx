@@ -9,8 +9,6 @@ import type { GoldKarat } from '@/types/gold-rate';
 const PURITY_OPTIONS: { value: GoldKarat; label: string }[] = [
   { value: 22, label: '22K (Most jewellery)' },
   { value: 24, label: '24K (Pure / Coins)' },
-  { value: 20, label: '20K' },
-  { value: 18, label: '18K' },
 ];
 
 function fmt(v: number) {
@@ -39,13 +37,11 @@ export function MkPledgedCalculator() {
   const [weight, setWeight] = useState('');
   const [purity, setPurity] = useState<GoldKarat>(22);
 
-  const { rate24K, rate22K, rate20K, rate18K, isLoading } = useGoldRate();
+  const { rate24K, rate22K, isLoading } = useGoldRate();
 
   const rateMap: Record<GoldKarat, number> = {
     24: rate24K,
     22: rate22K,
-    20: rate20K,
-    18: rate18K,
   };
 
   const weightNum  = parseFloat(weight) || 0;

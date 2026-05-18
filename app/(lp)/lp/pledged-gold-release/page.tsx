@@ -1,4 +1,5 @@
 // Landing page: Pledged Gold Release — calm, confidential, C2 journey
+export const revalidate = false; // Static at build
 export default function LpPledgedGoldReleasePage() {
   return (
     <main>

@@ -60,8 +60,6 @@ export const goldRateOverride = pgTable('gold_rate_override', {
   id:              serial('id').primaryKey(),
   rate_24k:        numeric('rate_24k').notNull(),
   rate_22k:        numeric('rate_22k').notNull(),
-  rate_20k:        numeric('rate_20k').notNull(),
-  rate_18k:        numeric('rate_18k').notNull(),
   is_manual:       boolean('is_manual').notNull().default(true),
   override_until:  timestamp('override_until'),       // null = active until manually cleared
   updated_at:      timestamp('updated_at').defaultNow().notNull(),
@@ -94,6 +92,19 @@ export const blogPosts = pgTable('blog_posts', {
   updated_at:      timestamp('updated_at').defaultNow().notNull(),
 });
 
+/* ─── faqs ──────────────────────────────────────────────────────── */
+
+export const faqs = pgTable('faqs', {
+  id:         serial('id').primaryKey(),
+  page:       text('page').notNull(),          // 'general' | 'sell-gold' | 'pledged-gold' | 'gold-rate'
+  question:   text('question').notNull(),
+  answer:     text('answer').notNull(),
+  order:      integer('order').notNull().default(0),
+  is_active:  boolean('is_active').notNull().default(true),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+});
+
 /* ─── Type exports ───────────────────────────────────────────────── */
 
 export type Lead         = typeof leads.$inferSelect;
@@ -104,3 +115,5 @@ export type GoldRateOverride = typeof goldRateOverride.$inferSelect;
 export type HeroBanner   = typeof heroBanners.$inferSelect;
 export type BlogPostRow  = typeof blogPosts.$inferSelect;
 export type NewBlogPost  = typeof blogPosts.$inferInsert;
+export type FaqRow       = typeof faqs.$inferSelect;
+export type NewFaq       = typeof faqs.$inferInsert;

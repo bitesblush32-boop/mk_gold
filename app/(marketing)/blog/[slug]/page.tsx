@@ -10,7 +10,7 @@ import { articleSchema }   from '@/lib/schema/article';
 import { getPostBySlug, getRelatedPosts } from '@/lib/db/blog';
 import type { BlogPost }   from '@/lib/db/blog';
 
-export const revalidate = 60;
+export const revalidate = 300; // ISR: blog is manually published, 5-min cadence is sufficient
 
 /* ─── Params type (Next.js 15+ async params) ────────────────────── */
 

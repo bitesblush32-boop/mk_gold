@@ -1,3 +1,5 @@
+export const revalidate = 3600; // ISR: dynamic per city param
+
 interface Props {
   params: Promise<{ "city]-gold-sell": string }>;
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkTicker } from '@/components/layout/MkTicker';
 import { MkFooter } from '@/components/layout/MkFooter';
@@ -13,65 +14,8 @@ import { MkButton } from '@/components/ui/MkButton';
 import { MkLeadPopup } from '@/components/features/MkLeadPopup';
 import { MkEmergency } from '@/components/features/MkEmergency';
 import { BRANCHES, type Branch } from '@/lib/branch-router';
-
-/* ─── Hero banners ─────────────────────────────────────────────── */
-
-const BANNERS = [
-  { src: '/Web Banners_Design 2.jpg.jpeg',    alt: 'Turn your gold into cash — MK Gold' },
-  { src: '/Web Banners_Design 6.jpg (1).jpeg', alt: 'We buy your gold at the right value — MK Gold' },
-  { src: '/Web Banners_Design 7.jpg.jpeg',    alt: 'ನಿಮ್ಮ ಚಿನ್ನಕ್ಕೆ ಸರಿಯಾದ ಬೆಲೆ, ತಕ್ಷಣ ಹಣ — MK Gold' },
-  { src: '/Home Page.png',                    alt: 'MK Gold branch — trusted gold buyers since 2014' },
-];
-
-
-/* ─── Testimonials ─────────────────────────────────────────────── */
-
-const TESTIMONIALS = [
-  {
-    name: 'Suresh Kumar',
-    area: 'Rajajinagar, Bangalore',
-    rating: 5,
-    text: 'Got the best rate for my 22K jewellery. The XRF test was done in front of me and payment was within 30 minutes. Very transparent process.',
-    initials: 'SK',
-  },
-  {
-    name: 'Kavitha Nair',
-    area: 'Gokulam, Mysore',
-    rating: 5,
-    text: 'MK Gold helped me release my pledged gold from the bank without any hassle. They handled everything professionally and confidentially.',
-    initials: 'KN',
-  },
-  {
-    name: 'Mohammed Rafiq',
-    area: 'Mangalore City',
-    rating: 5,
-    text: 'Excellent service. The staff explained the MCX rate and exactly how they calculated my gold value. Nothing hidden. Would recommend to everyone.',
-    initials: 'MR',
-  },
-  {
-    name: 'Anitha Reddy',
-    area: 'Koramangala, Bangalore',
-    rating: 5,
-    text: 'I was worried about getting a fair price but MK Gold showed me the live MCX rate and their margin side by side. Complete transparency.',
-    initials: 'AR',
-  },
-  {
-    name: 'Vijay Shetty',
-    area: 'Kadri, Mangalore',
-    rating: 5,
-    text: '15+ years in business means they know what they are doing. Fast, honest, professional. Got payment immediately after the test.',
-    initials: 'VS',
-  },
-  {
-    name: 'Priya Sharma',
-    area: 'Davangere',
-    rating: 5,
-    text: 'The branch team was very respectful and patient. They explained everything clearly. The German XRF machine gives accurate results instantly.',
-    initials: 'PS',
-  },
-];
-
-/* ─── City branch data ─────────────────────────────────────────── */
+import { getUtmParams } from '@/lib/utm';
+import type { FaqItem } from '@/lib/db/faqs';
 
 const CITIES = ['Bangalore', 'Mysore', 'Mangalore', 'Davangere'] as const;
 type City = typeof CITIES[number];
@@ -177,7 +121,7 @@ function CallbackForm({ onSuccess }: { onSuccess?: () => void }) {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, source: 'sample-c-callback' }),
+        body: JSON.stringify({ ...form, source: 'sample-c-callback', ...getUtmParams() }),
       });
       if (res.ok) { setStatus('success'); if (onSuccess) onSuccess(); }
       else setStatus('error');
@@ -274,10 +218,17 @@ function loadMapsSDK(): Promise<void> {
   if (typeof window === 'undefined') return Promise.reject(new Error('SSR'));
   if (_mapsReady) return _mapsReady;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ((window as any).google?.maps) { _mapsReady = Promise.resolve(); return _mapsReady; }
+  const win = window as any;
+
+  // If already loaded (e.g. HMR or second mount), resolve immediately
+  if (win.google?.maps?.Map) { _mapsReady = Promise.resolve(); return _mapsReady; }
+
+  // Classic loading (no loading=async): all requested libraries are fully
+  // populated on google.maps.* by the time onload fires — no importLibrary needed.
   _mapsReady = new Promise<void>((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}&loading=async&libraries=marker`;
+    s.src = 'https://maps.googleapis.com/maps/api/js?key=' +
+      (process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY ?? '') + '&libraries=marker';
     s.async = true;
     s.defer = true;
     s.onload = () => resolve();
@@ -340,63 +291,65 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
   const markersRef = useRef<{ branch: Branch; marker: any }[]>([]);
   const activeBranchRef = useRef(activeBranch);
   const [mapError, setMapError] = useState(false);
+  const [mapsReady, setMapsReady] = useState(false);
 
   // Keep ref in sync so marker click handlers always see latest value
   useEffect(() => { activeBranchRef.current = activeBranch; }, [activeBranch]);
 
-  // Initialize / re-initialize map when city changes
+  // Load the Maps SDK once on mount — sets mapsReady when done
   useEffect(() => {
-    if (!mapDivRef.current) return;
+    loadMapsSDK()
+      .then(() => setMapsReady(true))
+      .catch(() => setMapError(true));
+  }, []);
+
+  // Initialize / re-initialize map when city changes OR SDK becomes ready
+  useEffect(() => {
+    if (!mapsReady || !mapDivRef.current) return;
     const cityBranches = BRANCHES.filter(b => b.city === city);
     const center = CITY_CENTERS[city];
 
-    loadMapsSDK()
-      .then(() => {
-        if (!mapDivRef.current) return;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const g = (window as any).google.maps;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const g = (window as any).google.maps;
 
-        // Clear old markers
-        markersRef.current.forEach(({ marker }) => { marker.map = null; });
-        markersRef.current = [];
+    // Clear old markers
+    markersRef.current.forEach(({ marker }) => { marker.map = null; });
+    markersRef.current = [];
 
-        const map = new g.Map(mapDivRef.current, {
-          center: { lat: center.lat, lng: center.lng },
-          zoom: center.zoom,
-          mapId: process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID || 'DEMO_MAP_ID',
-          styles: MAP_STYLES,
-          disableDefaultUI: true,
-          zoomControl: true,
-          gestureHandling: 'cooperative',
-          clickableIcons: false,
-        });
+    const map = new g.Map(mapDivRef.current, {
+      center: { lat: center.lat, lng: center.lng },
+      zoom: center.zoom,
+      mapId: process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID || 'DEMO_MAP_ID',
+      styles: MAP_STYLES,
+      disableDefaultUI: true,
+      zoomControl: true,
+      gestureHandling: 'cooperative',
+      clickableIcons: false,
+    });
 
-        markersRef.current = cityBranches.map(branch => {
-          const isActive = activeBranchRef.current?.slug === branch.slug;
-          const pin = makePinElement(g, isActive);
-          const marker = new g.marker.AdvancedMarkerElement({
-            position: { lat: branch.coordinates.lat, lng: branch.coordinates.lng },
-            map,
-            title: branch.name,
-            content: pin.element,
-          });
+    markersRef.current = cityBranches.map(branch => {
+      const isActive = activeBranchRef.current?.slug === branch.slug;
+      const pin = makePinElement(g, isActive);
+      const marker = new g.marker.AdvancedMarkerElement({
+        position: { lat: branch.coordinates.lat, lng: branch.coordinates.lng },
+        map,
+        title: branch.name,
+        content: pin.element,
+      });
 
-          marker.addListener('click', () => {
-            const cur = activeBranchRef.current;
-            setActiveBranch(cur?.slug === branch.slug ? null : branch);
-          });
+      marker.addListener('click', () => {
+        const cur = activeBranchRef.current;
+        setActiveBranch(cur?.slug === branch.slug ? null : branch);
+      });
 
-          return { branch, marker };
-        });
-      })
-      .catch(() => setMapError(true));
+      return { branch, marker };
+    });
 
     return () => {
       markersRef.current.forEach(({ marker }) => { marker.map = null; });
       markersRef.current = [];
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [city]);
+  }, [city, mapsReady]);
 
   // Update marker pin colours when activeBranch changes (no map re-init)
   useEffect(() => {
@@ -716,55 +669,30 @@ const TRUST_PILLARS = [
 
 const TRUST_BADGES = ['GST Registered', 'ISO 9001:2015', 'XRF Certified', '16 Physical Branches'] as const;
 
-/* ─── Flippable trust coins ────────────────────────────────────── */
+/* ─── Auto-spinning trust coin ──────────────────────────────────── */
 
-function FlippableTrustSeals({
-  flip1, setFlip1,
-}: {
-  flip1: boolean; setFlip1: (v: (p: boolean) => boolean) => void;
-}) {
-  const coinStyle = { width: '130px', height: '130px', perspective: '600px', cursor: 'pointer', position: 'relative' as const };
-  const innerStyle = (flipped: boolean) => ({
-    width: '100%', height: '100%', position: 'relative' as const,
-    transformStyle: 'preserve-3d' as const,
-    transition: 'transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-    transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-    willChange: 'transform' as const,
-  });
-  const faceStyle: React.CSSProperties = { position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden' };
-  const backStyle: React.CSSProperties = { ...faceStyle, transform: 'rotateY(180deg)' };
-
+function TrustCoin() {
+  const faceStyle: React.CSSProperties = { position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' };
   return (
     <div className="mk-trust__seals reveal">
-      {/* Single coin — EN front / KN back */}
-      <div
-        style={coinStyle}
-        onClick={() => setFlip1(f => !f)}
-        role="button" tabIndex={0}
-        aria-label={flip1 ? 'Showing Kannada — tap for English' : 'Showing English — tap for Kannada'}
-        onKeyDown={(e) => e.key === 'Enter' && setFlip1(f => !f)}
-      >
-        <div style={innerStyle(flip1)}>
-          <div style={faceStyle}><MkSeal variant="en" size="lg" animate={!flip1} /></div>
-          <div style={backStyle}><MkSeal variant="kn" size="lg" /></div>
+      <div style={{ width: '130px', height: '130px', perspective: '600px', position: 'relative' }}>
+        <div className="mk-coin-spin" style={{ width: '100%', height: '100%', position: 'relative', transformStyle: 'preserve-3d' }}>
+          <div style={faceStyle}><MkSeal variant="en" size="lg" /></div>
+          <div style={{ ...faceStyle, transform: 'rotateY(180deg)' }}><MkSeal variant="kn" size="lg" /></div>
         </div>
       </div>
     </div>
   );
 }
 
-/* ─── Local trust section with flippable coins ──────────────────── */
+/* ─── Local trust section ───────────────────────────────────────── */
 
-function LocalTrustSection({
-  flip1, setFlip1,
-}: {
-  flip1: boolean; setFlip1: (v: (p: boolean) => boolean) => void;
-}) {
+function LocalTrustSection() {
   return (
     <section className="mk-trust mk-bg-dark section" id="why-mk-gold">
       <div className="mk-container mk-trust__inner">
         <div className="mk-trust__left">
-          <FlippableTrustSeals flip1={flip1} setFlip1={setFlip1} />
+          <TrustCoin />
           <div className="reveal delay-1">
             <p className="mk-section-overline">Why MK Gold</p>
             <h2 className="mk-trust__headline">
@@ -782,7 +710,7 @@ function LocalTrustSection({
               <div className="sc-trust-stat sc-trust-stat--rating" style={{ animation: 'mk-rating-glow 2.5s ease-in-out infinite' }}>
                 <span className="sc-trust-stat__score">4.9</span>
                 <div className="sc-trust-stat__stars" aria-label="4.9 out of 5 stars">
-                  {[0,1,2,3,4].map(i => (
+                  {[0, 1, 2, 3, 4].map(i => (
                     <span key={i} className="sc-trust-star" style={{
                       animation: 'mk-star-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both',
                       animationDelay: `${i * 0.08}s`,
@@ -917,7 +845,7 @@ function BottomNav() {
           transform: pastHero
             ? 'translateX(-50%) translateY(0)'
             : 'translateX(-50%) translateY(120%)',
-          transition: 'all 420ms cubic-bezier(0.34, 1.2, 0.64, 1)',
+          transition: 'opacity 420ms cubic-bezier(0.34, 1.2, 0.64, 1), transform 420ms cubic-bezier(0.34, 1.2, 0.64, 1)',
         }}
         aria-hidden={!pastHero}
       >
@@ -942,7 +870,7 @@ function BottomNav() {
           </a>
           <span className="sc-bn-sep" aria-hidden="true" />
           <a href={`tel:${process.env.NEXT_PUBLIC_PHONE_DEFAULT ?? '+917019500600'}`} className="sc-bn-phone sc-bn-hide-360">
-            <img src="/phone_icon.png" alt="" width={22} height={22} className="sc-bn-icon" aria-hidden="true" />
+            <Image src="/phone_icon.png" alt="" width={22} height={22} className="sc-bn-icon" loading="lazy" aria-hidden={true} />
             <span className="sc-bn-phone-text sc-bn-hide-900">+91 70195 00600</span>
           </a>
           <a
@@ -951,7 +879,7 @@ function BottomNav() {
             rel="noopener noreferrer"
             className="sc-bn-btn sc-bn-btn--whatsapp"
           >
-            <img src="/whatsapp_icon.png" alt="" width={22} height={22} className="sc-bn-icon" aria-hidden="true" />
+            <Image src="/whatsapp_icon.png" alt="" width={22} height={22} className="sc-bn-icon" loading="lazy" aria-hidden={true} />
             WhatsApp
           </a>
         </div>
@@ -962,17 +890,52 @@ function BottomNav() {
 
 /* ─── Page ─────────────────────────────────────────────────────── */
 
-export default function HomePage() {
-  const [scrollPct, setScrollPct] = useState(0);
-  const [sealFlipped, setSealFlipped] = useState(false);
-  const [trustFlip1, setTrustFlip1] = useState(false);
+export default function HomePage({ homeFaqs, initialBanners = [] }: {
+  homeFaqs?: FaqItem[];
+  initialBanners?: { src: string; alt: string }[];
+}) {
+  const progressBarRef = useRef<HTMLDivElement>(null);
+
   const [slide, setSlide] = useState(0);
   const [rateUnlocked, setRateUnlocked] = useState(false);
+  const [banners, setBanners] = useState<{ src: string; alt: string }[]>(initialBanners);
+  const [googleReviews, setGoogleReviews] = useState<{ name: string; area: string; rating: number; text: string; initials: string }[]>([]);
 
   useEffect(() => {
+    fetch('/api/reviews')
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data.reviews) && data.reviews.length > 0) {
+          setGoogleReviews(data.reviews.map((r: { author: string; quote: string; rating: number; date: string }) => ({
+            name: r.author,
+            area: r.date,
+            rating: r.rating,
+            text: r.quote,
+            initials: r.author.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase(),
+          })));
+        }
+      })
+      .catch(() => { /* keep empty — section shows loading state */ });
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/banners')
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data.banners) && data.banners.length > 0) {
+          setBanners(data.banners.map((b: { src: string; alt: string }) => ({ src: b.src, alt: b.alt })));
+        }
+      })
+      .catch(() => { /* keep current banners */ });
+  }, []);
+
+  useEffect(() => {
+    const el = progressBarRef.current;
     const handleScroll = () => {
+      if (!el) return;
       const docH = document.documentElement.scrollHeight - window.innerHeight;
-      setScrollPct(docH > 0 ? (window.scrollY / docH) * 100 : 0);
+      const pct = docH > 0 ? window.scrollY / docH : 0;
+      el.style.transform = `scaleX(${pct})`;
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
@@ -980,9 +943,10 @@ export default function HomePage() {
 
   // Auto-advance banner every 5 seconds
   useEffect(() => {
-    const id = setInterval(() => setSlide(p => (p + 1) % BANNERS.length), 5000);
+    if (banners.length < 2) return;
+    const id = setInterval(() => setSlide(p => (p + 1) % banners.length), 5000);
     return () => clearInterval(id);
-  }, []);
+  }, [banners.length]);
 
   function goToSlide(i: number) {
     setSlide(i);
@@ -1317,7 +1281,6 @@ export default function HomePage() {
         }
         .sc-coin-perspective {
           perspective: 700px;
-          cursor: pointer;
           position: relative;
           width: 220px;
           height: 220px;
@@ -1930,40 +1893,22 @@ export default function HomePage() {
         }
       `}</style>
 
-      {/* ── Scroll progress bar ─────────────────────────────────── */}
+      {/* ── Scroll progress bar — direct DOM update, no React re-render ── */}
       <div
         aria-hidden="true"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '4px',
-          zIndex: 999,
-          background: 'rgba(40,12,56,0.85)',
-        }}
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '4px', zIndex: 999, background: 'rgba(40,12,56,0.85)' }}
       >
-        <div style={{
-          height: '100%',
-          width: `${scrollPct}%`,
-          background: 'linear-gradient(90deg, #512561 0%, #7B2C91 40%, #DFC160 80%, #EDD47A 100%)',
-          boxShadow: '0 1px 8px rgba(223,193,96,0.55), 0 2px 4px rgba(123,44,145,0.4)',
-          borderRadius: '0 2px 2px 0',
-          transition: 'width 80ms linear',
-          position: 'relative',
-        }}>
-          <div style={{
-            position: 'absolute',
-            right: 0,
-            top: '-3px',
-            width: '16px',
-            height: '10px',
-            background: 'radial-gradient(ellipse at right, rgba(223,193,96,0.9) 0%, transparent 70%)',
-            borderRadius: '50%',
-            filter: 'blur(2px)',
-            pointerEvents: 'none',
-          }} />
-        </div>
+        <div
+          ref={progressBarRef}
+          style={{
+            height: '100%',
+            width: '100%',
+            transformOrigin: 'left center',
+            transform: 'scaleX(0)',
+            background: 'linear-gradient(90deg, #512561 0%, #7B2C91 40%, #DFC160 80%, #EDD47A 100%)',
+            boxShadow: '0 1px 8px rgba(223,193,96,0.55), 0 2px 4px rgba(123,44,145,0.4)',
+          }}
+        />
       </div>
 
       <MkTicker />
@@ -1971,15 +1916,19 @@ export default function HomePage() {
 
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="sc-hero mk-bg-dark" aria-label="Hero">
-        {BANNERS.map((b, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+        {banners.map((b, i) => (
+          <Image
             key={b.src}
             src={b.src}
             alt={b.alt}
+            fill
+            sizes="100vw"
+            quality={85}
+            priority={i === 0}
             className={`sc-hero__banner${i === slide ? ' sc-hero__banner--active' : ''}`}
             aria-hidden={i !== slide}
             draggable={false}
+            style={{ objectFit: 'cover' }}
           />
         ))}
         <div className="sc-hero__overlay" />
@@ -1987,29 +1936,19 @@ export default function HomePage() {
 
         {/* ── Overlapping coin anchor — 70% hero / 30% below ── */}
         <div className="sc-coin-anchor">
-          {/* Outer: constant 3D wobble + gold glow */}
+          {/* Outer: gold glow */}
           <div className="sc-coin-wobble">
             {/* Perspective wrapper */}
-            <div
-              onClick={() => setSealFlipped(f => !f)}
-              role="button"
-              tabIndex={0}
-              aria-label={sealFlipped ? 'Showing Kannada — tap for English' : 'Showing English — tap for Kannada'}
-              onKeyDown={(e) => e.key === 'Enter' && setSealFlipped(f => !f)}
-              className="sc-coin-perspective"
-            >
-              {/* Inner: EN ↔ KN flip */}
-              <div style={{
+            <div className="sc-coin-perspective" aria-label="MK Gold seal — MK Andare Nambike">
+              {/* Inner: auto-spinning EN front / KN back */}
+              <div className="mk-coin-spin" style={{
                 width: '100%',
                 height: '100%',
                 position: 'relative',
                 transformStyle: 'preserve-3d',
-                transition: 'transform 700ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-                transform: sealFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                willChange: 'transform',
               }}>
                 <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <MkSeal variant="en" size="lg" animate={!sealFlipped} />
+                  <MkSeal variant="en" size="lg" />
                 </div>
                 <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', transform: 'rotateY(180deg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <MkSeal variant="kn" size="lg" />
@@ -2017,14 +1956,11 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <span className="sc-coin-hint">
-            {sealFlipped ? 'MK ಅಂದರೆ ನಂಬಿಕೆ' : 'Tap to flip'}
-          </span>
         </div>
 
         {/* Slide dots */}
         <div className="sc-hero__dots" role="tablist" aria-label="Hero slides">
-          {BANNERS.map((_, i) => (
+          {banners.map((_, i) => (
             <button
               key={i}
               onClick={() => goToSlide(i)}
@@ -2107,12 +2043,12 @@ export default function HomePage() {
       <MkEmergency />
 
       {/* ── Trust architecture ──────────────────────────────────── */}
-      <LocalTrustSection flip1={trustFlip1} setFlip1={setTrustFlip1} />
+      <LocalTrustSection />
 
       {/* ── Branch finder ───────────────────────────────────────── */}
       <BranchFinder />
 
-      {/* ── Testimonials: infinite scroll carousel ──────────────── */}
+      {/* ── Google Reviews: infinite scroll carousel ────────────── */}
       <section className="mk-bg-light section" id="reviews">
         <div className="mk-container">
           <div className="reveal" style={{ maxWidth: '42rem', marginBottom: '2rem' }}>
@@ -2121,38 +2057,40 @@ export default function HomePage() {
               4.9 Stars Across All Branches
             </h2>
             <p className="reveal delay-2" style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', marginBottom: 0, maxWidth: '540px' }}>
-              Real reviews from real customers — pulled live from Google.
+              Real reviews from real customers
             </p>
           </div>
         </div>
 
-        {/* Carousel — full bleed, no container constraint */}
-        <div style={{ overflow: 'hidden', paddingBottom: '0.5rem' }}>
-          <div className="sc-reviews-track">
-            {[...TESTIMONIALS, ...TESTIMONIALS].map((t, i) => (
-              <div key={i} className="sc-review-card sc-review-card--carousel">
-                <span className="sc-google-badge">Google</span>
-                <div className="sc-review-stars" aria-label={`${t.rating} out of 5 stars`}>
-                  {Array.from({ length: t.rating }).map((_, j) => (
-                    <div key={j} className="sc-review-star" />
-                  ))}
-                </div>
-                <p className="sc-review-text">&ldquo;{t.text}&rdquo;</p>
-                <div className="sc-review-author">
-                  <div className="sc-review-avatar" aria-hidden="true">{t.initials}</div>
-                  <div>
-                    <p className="sc-review-name">{t.name}</p>
-                    <p className="sc-review-area">{t.area}</p>
+        {/* Carousel — only renders once reviews are fetched */}
+        {googleReviews.length > 0 && (
+          <div style={{ overflow: 'hidden', paddingBottom: '0.5rem' }}>
+            <div className="sc-reviews-track">
+              {[...googleReviews, ...googleReviews].map((t, i) => (
+                <div key={i} className="sc-review-card sc-review-card--carousel">
+                  <span className="sc-google-badge">Google</span>
+                  <div className="sc-review-stars" aria-label={`${t.rating} out of 5 stars`}>
+                    {Array.from({ length: t.rating }).map((_, j) => (
+                      <div key={j} className="sc-review-star" />
+                    ))}
+                  </div>
+                  <p className="sc-review-text">&ldquo;{t.text}&rdquo;</p>
+                  <div className="sc-review-author">
+                    <div className="sc-review-avatar" aria-hidden="true">{t.initials}</div>
+                    <div>
+                      <p className="sc-review-name">{t.name}</p>
+                      <p className="sc-review-area">{t.area}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* ── FAQ ─────────────────────────────────────────────────── */}
-      <MkFaq />
+      <MkFaq faqs={homeFaqs} />
 
       {/* ── CTA Band ─────────────────────────────────────────────── */}
       <div className="mk-bg-light sc-light-cta">

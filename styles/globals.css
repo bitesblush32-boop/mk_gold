@@ -197,9 +197,9 @@
   --section-xs: 2rem;
 
   /* Fixed chrome heights — referenced everywhere */
-  --ticker-h: 36px;
+  --ticker-h: 42px;
   --navbar-h: 96px;
-  --chrome-h: 132px;
+  --chrome-h: 138px;
   /* ticker + navbar — main pt offset */
 }
 
@@ -301,14 +301,28 @@
 
 /* Star scale-in — reviews rating animation */
 @keyframes mk-star-in {
-  from { transform: scale(0) rotate(-30deg); opacity: 0; }
-  to   { transform: scale(1) rotate(0deg);  opacity: 1; }
+  from {
+    transform: scale(0) rotate(-30deg);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
 }
 
 /* Rating glow pulse — 4.9 score highlight */
 @keyframes mk-rating-glow {
-  0%, 100% { filter: drop-shadow(0 0 4px rgba(223,193,96,0.4)); }
-  50%       { filter: drop-shadow(0 0 14px rgba(223,193,96,0.85)); }
+
+  0%,
+  100% {
+    filter: drop-shadow(0 0 4px rgba(223, 193, 96, 0.4));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 14px rgba(223, 193, 96, 0.85));
+  }
 }
 
 /* Gold shimmer — loading skeletons */
@@ -406,13 +420,38 @@
 }
 
 @keyframes mk-coin-wobble {
-  0%, 100% { transform: rotateZ(-2deg); }
-  50%       { transform: rotateZ(2deg); }
+
+  0%,
+  100% {
+    transform: rotateZ(-2deg);
+  }
+
+  50% {
+    transform: rotateZ(2deg);
+  }
+}
+
+/* Continuous Y-axis coin spin — replaces tap-to-flip */
+@keyframes coinSpin {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+.mk-coin-spin {
+  animation: coinSpin 5s linear infinite;
+  will-change: transform;
 }
 
 @keyframes mk-levitate {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-14px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-14px);
+  }
 }
 
 .mk-coin-wobble {

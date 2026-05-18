@@ -2,77 +2,54 @@
 // Pledged gold specific FAQ accordion — mirrors MkFaq visual style
 
 import { useState, useRef } from 'react';
+import type { FaqItem } from '@/lib/db/faqs';
 
-const FAQS = [
-  {
-    q: 'How quickly can the release happen?',
-    a: 'In most cases, the same day. Once you share your loan details and lender branch, we coordinate a visit together. The lender releases your gold the moment the outstanding amount is settled — which we do directly in front of you.',
-  },
-  {
-    q: 'What documents do you need from me?',
-    a: 'Your original loan agreement or pledge card from the lender, and one valid government photo ID — Aadhaar, PAN, or Passport. You do not need original purchase receipts or hallmark certificates for the gold.',
-  },
-  {
-    q: 'What if my gold is pledged with multiple lenders?',
-    a: 'We handle each lender separately. Each outstanding loan is settled individually, and you receive the balance from each transaction. There is no additional complexity or paperwork for you to manage.',
-  },
-  {
-    q: 'Is this process fully legal?',
-    a: 'Yes. We repay your outstanding loan through a standard banking transaction, directly to the lender in front of you. The lender then releases your gold. We then proceed with the purchase if you choose to sell. Every step follows RBI guidelines for gold loan settlement.',
-  },
-  {
-    q: 'Will MK Gold buy my gold after it is released?',
-    a: 'That is entirely your choice. Once your gold is released, you decide what to do with it. Many customers choose to sell to us at the same visit, but there is no obligation at any point. We are here to help you recover your gold — nothing more.',
-  },
-] as const;
+const FALLBACK_FAQS: FaqItem[] = [
+  { q: 'How quickly can the release happen?', a: 'In most cases, the same day. Once you share your loan details and lender branch, we coordinate a visit together. The lender releases your gold the moment the outstanding amount is settled — which we do directly in front of you.' },
+  { q: 'What documents do you need from me?', a: 'Your original loan agreement or pledge card from the lender, and one valid government photo ID — Aadhaar, PAN, or Passport. You do not need original purchase receipts or hallmark certificates for the gold.' },
+  { q: 'What if my gold is pledged with multiple lenders?', a: 'We handle each lender separately. Each outstanding loan is settled individually, and you receive the balance from each transaction. There is no additional complexity or paperwork for you to manage.' },
+  { q: 'Is this process fully legal?', a: 'Yes. We repay your outstanding loan through a standard banking transaction, directly to the lender in front of you. The lender then releases your gold. We then proceed with the purchase if you choose to sell. Every step follows RBI guidelines for gold loan settlement.' },
+  { q: 'Will MK Gold buy my gold after it is released?', a: 'That is entirely your choice. Once your gold is released, you decide what to do with it. Many customers choose to sell to us at the same visit, but there is no obligation at any point. We are here to help you recover your gold — nothing more.' },
+];
 
-const FAQ_SCHEMA = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: FAQS.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.a },
-  })),
-};
-
-export function MkPledgedFaq() {
+export function MkPledgedFaq({ faqs }: { faqs?: FaqItem[] }) {
+  const items = faqs && faqs.length > 0 ? faqs : FALLBACK_FAQS;
   const [open, setOpen] = useState<number | null>(null);
   const triggerRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const toggle = (i: number) => setOpen(open === i ? null : i);
 
   function handleKeyDown(e: React.KeyboardEvent, i: number) {
-    const count = FAQS.length;
+    const count = items.length;
     if (e.key === 'ArrowDown') { e.preventDefault(); triggerRefs.current[(i + 1) % count]?.focus(); }
     if (e.key === 'ArrowUp')   { e.preventDefault(); triggerRefs.current[(i - 1 + count) % count]?.focus(); }
     if (e.key === 'Home')      { e.preventDefault(); triggerRefs.current[0]?.focus(); }
     if (e.key === 'End')       { e.preventDefault(); triggerRefs.current[count - 1]?.focus(); }
   }
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
+
   return (
     <section className="mk-faq mk-bg-light section" id="faq">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <div className="mk-container">
         <div className="mk-faq__header reveal">
           <p className="mk-section-overline">FAQ</p>
-          <h2 className="mk-faq__title">Common questions</h2>
+          <h2 className="mk-faq__title">Pledged gold — questions answered</h2>
         </div>
-        <dl
-          className="mk-faq__list"
-          role="group"
-          aria-label="Frequently asked questions about pledged gold release"
-        >
-          {FAQS.map((item, i) => {
+        <dl className="mk-faq__list" role="group" aria-label="Pledged gold frequently asked questions">
+          {items.map((item, i) => {
             const isOpen = open === i;
             return (
-              <div
-                key={i}
-                className={`mk-faq__item${isOpen ? ' mk-faq__item--open' : ''}`}
-              >
+              <div key={i} className={`mk-faq__item${isOpen ? ' mk-faq__item--open' : ''}`}>
                 <dt>
                   <button
                     ref={el => { triggerRefs.current[i] = el; }}

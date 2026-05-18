@@ -34,11 +34,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { rate_24k, rate_22k, rate_20k, rate_18k, hours = 24 } = body as Record<string, unknown>;
+  const { rate_24k, rate_22k, hours = 24 } = body as Record<string, unknown>;
 
-  if (!rate_24k || !rate_22k || !rate_20k || !rate_18k) {
+  if (!rate_24k || !rate_22k) {
     return NextResponse.json(
-      { error: 'rate_24k, rate_22k, rate_20k, rate_18k are required' },
+      { error: 'rate_24k, rate_22k are required' },
       { status: 400 },
     );
   }
@@ -49,8 +49,6 @@ export async function POST(req: NextRequest) {
     const row = await setGoldRateOverride({
       rate_24k:       String(rate_24k),
       rate_22k:       String(rate_22k),
-      rate_20k:       String(rate_20k),
-      rate_18k:       String(rate_18k),
       override_until: overrideUntil,
     });
     return NextResponse.json({ success: true, override: row });
