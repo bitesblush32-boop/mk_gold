@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/admin-auth';
 import {
   getGoldRateOverride,
@@ -51,6 +52,8 @@ export async function POST(req: NextRequest) {
       rate_22k:       String(rate_22k),
       override_until: overrideUntil,
     });
+    revalidatePath('/gold-rate-today');
+    revalidatePath('/');
     return NextResponse.json({ success: true, override: row });
   } catch (err) {
     console.error('[api/admin/gold-rate] POST error:', err);
@@ -66,6 +69,8 @@ export async function DELETE(req: NextRequest) {
 
   try {
     await clearGoldRateOverride();
+    revalidatePath('/gold-rate-today');
+    revalidatePath('/');
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[api/admin/gold-rate] DELETE error:', err);

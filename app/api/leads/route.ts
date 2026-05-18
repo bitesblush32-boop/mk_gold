@@ -3,6 +3,38 @@ import { createLead, getAllLeads, updateLeadRemarks, deleteLead } from '@/lib/db
 import { getBranchBySlug } from '@/lib/branch-router';
 import { sendWhatsApp } from '@/lib/whatsapp';
 import { requireAdmin } from '@/lib/admin-auth';
+import type { Lead } from '@/db/schema';
+
+/* ─── Google Sheets sync (non-blocking, best-effort) ────────────── */
+
+async function syncLeadToSheets(lead: Lead): Promise<void> {
+  const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+  if (!url) return;
+
+  const ist = new Date(lead.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+  const istDate = new Date(lead.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  try {
+    await fetch(url, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        date:         istDate,
+        channel:      lead.source,
+        name:         lead.name,
+        phone:        lead.phone,
+        gold_type:    lead.gold_type ?? '',
+        city:         lead.city ?? '',
+        weight:       lead.weight_grams ?? '',
+        email:        lead.email ?? '',
+        purity:       lead.purity_karat ? `${lead.purity_karat}K` : '',
+        created_time: ist,
+      }),
+    });
+  } catch (err) {
+    console.error('[sheets-sync] failed:', err);
+  }
+}
 
 /* ─── Simple in-memory rate limiter ─────────────────────────────── */
 
@@ -161,6 +193,9 @@ export async function POST(req: NextRequest) {
       utm_content:     utm_content ? String(utm_content) : undefined,
       status:          'new',
     });
+
+    // Sync to Google Sheets (non-blocking)
+    syncLeadToSheets(lead).catch(() => {});
 
     // Notify branch manager via WhatsApp (non-blocking)
     if (branch_slug) {
