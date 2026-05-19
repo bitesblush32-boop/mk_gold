@@ -35,17 +35,49 @@ export async function GET(req: NextRequest) {
   }
 }
 
-/* ─── POST — upload banner image ─────────────────────────────────── */
-
+/* ─── POST — save banner record ──────────────────────────────────── */
+/*
+ * Accepts two shapes:
+ *   A) JSON  { src: string, alt: string }   — after a client-side Vercel Blob upload
+ *   B) FormData { file: File, alt: string } — localhost fallback (no BLOB_READ_WRITE_TOKEN)
+ *
+ * Shape A is used in production to bypass Vercel's 4.5 MB API-route body limit.
+ * The file never passes through this route; only the CDN URL does.
+ */
 export async function POST(req: NextRequest) {
   const deny = requireAdmin(req);
   if (deny) return deny;
 
+  const contentType = req.headers.get('content-type') ?? '';
+
+  /* ── Shape A: JSON { src, alt } ── */
+  if (contentType.includes('application/json')) {
+    let body: { src?: string; alt?: string };
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
+    const { src, alt } = body;
+    if (!src || !alt) {
+      return NextResponse.json({ error: 'src and alt are required' }, { status: 400 });
+    }
+    try {
+      const banner = await createBanner({ src, alt, order: 99 });
+      revalidatePath('/');
+      return NextResponse.json({ success: true, banner }, { status: 201 });
+    } catch (err) {
+      console.error('[api/admin/banners] POST (json) error:', err);
+      return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    }
+  }
+
+  /* ── Shape B: FormData { file, alt } — localhost only ── */
   let formData: FormData;
   try {
     formData = await req.formData();
   } catch {
-    return NextResponse.json({ error: 'Expected multipart/form-data' }, { status: 400 });
+    return NextResponse.json({ error: 'Expected multipart/form-data or application/json' }, { status: 400 });
   }
 
   const file = formData.get('file') as File | null;
@@ -54,7 +86,6 @@ export async function POST(req: NextRequest) {
   if (!file || !alt) {
     return NextResponse.json({ error: 'file and alt are required' }, { status: 400 });
   }
-
   if (!file.type.startsWith('image/')) {
     return NextResponse.json({ error: 'File must be an image' }, { status: 400 });
   }
@@ -63,16 +94,14 @@ export async function POST(req: NextRequest) {
     let src: string;
 
     if (process.env.BLOB_READ_WRITE_TOKEN) {
-      // Vercel Blob SDK — uploads to CDN and returns public URL
       const filename = `banners/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
       const blob = await put(filename, file, { access: 'public' });
       src = blob.url;
     } else {
-      // Local dev — save to public/banners/
-      const filename  = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-      const dir       = join(process.cwd(), 'public', 'banners');
+      const filename = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const dir      = join(process.cwd(), 'public', 'banners');
       await mkdir(dir, { recursive: true });
-      const buffer    = Buffer.from(await file.arrayBuffer());
+      const buffer   = Buffer.from(await file.arrayBuffer());
       await writeFile(join(dir, filename), buffer);
       src = `/banners/${filename}`;
     }
@@ -81,7 +110,7 @@ export async function POST(req: NextRequest) {
     revalidatePath('/');
     return NextResponse.json({ success: true, banner }, { status: 201 });
   } catch (err) {
-    console.error('[api/admin/banners] POST error:', err);
+    console.error('[api/admin/banners] POST (formdata) error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

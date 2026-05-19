@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { upload } from '@vercel/blob/client';
 
 interface Banner {
   id:         number;
@@ -62,16 +63,45 @@ export default function BannersPage() {
     setUploading(true);
     setMessage(null);
     try {
-      const fd = new FormData();
-      fd.append('file', file);
-      fd.append('alt', altText);
-      const res  = await fetch('/api/admin/banners', { method: 'POST', body: fd });
+      let src: string;
+
+      try {
+        // Production path: upload file directly from browser → Vercel Blob CDN.
+        // This bypasses the 4.5 MB API-route body limit entirely.
+        const blob = await upload(
+          `banners/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`,
+          file,
+          { access: 'public', handleUploadUrl: '/api/admin/banners/upload' },
+        );
+        src = blob.url;
+      } catch {
+        // Localhost fallback: BLOB_READ_WRITE_TOKEN not set → send file as FormData.
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('alt', altText);
+        const fallback = await fetch('/api/admin/banners', { method: 'POST', body: fd });
+        const fallbackData = await fallback.json();
+        if (!fallback.ok) {
+          setMessage({ type: 'err', text: fallbackData.error ?? 'Upload failed.' });
+          return;
+        }
+        setMessage({ type: 'ok', text: 'Banner uploaded.' });
+        setFile(null); setAltText(''); setPreview(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        await fetchBanners();
+        return;
+      }
+
+      // Save the blob URL + alt text to the DB via the API route (tiny JSON payload).
+      const res  = await fetch('/api/admin/banners', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ src, alt: altText }),
+      });
       const data = await res.json();
       if (res.ok) {
         setMessage({ type: 'ok', text: 'Banner uploaded.' });
-        setFile(null);
-        setAltText('');
-        setPreview(null);
+        setFile(null); setAltText(''); setPreview(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
         await fetchBanners();
       } else {
