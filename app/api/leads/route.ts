@@ -14,6 +14,8 @@ function sourceLabel(source: string, utmMedium?: string | null, utmSource?: stri
   if (utmMedium === 'cpc' || utmMedium === 'ppc') return 'Paid Ad';
   if (utmSource?.toLowerCase().includes('facebook') || utmSource?.toLowerCase().includes('instagram')) return 'Social Ad';
   if (s === 'popup-lead-form' || s === 'popup') return 'Website Popup';
+  if (s === 'calculator-gate') return 'Calculator Lead Form';
+  if (s === 'sample-c-callback') return 'Callback Form';
   if (s === 'contact-form') return 'Contact Form';
   if (s === 'appointment') return 'Appointment Form';
   if (s === 'branch-page') return 'Branch Page';
