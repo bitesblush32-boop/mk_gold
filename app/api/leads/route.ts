@@ -11,26 +11,49 @@ async function syncLeadToSheets(lead: Lead): Promise<void> {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   if (!url) return;
 
-  const ist = new Date(lead.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+  const ist     = new Date(lead.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
   const istDate = new Date(lead.created_at).toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
 
+  const payload = JSON.stringify({
+    date:         istDate,
+    channel:      lead.source,
+    name:         lead.name,
+    phone:        lead.phone,
+    gold_type:    lead.gold_type ?? '',
+    city:         lead.city ?? '',
+    weight:       lead.weight_grams ?? '',
+    email:        lead.email ?? '',
+    purity:       lead.purity_karat ? `${lead.purity_karat}K` : '',
+    created_time: ist,
+  });
+
+  const postOptions: RequestInit = {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    payload,
+  };
+
   try {
-    await fetch(url, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({
-        date:         istDate,
-        channel:      lead.source,
-        name:         lead.name,
-        phone:        lead.phone,
-        gold_type:    lead.gold_type ?? '',
-        city:         lead.city ?? '',
-        weight:       lead.weight_grams ?? '',
-        email:        lead.email ?? '',
-        purity:       lead.purity_karat ? `${lead.purity_karat}K` : '',
-        created_time: ist,
-      }),
-    });
+    // Google Apps Script /exec redirects POST → 302. Node fetch converts it to GET and
+    // drops the body. Send with redirect:'manual', then manually re-POST to the Location.
+    const res = await fetch(url, { ...postOptions, redirect: 'manual' });
+
+    let finalRes: Response;
+    if (res.status === 301 || res.status === 302 || res.status === 307 || res.status === 308) {
+      const location = res.headers.get('location');
+      if (!location) {
+        console.error('[sheets-sync] redirect with no Location header');
+        return;
+      }
+      finalRes = await fetch(location, postOptions);
+    } else {
+      finalRes = res;
+    }
+
+    if (!finalRes.ok) {
+      const text = await finalRes.text().catch(() => '');
+      console.error('[sheets-sync] HTTP error:', finalRes.status, text.slice(0, 200));
+    }
   } catch (err) {
     console.error('[sheets-sync] failed:', err);
   }

@@ -52,6 +52,7 @@ export async function POST(req: NextRequest) {
       rate_22k:       String(rate_22k),
       override_until: overrideUntil,
     });
+    revalidatePath('/api/gold-rate');
     revalidatePath('/gold-rate-today');
     revalidatePath('/');
     return NextResponse.json({ success: true, override: row });
@@ -69,6 +70,7 @@ export async function DELETE(req: NextRequest) {
 
   try {
     await clearGoldRateOverride();
+    revalidatePath('/api/gold-rate');
     revalidatePath('/gold-rate-today');
     revalidatePath('/');
     return NextResponse.json({ success: true });
