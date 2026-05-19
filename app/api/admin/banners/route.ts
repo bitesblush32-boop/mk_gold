@@ -65,6 +65,7 @@ export async function POST(req: NextRequest) {
     try {
       const banner = await createBanner({ src, alt, order: 99 });
       revalidatePath('/');
+      revalidatePath('/api/banners');
       return NextResponse.json({ success: true, banner }, { status: 201 });
     } catch (err) {
       console.error('[api/admin/banners] POST (json) error:', err);

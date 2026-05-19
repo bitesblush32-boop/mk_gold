@@ -12,7 +12,7 @@ export function MkLeadPopup() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [form, setForm] = useState({
-    name: '', phone: '', goldType: '', weight: '', purity: '', message: '',
+    name: '', phone: '', city: '', goldType: '', weight: '', purity: '', message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [phoneError, setPhoneError] = useState('');
@@ -62,6 +62,7 @@ export function MkLeadPopup() {
         body: JSON.stringify({
           name:         form.name,
           phone:        cleanPhone,
+          city:         form.city || undefined,
           gold_type:    form.goldType || undefined,
           weight_grams: weightGrams != null ? String(weightGrams) : undefined,
           purity_karat: puritiyKarat,
@@ -195,6 +196,17 @@ export function MkLeadPopup() {
                       {phoneError}
                     </p>
                   )}
+                </div>
+                <div>
+                  <label className="lp-form-label">City</label>
+                  <select className="mk-select" required
+                    value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}>
+                    <option value="" disabled>Select your city</option>
+                    <option value="Bangalore">Bangalore</option>
+                    <option value="Mysore">Mysore</option>
+                    <option value="Mangalore">Mangalore</option>
+                    <option value="Davangere">Davangere</option>
+                  </select>
                 </div>
                 <div>
                   <label className="lp-form-label">Gold Type</label>
