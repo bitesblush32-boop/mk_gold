@@ -3,7 +3,9 @@ import { getActiveBanners } from '@/lib/db/banners';
 
 export const revalidate = 300;
 
-const CACHE = { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' } };
+// No stale-while-revalidate: a stale response here would override fresh SSR data
+// and cause newly-uploaded banners to disappear on the client.
+const CACHE = { headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=0' } };
 
 export async function GET() {
   try {

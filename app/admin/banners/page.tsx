@@ -1,6 +1,47 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { upload } from '@vercel/blob/client';
+
+/**
+ * Compress an image to fit within maxBytes using Canvas.
+ * Converts to JPEG and reduces quality until under the target size.
+ * Returns the compressed Blob (or the original if already small enough).
+ */
+async function compressImage(file: File, maxBytes = 3_500_000): Promise<Blob> {
+  if (file.size <= maxBytes) return file; // already small enough
+  return new Promise((resolve, reject) => {
+    const img  = new Image();
+    const objUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objUrl);
+      const MAX_DIM = 1920;
+      let w = img.naturalWidth;
+      let h = img.naturalHeight;
+      if (w > MAX_DIM || h > MAX_DIM) {
+        const r = Math.min(MAX_DIM / w, MAX_DIM / h);
+        w = Math.round(w * r);
+        h = Math.round(h * r);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width  = w;
+      canvas.height = h;
+      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
+      let quality = 0.85;
+      const attempt = () => {
+        canvas.toBlob(blob => {
+          if (!blob) { reject(new Error('Canvas compression failed')); return; }
+          if (blob.size <= maxBytes || quality < 0.25) { resolve(blob); return; }
+          quality -= 0.10;
+          attempt();
+        }, 'image/jpeg', quality);
+      };
+      attempt();
+    };
+    img.onerror = () => { URL.revokeObjectURL(objUrl); reject(new Error('Image load failed')); };
+    img.src = objUrl;
+  });
+}
 
 interface Banner {
   id:         number;
@@ -61,24 +102,68 @@ export default function BannersPage() {
     }
     setUploading(true);
     setMessage(null);
+
     try {
+      // ── Path A: Vercel Blob client upload ────────────────────────────
+      // File goes browser → Vercel Blob CDN directly; bypasses the 4.5 MB
+      // API-route body limit. Requires BLOB_READ_WRITE_TOKEN on the server.
+      let blobUploadErr: string | null = null;
+      try {
+        const safeFilename = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+        const blob = await upload(
+          `banners/${Date.now()}-${safeFilename}`,
+          file,
+          { access: 'public', handleUploadUrl: '/api/admin/banners/upload' },
+        );
+
+        // Upload succeeded — save the CDN URL to the DB (tiny JSON, no size issue).
+        const res  = await fetch('/api/admin/banners', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ src: blob.url, alt: altText }),
+        });
+        const data = await res.json();
+        if (res.ok) {
+          setMessage({ type: 'ok', text: 'Banner uploaded.' });
+          setFile(null); setAltText(''); setPreview(null);
+          if (fileInputRef.current) fileInputRef.current.value = '';
+          await fetchBanners();
+          return;
+        }
+        blobUploadErr = data.error ?? 'DB save failed after blob upload.';
+      } catch (err) {
+        blobUploadErr = String(err);
+        console.warn('[banners] blob upload failed, falling back to FormData:', blobUploadErr);
+      }
+
+      // ── Path B: FormData fallback (localhost / no BLOB token) ────────
+      // Compress to ≤ 3.5 MB so the payload stays under Vercel's 4.5 MB limit.
+      let uploadFile: Blob;
+      try {
+        uploadFile = await compressImage(file, 3_500_000);
+      } catch {
+        uploadFile = file; // best-effort if compression fails
+      }
+
+      const compressedName = file.name.replace(/\.[^.]+$/, '.jpg');
       const fd = new FormData();
-      fd.append('file', file);
+      fd.append('file', new File([uploadFile], compressedName, { type: 'image/jpeg' }));
       fd.append('alt', altText);
+
       const res  = await fetch('/api/admin/banners', { method: 'POST', body: fd });
       const data = await res.json();
       if (res.ok) {
         setMessage({ type: 'ok', text: 'Banner uploaded.' });
-        setFile(null);
-        setAltText('');
-        setPreview(null);
+        setFile(null); setAltText(''); setPreview(null);
         if (fileInputRef.current) fileInputRef.current.value = '';
         await fetchBanners();
       } else {
-        setMessage({ type: 'err', text: data.error ?? 'Upload failed.' });
+        // Surface the real reason to help diagnose further
+        const detail = blobUploadErr ? ` (blob error: ${blobUploadErr})` : '';
+        setMessage({ type: 'err', text: (data.error ?? 'Upload failed.') + detail });
       }
     } catch {
-      setMessage({ type: 'err', text: 'Network error.' });
+      setMessage({ type: 'err', text: 'Network error — check console for details.' });
     } finally {
       setUploading(false);
     }

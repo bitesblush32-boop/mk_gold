@@ -919,6 +919,11 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
   }, []);
 
   useEffect(() => {
+    // Only fetch from the API if the server didn't provide banners.
+    // When initialBanners is populated it comes from a direct DB read at SSR time
+    // and is always fresher than the edge-cached /api/banners response (which can
+    // lag by up to 10 min due to stale-while-revalidate), so we must not override it.
+    if (initialBanners.length > 0) return;
     fetch('/api/banners')
       .then(r => r.json())
       .then(data => {
