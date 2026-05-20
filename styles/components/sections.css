@@ -3802,7 +3802,7 @@ body { overflow-x: hidden; }
 .sc-gate-subtitle {
   font-family: 'Poppins', sans-serif;
   font-size: var(--t-sm);
-  color: var(--gold-deep);
+  color: var(--plum) !important;
   margin: 0 0 0.25rem;
 }
 .sc-gate-card .mk-input,

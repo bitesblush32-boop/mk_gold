@@ -977,7 +977,7 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
                 {/* Right: white card form */}
                 <div className="sc-gate-card reveal delay-2">
                   <div>
-                    <h3 className="sc-tanker-h3" style={{ margin: '0 0 0.25rem', lineHeight: 1.1 }}>
+                    <h3 className="sc-tanker-h3" style={{ margin: '0 0 0.25rem', lineHeight: 1.1, color: 'var(--plum)' }}>
                       Calculate Your Gold Value
                     </h3>
                     <p className="sc-gate-subtitle">Enter your details to unlock the live calculator</p>
