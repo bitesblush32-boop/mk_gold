@@ -42,25 +42,29 @@ export function MkTicker({ rates: initialRates }: MkTickerProps) {
         .then(d => { if (d.rates) setRates(d.rates); })
         .catch(() => {});
     load();
-    const id = setInterval(load, 5 * 60 * 1000);
+    const id = setInterval(load, 60 * 1000); // poll every 1 min to catch minimum change interval
     return () => clearInterval(id);
   }, []);
 
   // Separator text between karat items
   const SEP = <span className="mk-ticker__sep" aria-hidden="true">·</span>;
 
-  const items = rates.map((r, i) => (
-    <span key={r.karat} className="mk-ticker__item">
-      <span className="mk-ticker__karat">{KARAT_LABELS[r.karat]}</span>
-      <span className="mk-ticker__value">{fmt(r.value)}/g</span>
-      {r.change !== undefined && r.change !== 0 && (
-        <span className={`mk-ticker__change mk-ticker__change--${r.change > 0 ? 'up' : 'down'}`}>
-          {r.change > 0 ? '+' : ''}{fmt(r.change)}
-        </span>
-      )}
-      {i < rates.length - 1 && SEP}
-    </span>
-  ));
+  const items = rates.map((r, i) => {
+    const dir = r.change !== undefined ? (r.change >= 0 ? 'up' : 'down') : null;
+    const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : null;
+    return (
+      <span key={r.karat} className="mk-ticker__item">
+        <span className="mk-ticker__karat">{KARAT_LABELS[r.karat]}</span>
+        <span className="mk-ticker__value">{fmt(r.value)}/g</span>
+        {arrow && r.change !== undefined && (
+          <span className={`mk-ticker__indicator mk-ticker__indicator--${dir}`}>
+            {arrow} {r.change >= 0 ? '+' : ''}{r.change}
+          </span>
+        )}
+        {i < rates.length - 1 && SEP}
+      </span>
+    );
+  });
 
   // Duplicate for seamless CSS loop
   const track = [...Array(2)].map((_, pass) => (

@@ -4,7 +4,10 @@ export interface GoldRate {
   rate22k: number;
   mcxRate: number;             // MCX per 10g
   source: "goldapi" | "fallback" | "manual";
+  change24k?: number;          // delta vs previous bucket (manual only)
+  change22k?: number;
 }
+
 
 const FALLBACK_RATE_24K = 7200; // fallback per gram (update periodically)
 
