@@ -13,7 +13,7 @@ export const VALUES = [
   },
   {
     heading: 'Reliability',
-    body: 'Same certified XRF process at all 16 branches. Same MCX-linked rate. Same promise everywhere, every day.',
+    body: 'Same certified XRF process at all our branches. Same MCX-linked rate. Same promise everywhere, every day.', // was: all 16 branches
   },
 ] as const;
 

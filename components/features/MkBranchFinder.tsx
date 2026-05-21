@@ -136,7 +136,7 @@ export function MkBranchFinder() {
 
           {/* Header */}
           <div className="mk-branch-finder__header reveal">
-            <p className="mk-section-overline">16 Branches</p>
+            <p className="mk-section-overline">Our Branches</p>
             <h2 className="mk-branch-finder__title">
               Find a branch near you
             </h2>

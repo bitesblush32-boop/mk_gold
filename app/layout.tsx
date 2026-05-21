@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     template: "%s | MK Gold",
   },
   description:
-    "Karnataka's most trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere.",
+    "Karnataka's most trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. Branches in Bangalore, Mysore, Mangalore & Davangere.", // was: 16 branches
   keywords: [
     "sell gold Karnataka",
     "gold buyer Bangalore",
@@ -72,14 +72,14 @@ export const metadata: Metadata = {
     siteName: "MK Gold",
     title: "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
     description:
-      "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. 16 branches.",
+      "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. Branches across Karnataka.", // was: 16 branches
     images: [{ url: "https://mkgold.in/mkgoldlogo.png", width: 400, height: 400, alt: "MK Gold" }],
   },
   twitter: {
     card: "summary_large_image",
     site: "@mkgold_official",
     title: "MK Gold — Sell Gold in Karnataka",
-    description: "Instant cash for gold. Live MCX rates. 16 branches. Trusted since 2014.",
+    description: "Instant cash for gold. Live MCX rates. Trusted since 2014.", // was: 16 branches
   },
   robots: { index: true, follow: true },
   alternates: { canonical: "https://mkgold.in" },

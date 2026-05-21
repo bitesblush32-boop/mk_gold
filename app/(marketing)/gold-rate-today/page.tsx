@@ -168,7 +168,7 @@ export default async function GoldRateTodayPage() {
                 letterSpacing: '0.02em',
               }}
             >
-              MCX-linked rates · Verified XRF purity · 16 branches across Karnataka
+              MCX-linked rates · Verified XRF purity · Branches across Karnataka
             </p>
           </div>
 

@@ -17,7 +17,7 @@ const FALLBACK: Record<string, FaqItem[]> = {
     { q: 'How long does the entire process take?', a: 'From the moment you walk in to receiving payment, the process takes around 30 minutes for most customers. Weighing takes 5 minutes, XRF testing takes 2 minutes, and payment is immediate once you accept the offer.' },
     { q: 'What documents do I need to bring?', a: 'You need any one valid government-issued photo ID: Aadhaar card, PAN card, Passport, Voter ID, or Driving Licence. No original purchase receipts or hallmark certificates are required.' },
     { q: 'Can you help release gold pledged at a bank or NBFC?', a: 'Yes. We pay the outstanding loan amount directly to your bank or NBFC in front of you, and you receive the balance amount. We handle the full paperwork. Your privacy is protected throughout the process.' },
-    { q: 'Do I need an appointment or can I walk in?', a: 'Walk-ins are welcome at all 16 branches during working hours (Monday to Saturday, 9:30 AM to 7:00 PM). Booking an appointment ensures you are attended to immediately, but it is never required.' },
+    { q: 'Do I need an appointment or can I walk in?', a: 'Walk-ins are welcome at all our branches during working hours (Monday to Saturday, 9:30 AM to 7:00 PM). Booking an appointment ensures you are attended to immediately, but it is never required.' }, // was: all 16 branches
   ],
   'pledged-gold': [
     { q: 'How quickly can the release happen?', a: 'In most cases, the same day. Once you share your loan details and lender branch, we coordinate a visit together. The lender releases your gold the moment the outstanding amount is settled — which we do directly in front of you.' },

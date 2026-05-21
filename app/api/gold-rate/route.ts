@@ -24,9 +24,9 @@ function randomOffset(): number {
   return Math.round(Math.random() * 400 - 200);
 }
 
-/** Random interval between 1 minute and 15 minutes (in ms) */
+/** Random interval between 2 and 3 seconds (in ms) */
 function randomInterval(): number {
-  return (Math.floor(Math.random() * 15) + 1) * 60 * 1000;
+  return Math.random() * 1000 + 2000; // 2000–3000 ms
 }
 
 /** Build a fresh variation snapshot from the admin base rates */
@@ -79,8 +79,8 @@ export async function GET() {
           change24K:  varied.change24k,
           change22K:  varied.change22k,
           rates: [
-            { karat: 24, value: varied.rate24k, change: varied.change24k },
-            { karat: 22, value: varied.rate22k, change: varied.change22k },
+            { karat: 24, value: varied.rate24k, change: varied.change24k, base: base24 },
+            { karat: 22, value: varied.rate22k, change: varied.change22k, base: base22 },
           ],
         },
         {

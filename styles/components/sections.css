@@ -1293,20 +1293,20 @@
 
 .mk-steps__grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--s-6);
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
   .mk-steps__grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 480px) {
   .mk-steps__grid {
     grid-template-columns: 1fr;
     gap: var(--s-4);
@@ -1316,11 +1316,13 @@
 .mk-step {
   background: var(--white);
   border-radius: var(--r-xl);
-  padding: var(--s-7) var(--s-6);
+  padding: var(--s-8) var(--s-5) var(--s-7);
   border: 1.5px solid var(--gallery-dk);
   display: flex;
   flex-direction: column;
-  gap: var(--s-3);
+  align-items: center;
+  text-align: center;
+  gap: var(--s-2);
   transition: box-shadow var(--t-base), transform var(--t-base);
 }
 
@@ -1329,75 +1331,36 @@
   transform: translateY(-2px);
 }
 
-/* Circle + connecting line + 3D coin-flip */
-.mk-step__circle-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--s-5);
+/* Icon */
+.mk-step__icon-wrap {
+  margin-bottom: var(--s-4);
+  transition: transform var(--t-spring);
 }
 
-.mk-step__coin {
-  transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-  transform: perspective(500px) rotateY(-90deg);
+.mk-step:hover .mk-step__icon-wrap {
+  transform: scale(1.08);
 }
 
-.mk-step.in .mk-step__coin {
-  transform: perspective(500px) rotateY(0deg);
-}
-
-.mk-step__circle {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--plum);
-  border: 2px solid rgba(223, 193, 96, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
-  transition: transform var(--t-spring), box-shadow var(--t-spring);
-}
-
-.mk-step:hover .mk-step__circle {
-  transform: scale(1.1);
-  box-shadow: 0 4px 20px rgba(223, 193, 96, 0.28);
-  border-color: var(--gold);
+.mk-step__icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
 }
 
 .mk-step__num {
   font-family: 'Tanker', serif;
-  font-size: 1.25rem;
-  color: var(--gold);
+  font-size: 1.5rem;
+  color: var(--plum);
   line-height: 1;
-}
-
-.mk-step__line {
-  position: absolute;
-  top: 50%;
-  left: 56px;
-  right: 0;
-  height: 1px;
-  background: rgba(223, 193, 96, 0.22);
-  transform: translateY(-50%);
-  z-index: 0;
-}
-
-.mk-step:last-child .mk-step__line { display: none; }
-
-@media (max-width: 540px) {
-  .mk-step__line { display: none; }
+  margin-bottom: var(--s-1);
 }
 
 .mk-step__title {
   font-family: 'Poppins', sans-serif;
   font-size: var(--t-h4);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ink);
-  line-height: 1.25;
+  line-height: 1.2;
   margin: 0;
 }
 
@@ -3903,21 +3866,26 @@ body { overflow-x: hidden; }
 /* ── How It Works cards ──────────────────────────────────────────── */
 .sc-steps-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
   list-style: none;
   padding: 0; margin: 0;
 }
-@media (max-width: 860px) { .sc-steps-grid { grid-template-columns: repeat(2,1fr); } }
-@media (max-width: 540px) { .sc-steps-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .sc-steps-grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 480px) { .sc-steps-grid { grid-template-columns: 1fr; gap: 1rem; } }
 
 .sc-step {
   background: var(--white);
   border: 1.5px solid var(--gallery-dk);
   border-radius: 16px;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.25rem 1.75rem;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.375rem;
   transition: transform 350ms cubic-bezier(0.34,1.56,0.64,1),
               border-color 260ms ease,
               box-shadow 260ms ease;
@@ -3937,26 +3905,31 @@ body { overflow-x: hidden; }
   box-shadow: 0 12px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(223,193,96,0.15);
 }
 .sc-step:hover::before { opacity: 1; }
-.sc-step__number {
-  font-family: 'Tanker', serif;
-  font-size: 3.25rem;
-  line-height: 1;
-  display: block;
+.sc-step__icon-wrap {
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--gold) 0%, rgba(223,193,96,0.4) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
   transition: transform 350ms cubic-bezier(0.34,1.56,0.64,1);
 }
-.sc-step:hover .sc-step__number { transform: scale(1.08); }
+.sc-step:hover .sc-step__icon-wrap { transform: scale(1.08); }
+.sc-step__icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+.sc-step__number {
+  font-family: 'Tanker', serif;
+  font-size: 1.5rem;
+  line-height: 1;
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--plum);
+}
 .sc-step__title {
   font-family: 'Poppins', sans-serif;
   font-size: var(--t-h4);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--ink);
-  margin: 0 0 0.625rem;
-  line-height: 1.25;
+  margin: 0 0 0.375rem;
+  line-height: 1.2;
 }
 .sc-step__body {
   font-family: 'Poppins', sans-serif;
@@ -3966,8 +3939,8 @@ body { overflow-x: hidden; }
   margin: 0;
 }
 @media (max-width: 480px) {
-  .sc-step { padding: 1.25rem; }
-  .sc-step__number { font-size: 2.75rem; margin-bottom: 0.5rem; }
+  .sc-step { padding: 1.5rem 1rem; }
+  .sc-step__icon { width: 64px; height: 64px; }
   .sc-step__title { font-size: 1rem; }
   .sc-step__body { font-size: var(--t-xs); }
 }
@@ -4067,8 +4040,10 @@ body { overflow-x: hidden; }
   transition: border-color var(--t-base), background var(--t-base), transform var(--t-fast);
   text-align: center;
 }
-.sc-city-card:hover { transform: translateY(-2px); }
+.sc-city-card:hover:not(:disabled) { transform: translateY(-2px); }
 .sc-city-card--active { border-color: var(--plum); background: rgba(81,37,97,0.06); }
+.sc-city-card--coming-soon { cursor: default; opacity: 0.6; border-style: dashed; }
+.sc-city-card--coming-soon:hover { transform: none; }
 .sc-city-name { font-family: 'Tanker', serif; font-size: var(--t-h4); color: var(--plum); margin: 0.5rem 0 0.25rem; }
 .sc-city-count { font-family: 'Poppins', sans-serif; font-size: var(--t-xs); color: var(--ink-mid); }
 

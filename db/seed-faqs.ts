@@ -48,7 +48,7 @@ const SEED_DATA: { page: string; items: { q: string; a: string }[] }[] = [
       },
       {
         q: 'Do I need an appointment or can I walk in?',
-        a: 'Walk-ins are welcome at all 16 branches during working hours (Monday to Saturday, 9:30 AM to 7:00 PM). Booking an appointment ensures you are attended to immediately, but it is never required.',
+        a: 'Walk-ins are welcome at all our branches during working hours (Monday to Saturday, 9:30 AM to 7:00 PM). Booking an appointment ensures you are attended to immediately, but it is never required.', // was: all 16 branches
       },
     ],
   },

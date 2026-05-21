@@ -32,7 +32,7 @@ const FAQ_SCHEMA = {
 export const metadata: Metadata = {
   title: 'MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted',
   description:
-    "Karnataka's most trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere.",
+    "Karnataka's most trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. Branches in Bangalore, Mysore, Mangalore & Davangere.", // was: 16 branches
   alternates: {
     canonical: 'https://mkgold.in',
   },
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     siteName: 'MK Gold',
     title: 'MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted',
     description:
-      "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. 16 branches.",
+      "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. Branches across Karnataka.", // was: 16 branches
     images: [
       {
         url: 'https://mkgold.in/mkgoldlogo.png',

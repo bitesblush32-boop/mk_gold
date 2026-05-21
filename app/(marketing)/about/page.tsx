@@ -19,11 +19,11 @@ import { VALUES, CITIES }  from '@/lib/data/about';
 export const metadata: Metadata = {
   title: 'About MK Gold | 15 Years Trusted | Karnataka Since 2014',
   description:
-    "MK Gold — established 2014. Karnataka's trusted gold buyer. 16 branches, ISO 9001:2015 certified, German XRF spectrometer, 10,000+ customers served.",
+    "MK Gold — established 2014. Karnataka's trusted gold buyer. ISO 9001:2015 certified, German XRF spectrometer, 10,000+ customers served.", // was: 16 branches
   openGraph: {
     title: "About MK Gold | Karnataka's Most Trusted Gold Buyer Since 2014",
     description:
-      'Learn about MK Gold — 15+ years of transparent gold buying across Karnataka. 16 branches, ISO certified, XRF tested.',
+      'Learn about MK Gold — 15+ years of transparent gold buying across Karnataka. ISO certified, XRF tested.', // was: 16 branches
     url: 'https://mkgold.in/about',
     siteName: 'MK Gold',
     locale: 'en_IN',
@@ -43,7 +43,7 @@ const ORG_SCHEMA = {
   logo: 'https://mkgold.in/brand/logo_light_eng.png',
   foundingDate: '2014',
   description:
-    "MK Gold is Karnataka's most trusted gold buyer. Established in Bangalore in 2014. 16 branches across Bangalore, Mysore, Mangalore and Davangere.",
+    "MK Gold is Karnataka's most trusted gold buyer. Established in Bangalore in 2014. Branches across Bangalore, Mysore, Mangalore and Davangere.", // was: 16 branches
   address: { '@type': 'PostalAddress', addressRegion: 'Karnataka', addressCountry: 'IN' },
   areaServed: { '@type': 'State', name: 'Karnataka' },
   sameAs: ['https://www.instagram.com/mkgold.in', 'https://www.facebook.com/mkgold.in'],
@@ -55,7 +55,7 @@ const ABOUT_SCHEMA = {
   name: 'About MK Gold',
   url: 'https://mkgold.in/about',
   description:
-    "Learn about MK Gold — Karnataka's trusted gold buyer since 2014. 15+ years of transparent gold buying across 16 branches.",
+    "Learn about MK Gold — Karnataka's trusted gold buyer since 2014. 15+ years of transparent gold buying across Karnataka.", // was: 16 branches
   publisher: { '@type': 'Organization', name: 'MK Gold', url: 'https://mkgold.in' },
 };
 
@@ -580,7 +580,7 @@ export default function AboutPage() {
                 margin: 0,
               }}
             >
-              16 branches, one standard of trust.
+              One standard of trust.
             </p>
           </div>
 

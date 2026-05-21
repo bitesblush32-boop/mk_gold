@@ -24,12 +24,12 @@ import { HOW_TO_STEPS, GOLD_TYPES, PAYMENT_METHODS, REQUIRED_DOCS, NOT_NEEDED } 
 export const metadata: Metadata = {
   title: 'Sell Gold | Best Rate Today | MK Gold Karnataka',
   description:
-    'Sell gold at MK Gold. Live MCX rates, XRF purity test, payment in 30 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere. Walk in today — no appointment needed.',
+    'Sell gold at MK Gold. Live MCX rates, XRF purity test, payment in 30 minutes. Branches in Bangalore, Mysore, Mangalore & Davangere. Walk in today — no appointment needed.', // was: 16 branches
   alternates: { canonical: 'https://mkgold.in/sell-gold' },
   openGraph: {
     title: 'Sell Gold | Best Rate Today | MK Gold Karnataka',
     description:
-      'Sell gold at live MCX rates. XRF purity test. Payment in 30 minutes. 16 branches across Karnataka. Trusted since 2014.',
+      'Sell gold at live MCX rates. XRF purity test. Payment in 30 minutes. Branches across Karnataka. Trusted since 2014.', // was: 16 branches
     url: 'https://mkgold.in/sell-gold',
     siteName: 'MK Gold',
     locale: 'en_IN',
@@ -45,7 +45,7 @@ const SERVICE_SCHEMA = {
   '@type': 'Service',
   name: 'Sell Gold for Instant Cash',
   description:
-    'MK Gold buys gold jewellery, coins, and bars at live MCX rates. XRF purity test. Instant payment in 45 minutes. 16 branches across Karnataka.',
+    'MK Gold buys gold jewellery, coins, and bars at live MCX rates. XRF purity test. Instant payment in 45 minutes. Branches across Karnataka.', // was: 16 branches
   provider: {
     '@type': 'LocalBusiness',
     name: 'MK Gold',
@@ -115,7 +115,7 @@ export default async function SellGoldPage() {
             {/* Trust badges */}
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
               <MkBadge variant="gold">Est. 2014</MkBadge>
-              <MkBadge variant="gold">16 Branches</MkBadge>
+              {/* <MkBadge variant="gold">16 Branches</MkBadge> */}
               <MkBadge variant="gold">XRF Certified</MkBadge>
               <MkBadge variant="gold">ISO 9001:2015</MkBadge>
             </div>
@@ -144,7 +144,7 @@ export default async function SellGoldPage() {
               }}
             >
               XRF purity test. Transparent pricing. Payment in 45 minutes.
-              Walk in at any of our 16 branches — no appointment needed.
+              Walk in at any of our branches — no appointment needed.
             </p>
 
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>

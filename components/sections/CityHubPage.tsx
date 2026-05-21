@@ -199,7 +199,7 @@ const CITY_FAQS: Record<City, FaqItem[]> = {
     },
     {
       q: 'Is there an MK Gold branch in Davangere?',
-      a: 'Yes. MK Gold has one branch in Davangere, serving the city and surrounding areas. It follows the same process and pricing as all 16 branches across Karnataka.',
+      a: 'Yes. MK Gold has one branch in Davangere, serving the city and surrounding areas. It follows the same process and pricing as all our branches across Karnataka.', // was: all 16 branches
     },
     {
       q: 'Is MK Gold a safe buyer in Davangere?',

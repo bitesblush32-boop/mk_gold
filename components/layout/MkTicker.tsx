@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 
 interface KaratRate {
   karat: 22 | 24;
-  value: number;   // ₹ per gram
-  change?: number; // delta from yesterday, ₹
+  value: number;   // ₹ per gram — current varied rate
+  change?: number; // raw offset from base
+  base?: number;   // admin-set base price — used to determine colour direction
 }
 
 interface MkTickerProps {
@@ -42,7 +43,7 @@ export function MkTicker({ rates: initialRates }: MkTickerProps) {
         .then(d => { if (d.rates) setRates(d.rates); })
         .catch(() => {});
     load();
-    const id = setInterval(load, 60 * 1000); // poll every 1 min to catch minimum change interval
+    const id = setInterval(load, 3000); // poll every 3s — matches 2-3s change interval
     return () => clearInterval(id);
   }, []);
 
@@ -50,17 +51,17 @@ export function MkTicker({ rates: initialRates }: MkTickerProps) {
   const SEP = <span className="mk-ticker__sep" aria-hidden="true">·</span>;
 
   const items = rates.map((r, i) => {
-    const dir = r.change !== undefined ? (r.change >= 0 ? 'up' : 'down') : null;
-    const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : null;
+    // Direction is determined by comparing varied value against admin base price
+    const dir = r.base !== undefined
+      ? (r.value > r.base ? 'up' : r.value < r.base ? 'down' : null)
+      : null;
+    const arrow = dir === 'up' ? '▲' : dir === 'down' ? '▼' : '';
     return (
       <span key={r.karat} className="mk-ticker__item">
         <span className="mk-ticker__karat">{KARAT_LABELS[r.karat]}</span>
-        <span className="mk-ticker__value">{fmt(r.value)}/g</span>
-        {arrow && r.change !== undefined && (
-          <span className={`mk-ticker__indicator mk-ticker__indicator--${dir}`}>
-            {arrow} {r.change >= 0 ? '+' : ''}{r.change}
-          </span>
-        )}
+        <span className={`mk-ticker__value${dir ? ` mk-ticker__value--${dir}` : ''}`}>
+          {arrow}{arrow ? ' ' : ''}{fmt(r.value)}/g
+        </span>
         {i < rates.length - 1 && SEP}
       </span>
     );

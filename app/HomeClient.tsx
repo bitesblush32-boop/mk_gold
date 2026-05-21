@@ -523,30 +523,37 @@ function BranchFinder() {
     <section className="mk-bg-light section" id="branches" aria-label="Branch finder">
 
       <div className="mk-container">
-        <p className="mk-section-overline reveal">16 Branches Across Karnataka</p>
+        <p className="mk-section-overline reveal">Branches Across Karnataka</p>
         <h2 className="reveal delay-1 t-h2" style={{ marginBottom: '2.5rem' }}>
           Find Your Nearest MK Gold Branch
         </h2>
 
         <div className="sc-city-grid reveal delay-2">
           {CITIES.map((city) => {
+            const isActive = city === 'Bangalore';
             const count = BRANCHES.filter(b => b.city.toLowerCase() === city.toLowerCase()).length;
             return (
               <button
                 key={city}
-                onClick={() => { setActiveCity(city); setActiveBranch(null); }}
-                className={`sc-city-card${activeCity === city ? ' sc-city-card--active' : ''}`}
+                onClick={() => { if (isActive) { setActiveCity(city); setActiveBranch(null); } }}
+                className={`sc-city-card${activeCity === city ? ' sc-city-card--active' : ''}${!isActive ? ' sc-city-card--coming-soon' : ''}`}
+                disabled={!isActive}
+                aria-disabled={!isActive}
               >
-                <div style={{ width: '100%', maxWidth: '96px', margin: '0 auto', position: 'relative' }}>
+                <div style={{ width: '100%', maxWidth: '96px', margin: '0 auto', position: 'relative', opacity: isActive ? 1 : 0.4 }}>
                   {cityArt[city]}
                 </div>
                 <p className="sc-city-name">{city}</p>
-                <p className="sc-city-count">{count} {count === 1 ? 'branch' : 'branches'}</p>
+                {isActive
+                  ? <p className="sc-city-count">{count} {count === 1 ? 'branch' : 'branches'}</p>
+                  : <p className="sc-city-count" style={{ color: 'var(--mist)', fontStyle: 'italic' }}>Coming Soon</p>
+                }
               </button>
             );
           })}
         </div>
 
+        {/* Map only shown for Bangalore — other cities not yet operational */}
         <GoogleCityMap
           key={activeCity}
           city={activeCity}
@@ -569,7 +576,7 @@ const TRUST_PILLARS = [
   { label: 'Post-Sale Support', detail: 'WhatsApp support after your transaction. Grievance email in footer. We stand behind every offer we make.' },
 ] as const;
 
-const TRUST_BADGES = ['GST Registered', 'ISO 9001:2015', 'XRF Certified', '16 Physical Branches'] as const;
+const TRUST_BADGES = ['GST Registered', 'ISO 9001:2015', 'XRF Certified' /* , '16 Physical Branches' */] as const; // was: 16 Physical Branches
 
 /* ─── Auto-spinning trust coin ──────────────────────────────────── */
 
@@ -652,12 +659,10 @@ function LocalTrustSection() {
 /* ─── Steps data + local section ───────────────────────────────── */
 
 const SC_STEPS = [
-  { n: '01', title: 'Book Appointment', body: 'Call, WhatsApp, or book online in 30 seconds. No documents or paperwork needed at this stage.' },
-  { n: '02', title: 'Visit Any Branch', body: 'Walk into any of our 16 branches with your gold and a valid government ID. Walk-ins always welcome.' },
-  { n: '03', title: 'Weigh & Assess', body: 'Your gold is weighed on certified precision scales in front of you. Transparent process, zero hidden deductions.' },
-  { n: '04', title: 'XRF Purity Test', body: 'Our German XRF spectrometer reads exact gold content in under 2 minutes. No acid test. No scratches.' },
-  { n: '05', title: 'Receive Your Offer', body: 'You get an offer based on live MCX rates. We show you our margin openly, side by side. Zero pressure.' },
-  { n: '06', title: 'Get Paid Instantly', body: 'Accept and receive payment in cash, NEFT, or UPI within 30 minutes. Walk in with gold, walk out with money.' },
+  { n: '01', title: 'Weight Check',        body: 'Accurate weight checking systems — your gold weighed on certified precision scales in front of you.',          icon: '/weight.png',    alt: 'Weight check scale' },
+  { n: '02', title: 'Purity Verification', body: 'Using advanced XRF Machine — German spectrometer reads exact gold content in under 2 minutes. No acid test.', icon: '/purity.png',    alt: 'XRF purity verification' },
+  { n: '03', title: 'Rate Calculation',    body: 'Based on live markets — your offer is calculated against live MCX rates. We show our margin openly.',          icon: '/rate_calc.png', alt: 'Rate calculation chart' },
+  { n: '04', title: 'Payment Transfer',    body: 'Instant payment to your bank account — receive cash, NEFT, or UPI within 30 minutes of evaluation.',          icon: '/payment.png',   alt: 'Instant payment transfer' },
 ] as const;
 
 function LocalStepsSection() {
@@ -667,16 +672,19 @@ function LocalStepsSection() {
         <div className="reveal" style={{ textAlign: 'center', maxWidth: '42rem', margin: '0 auto 3.5rem' }}>
           <p className="mk-section-overline">How It Works</p>
           <h2 className="t-h1" style={{ lineHeight: 1.05, marginBottom: '1rem' }}>
-            Six steps. 30 minutes.<br />That&apos;s all it takes.
+            Our Gold Evaluation Process
           </h2>
           <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', lineHeight: 1.65 }}>
-            Sell your gold at fair, transparent rates backed by live MCX prices and certified XRF purity testing.
+            We follow a transparent process to ensure you get the best value
           </p>
         </div>
-        <ol className="sc-steps-grid" aria-label="Steps to sell your gold">
+        <ol className="sc-steps-grid" aria-label="Gold evaluation process steps">
           {SC_STEPS.map((step, i) => (
-            <li key={step.n} className={`sc-step reveal delay-${(i % 3) + 1}`}>
-              <span className="sc-step__number" aria-hidden="true">{step.n}</span>
+            <li key={step.n} className={`sc-step reveal delay-${i + 1}`}>
+              <div className="sc-step__icon-wrap">
+                <Image src={step.icon} alt={step.alt} width={80} height={80} className="sc-step__icon" />
+              </div>
+              <span className="sc-step__number">{step.n}</span>
               <h3 className="sc-step__title">{step.title}</h3>
               <p className="sc-step__body">{step.body}</p>
             </li>

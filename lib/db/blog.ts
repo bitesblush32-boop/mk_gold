@@ -49,7 +49,7 @@ const SEED_POSTS: BlogPost[] = [
       'You do NOT need to bring the original purchase receipt, invoice, or hallmark certificate. MK Gold performs its own independent XRF purity test and pays based on the actual gold content — not what is printed on a certificate.',
       'Why do we need an ID at all?\n\nRBI regulations require gold buyers to record the identity of sellers for transactions above a certain threshold. This is a standard banking compliance requirement, not a barrier to selling. Your information is kept strictly confidential.',
       'For pledged gold release: If you are releasing gold pledged at a bank or NBFC, you will need to bring your original loan agreement or pledge card, along with your ID. The bank will need to be present or reachable to accept payment directly.',
-      'Walk in with one ID and your gold. That is genuinely all you need at any of our 16 branches across Karnataka.',
+      'Walk in with one ID and your gold. That is genuinely all you need at any of our branches across Karnataka.', // was: 16 branches
     ].join('\n\n'),
     category: 'Sell Gold',
     published: true,

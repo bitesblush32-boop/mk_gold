@@ -16,7 +16,7 @@ export function organizationSchema() {
     url: "https://mkgold.in",
     logo: "https://mkgold.in/mkgoldlogo.png",
     description:
-      "Karnataka's trusted gold buyer since 2014. 16 branches across Bangalore, Mysore, Mangalore and Davangere.",
+      "Karnataka's trusted gold buyer since 2014. Branches across Bangalore, Mysore, Mangalore and Davangere.", // was: 16 branches
     foundingDate: "2014",
     telephone: "+91-7019500600",
     areaServed: {
