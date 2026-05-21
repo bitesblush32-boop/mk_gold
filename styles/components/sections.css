@@ -85,7 +85,7 @@
 
 .mk-footer__contact {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.5rem;
   margin-top: var(--s-3);
   margin-bottom: calc(var(--s-3) * -0.5);
@@ -111,6 +111,23 @@
 .mk-footer__contact-link:hover {
   background: rgba(223, 193, 96, 0.14);
   border-color: rgba(223, 193, 96, 0.45);
+}
+
+.mk-footer__address {
+  font-style: normal;
+  display: inline-flex;
+  align-items: flex-start;
+  padding: 0.3rem 0.875rem;
+  border-radius: 12px;
+  background: rgba(223, 193, 96, 0.07);
+  border: 1px solid rgba(223, 193, 96, 0.22);
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 500;
+  color: #DFC160;
+  line-height: 1.6;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .mk-footer__social {

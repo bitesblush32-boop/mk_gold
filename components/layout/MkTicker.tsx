@@ -60,7 +60,7 @@ export function MkTicker({ rates: initialRates }: MkTickerProps) {
       <span key={r.karat} className="mk-ticker__item">
         <span className="mk-ticker__karat">{KARAT_LABELS[r.karat]}</span>
         <span className={`mk-ticker__value${dir ? ` mk-ticker__value--${dir}` : ''}`}>
-          {arrow}{arrow ? ' ' : ''}{fmt(r.value)}/g
+          {arrow}{arrow ? ' ' : ''}{fmt(r.value)}/gram
         </span>
         {i < rates.length - 1 && SEP}
       </span>

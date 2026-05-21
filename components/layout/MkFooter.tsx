@@ -83,6 +83,11 @@ export function MkFooter() {
               <a href="mailto:info@mkgold.in" className="mk-footer__contact-link">
                 info@mkgold.in
               </a>
+              <address className="mk-footer__address">
+                3rd Block, 29, 2nd, 1st Main Rd, 3rd Stage,<br />
+                Basaveshwar Nagar, Bengaluru,<br />
+                Karnataka 560079
+              </address>
             </div>
             {/* Social icons */}
             <div className="mk-footer__social">
