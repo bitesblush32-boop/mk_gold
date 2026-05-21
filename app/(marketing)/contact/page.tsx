@@ -1,3 +1,5 @@
+// TODO: Contact/branches page hidden until all branches are live. Restore by removing the redirect below.
+import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600; // ISR: branch data changes infrequently
@@ -42,6 +44,7 @@ function mapsUrl(branch: Branch): string {
 }
 
 export default function ContactPage() {
+  redirect('/'); // TODO: remove redirect when all branches are live
   return (
     <main>
       <MkNavbar />

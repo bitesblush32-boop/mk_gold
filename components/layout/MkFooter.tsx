@@ -11,7 +11,7 @@ const FOOTER_LINKS = {
   Company: [
     { href: '/about',        label: 'About Us' },
     { href: '/testimonials', label: 'Reviews' },
-    { href: '/contact',      label: 'All Branches' },
+    // { href: '/contact', label: 'All Branches' }, // TODO: restore when all branches are live
     { href: '/blog',         label: 'Blog' },
     { href: '/referral',     label: 'Refer & Earn' },
   ],

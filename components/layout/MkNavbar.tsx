@@ -18,7 +18,8 @@ const SERVICES_LINKS = [
 const NAV_LINKS = [
   { href: '/gold-rate-today', label: 'Gold Rate' },
   { href: '/about',           label: 'About' },
-  { href: '/contact',         label: 'Branches' },
+  // { href: '/contact', label: 'Branches' }, // TODO: restore when all branches are live
+  { href: '/#faq',            label: 'FAQ' },
   { href: '/blog',            label: 'Blog' },
 ];
 
