@@ -10,33 +10,29 @@ import {
 import type {
   GoldRateContextValue,
   GoldRateData,
-  KaratRate,
 } from '@/types/gold-rate';
-
-/* ─── Fallback data ──────────────────────────────────────────── */
-
-const FALLBACK_RATES: KaratRate[] = [
-  { karat: 24, value: 7200 },
-  { karat: 22, value: 6600 },
-];
-
-const FALLBACK_MCX = 72000;
 
 /* ─── Context ────────────────────────────────────────────────── */
 
 const GoldRateContext = createContext<GoldRateContextValue>({
-  rates:       FALLBACK_RATES,
-  mcxRate:     FALLBACK_MCX,
+  rates:       [],
+  mcxRate:     0,
   lastUpdated: null,
-  isLoading:   false,
+  isLoading:   true,
   isError:     false,
 });
 
 /* ─── Provider ───────────────────────────────────────────────── */
 
-export function GoldRateProvider({ children }: { children: ReactNode }) {
-  const [data, setData]         = useState<GoldRateData | null>(null);
-  const [isLoading, setLoading] = useState(true);
+interface GoldRateProviderProps {
+  children:     ReactNode;
+  /** Server-fetched admin rates passed from layout — avoids loading flash */
+  initialData?: GoldRateData | null;
+}
+
+export function GoldRateProvider({ children, initialData }: GoldRateProviderProps) {
+  const [data, setData]         = useState<GoldRateData | null>(initialData ?? null);
+  const [isLoading, setLoading] = useState(!initialData);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
@@ -48,15 +44,16 @@ export function GoldRateProvider({ children }: { children: ReactNode }) {
         .catch(() => { setHasError(true); setLoading(false); });
     };
     load();
-    const id = setInterval(load, 300_000); // 5 minutes — matches ISR on /api/gold-rate
+    // Poll every 3s — keeps ticker ±200 variation and rate widget both current
+    const id = setInterval(load, 3000);
     return () => clearInterval(id);
   }, []);
 
   return (
     <GoldRateContext.Provider
       value={{
-        rates:       data?.rates     ?? FALLBACK_RATES,
-        mcxRate:     data?.mcxRate   ?? FALLBACK_MCX,
+        rates:       data?.rates     ?? [],
+        mcxRate:     data?.mcxRate   ?? 0,
         lastUpdated: data?.updatedAt ?? null,
         isLoading,
         isError:     hasError && !data,

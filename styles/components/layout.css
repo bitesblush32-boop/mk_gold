@@ -52,7 +52,7 @@
 .mk-ticker__track {
   display: flex;
   white-space: nowrap;
-  animation: tickerRun 24s linear infinite;
+  animation: tickerRun 8s linear infinite;
   will-change: transform;
 }
 

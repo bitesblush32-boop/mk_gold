@@ -6,6 +6,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MkRevealObserver } from "@/components/ui/MkRevealObserver";
 import { MkSocialProof } from "@/components/features/MkSocialProof";
 import { GoldRateProvider } from "@/context/GoldRateContext";
+import { getEffectiveGoldRate } from "@/lib/gold-rate";
+import type { GoldRateData } from "@/types/gold-rate";
 import { localBusinessSchema } from "@/lib/schema/local-business";
 import { organizationSchema } from "@/lib/schema/organization";
 import "./globals.css";
@@ -99,9 +101,22 @@ const WEBSITE_SCHEMA = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Fetch admin-set rates server-side so the page renders with real rates on first paint
+  const adminRate = await getEffectiveGoldRate();
+  const initialGoldRate: GoldRateData | null = adminRate
+    ? {
+        rates: [
+          { karat: 24, value: adminRate.rate24k },
+          { karat: 22, value: adminRate.rate22k },
+        ],
+        mcxRate:   adminRate.mcxRate,
+        updatedAt: adminRate.timestamp,
+      }
+    : null;
+
   return (
     <html lang="en" className={`${poppins.variable} ${anekKannada.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
@@ -208,7 +223,7 @@ export default function RootLayout({
         )}
 
         <MkRevealObserver />
-        <GoldRateProvider>
+        <GoldRateProvider initialData={initialGoldRate}>
           {children}
         </GoldRateProvider>
         <MkSocialProof />

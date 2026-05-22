@@ -1,28 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-
-interface KaratRate {
-  karat: 22 | 24;
-  value: number;   // ₹ per gram — current varied rate
-  change?: number; // raw offset from base
-  base?: number;   // admin-set base price — used to determine colour direction
-}
-
-interface MkTickerProps {
-  /** Pass rates from server to hydrate immediately */
-  rates?: KaratRate[];
-}
+import { useGoldRateContext } from '@/context/GoldRateContext';
 
 const KARAT_LABELS: Record<number, string> = {
   24: '24K',
   22: '22K',
 };
-
-const DEFAULT_RATES: KaratRate[] = [
-  { karat: 24, value: 7200 },
-  { karat: 22, value: 6600 },
-];
 
 function fmt(v: number) {
   return new Intl.NumberFormat('en-IN', {
@@ -33,25 +16,29 @@ function fmt(v: number) {
   }).format(v);
 }
 
-export function MkTicker({ rates: initialRates }: MkTickerProps) {
-  const [rates, setRates] = useState<KaratRate[]>(initialRates ?? DEFAULT_RATES);
+export function MkTicker() {
+  const { rates, isLoading } = useGoldRateContext();
 
-  useEffect(() => {
-    const load = () =>
-      fetch('/api/gold-rate')
-        .then(r => r.json())
-        .then(d => { if (d.rates) setRates(d.rates); })
-        .catch(() => {});
-    load();
-    const id = setInterval(load, 3000); // poll every 3s — matches 2-3s change interval
-    return () => clearInterval(id);
-  }, []);
-
-  // Separator text between karat items
   const SEP = <span className="mk-ticker__sep" aria-hidden="true">·</span>;
 
+  // No rates set by admin yet — show a neutral placeholder in the ticker
+  if (isLoading || rates.length === 0) {
+    return (
+      <div className="mk-ticker" role="region" aria-label="Gold rates">
+        <div className="mk-ticker__track">
+          <span className="mk-ticker__pass">
+            <span className="mk-ticker__note">MK Gold Buying Rate: 97.5% of MCX</span>
+          </span>
+        </div>
+        <div className="mk-ticker__live-wrap" aria-hidden="true">
+          <span className="mk-ticker__live-dot" />
+          <span className="mk-ticker__live-label">LIVE</span>
+        </div>
+      </div>
+    );
+  }
+
   const items = rates.map((r, i) => {
-    // Direction is determined by comparing varied value against admin base price
     const dir = r.base !== undefined
       ? (r.value > r.base ? 'up' : r.value < r.base ? 'down' : null)
       : null;
@@ -67,7 +54,6 @@ export function MkTicker({ rates: initialRates }: MkTickerProps) {
     );
   });
 
-  // Duplicate for seamless CSS loop
   const track = [...Array(2)].map((_, pass) => (
     <span key={pass} className="mk-ticker__pass" aria-hidden={pass === 1 ? 'true' : undefined}>
       {items}
@@ -82,8 +68,6 @@ export function MkTicker({ rates: initialRates }: MkTickerProps) {
       <div className="mk-ticker__track">
         {track}
       </div>
-
-      {/* Fixed live indicator — right side, outside scroll track */}
       <div className="mk-ticker__live-wrap" aria-hidden="true">
         <span className="mk-ticker__live-dot" />
         <span className="mk-ticker__live-label">LIVE</span>

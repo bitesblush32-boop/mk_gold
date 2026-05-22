@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { FALLBACK_RATE_24K, FALLBACK_RATE_22K } from '@/lib/gold-rate';
 import { getGoldRateOverride } from '@/lib/db/rates';
 
 export const revalidate = 0; // disable ISR — manual override uses no-store, live rate uses its own cache
@@ -91,27 +90,10 @@ export async function GET() {
       );
     }
 
-    // 2. No admin override — apply variation to fallback defaults
-    const varied = getVariation(FALLBACK_RATE_24K, FALLBACK_RATE_22K);
+    // 2. No admin rate set — return empty, no hardcoded fallback
     return NextResponse.json(
-      {
-        rate24K:   varied.rate24k,
-        rate22K:   varied.rate22k,
-        mcxRate:   Math.round(varied.rate24k * 10),
-        updatedAt: new Date().toISOString(),
-        source:    'fallback' as const,
-        change24K: varied.change24k,
-        change22K: varied.change22k,
-        rates: [
-          { karat: 24, value: varied.rate24k, change: varied.change24k, base: FALLBACK_RATE_24K },
-          { karat: 22, value: varied.rate22k, change: varied.change22k, base: FALLBACK_RATE_22K },
-        ],
-      },
-      {
-        headers: {
-          'Cache-Control': 'no-store',
-        },
-      },
+      { rates: [], mcxRate: 0, updatedAt: null, noRate: true },
+      { headers: { 'Cache-Control': 'no-store' } },
     );
   } catch (err) {
     console.error('[api/gold-rate] error:', err);

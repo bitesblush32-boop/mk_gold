@@ -249,7 +249,7 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
           <>
             {isError && <StaleNotice lastUpdated={lastUpdated} />}
             <RateGrid rates={rates} />
-            <MarginRow mcxRate={mcxRate} />
+            {mcxRate > 0 && <MarginRow mcxRate={mcxRate} />}
           </>
         )}
       </div>
@@ -287,7 +287,7 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
           {isError && <StaleNotice lastUpdated={lastUpdated} />}
 
           <RateGrid rates={rates} />
-          <MarginRow mcxRate={mcxRate} />
+          {mcxRate > 0 && <MarginRow mcxRate={mcxRate} />}
 
           {/* Calculator — gated behind lead form */}
           {!calcUnlocked ? (

@@ -28,8 +28,10 @@ export interface GoldRateData {
   rates: KaratRate[];
   /** MCX gold price in ₹ per 10g (raw MCX quote) */
   mcxRate: number;
-  /** ISO 8601 timestamp of last MCX fetch */
-  updatedAt: string;
+  /** ISO 8601 timestamp of last admin rate update, null if no rate set */
+  updatedAt: string | null;
+  /** True when no admin rate has been configured yet */
+  noRate?: boolean;
 }
 
 /** Shape of values exposed by GoldRateContext */
