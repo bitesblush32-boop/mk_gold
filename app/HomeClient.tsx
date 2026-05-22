@@ -9,6 +9,7 @@ import { MkFaq } from '@/components/sections/MkFaq';
 import { MkCtaBand } from '@/components/sections/MkCtaBand';
 import { MkRateWidget } from '@/components/features/MkRateWidget';
 import { MkCalculator } from '@/components/features/MkCalculator';
+import { GoldCalculatorUnlocked } from '@/components/sections/GoldCalculatorSection';
 import { MkSeal } from '@/components/ui/MkSeal';
 import { MkButton } from '@/components/ui/MkButton';
 import { MkLeadPopup } from '@/components/features/MkLeadPopup';
@@ -954,15 +955,6 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
         {/* ── Rate + Calculator + Callback + Chart ────────────────── */}
         <section className="sc-rate-section section" id="gold-rate">
           <div className="mk-container" style={{ position: 'relative' }}>
-            {rateUnlocked && (
-              <>
-                <p className="mk-section-overline reveal">Live Gold Rate Karnataka</p>
-                <h2 className="reveal delay-1 t-h2" style={{ marginBottom: '2.5rem' }}>
-                  Today&apos;s Rate &amp; Calculator
-                </h2>
-              </>
-            )}
-
             {/* Gate state — marketing copy (left) + form card (right) */}
             {!rateUnlocked && (
               <div className="sc-rate-top-grid">
@@ -996,16 +988,9 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
               </div>
             )}
 
-            {/* Unlocked state — rate widget (left) + calculator (right) */}
+            {/* Unlocked state — pixel-perfect calculator with Gold.png */}
             {rateUnlocked && (
-              <div className="sc-rate-top-grid" style={{ animation: 'fadeUp 0.4s ease both' }}>
-                <div className="sc-chart-card">
-                  <MkRateWidget variant="page" />
-                </div>
-                <div className="sc-chart-card">
-                  <MkCalculator variant="dark" defaultUnlocked showBookingCTA />
-                </div>
-              </div>
+              <GoldCalculatorUnlocked />
             )}
           </div>
         </section>
