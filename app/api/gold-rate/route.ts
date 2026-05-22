@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchGoldRate } from '@/lib/gold-rate';
+import { FALLBACK_RATE_24K, FALLBACK_RATE_22K } from '@/lib/gold-rate';
 import { getGoldRateOverride } from '@/lib/db/rates';
 
 export const revalidate = 0; // disable ISR — manual override uses no-store, live rate uses its own cache
@@ -91,23 +91,25 @@ export async function GET() {
       );
     }
 
-    // 2. Fetch live rate from GoldAPI.io
-    const rate = await fetchGoldRate();
+    // 2. No admin override — apply variation to fallback defaults
+    const varied = getVariation(FALLBACK_RATE_24K, FALLBACK_RATE_22K);
     return NextResponse.json(
       {
-        rate24K:   rate.rate24k,
-        rate22K:   rate.rate22k,
-        mcxRate:   rate.mcxRate,
-        updatedAt: rate.timestamp,
-        source:    rate.source,
+        rate24K:   varied.rate24k,
+        rate22K:   varied.rate22k,
+        mcxRate:   Math.round(varied.rate24k * 10),
+        updatedAt: new Date().toISOString(),
+        source:    'fallback' as const,
+        change24K: varied.change24k,
+        change22K: varied.change22k,
         rates: [
-          { karat: 24, value: rate.rate24k },
-          { karat: 22, value: rate.rate22k },
+          { karat: 24, value: varied.rate24k, change: varied.change24k, base: FALLBACK_RATE_24K },
+          { karat: 22, value: varied.rate22k, change: varied.change22k, base: FALLBACK_RATE_22K },
         ],
       },
       {
         headers: {
-          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=0',
+          'Cache-Control': 'no-store',
         },
       },
     );
