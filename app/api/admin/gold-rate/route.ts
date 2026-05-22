@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/admin-auth';
 import {
   getGoldRateOverride,
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       rate_24k: String(rate_24k),
       rate_22k: String(rate_22k),
     });
-    revalidateTag('gold-rate');        // invalidates unstable_cache instantly
+    updateTag('gold-rate');        // invalidates unstable_cache instantly
     revalidatePath('/gold-rate-today');
     revalidatePath('/');
     return NextResponse.json({ success: true, override: row });
@@ -67,7 +67,7 @@ export async function DELETE(req: NextRequest) {
 
   try {
     await clearGoldRateOverride();
-    revalidateTag('gold-rate');
+    updateTag('gold-rate');
     revalidatePath('/gold-rate-today');
     revalidatePath('/');
     return NextResponse.json({ success: true });

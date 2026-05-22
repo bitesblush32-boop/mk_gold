@@ -21,6 +21,10 @@ export interface KaratRate {
   karat: GoldKarat;
   /** ₹ per gram, already adjusted for karat purity */
   value: number;
+  /** ±200 offset from admin base (used for up/down arrow direction) */
+  change?: number;
+  /** Admin-set base price — used to determine arrow direction in ticker */
+  base?: number;
 }
 
 /** Full payload from /api/gold-rate */

@@ -355,10 +355,10 @@ export default async function GoldRateTodayPage() {
                 Live example — 10g of 22K gold at today&apos;s rate
               </p>
               {[
-                ['MCX 24K spot (per 10g)',          `₹${rate.mcxRate.toLocaleString('en-IN')}`],
-                ['22K purity factor (91.67%)',        `₹${rate.rate22k.toLocaleString('en-IN')} per gram`],
-                ['For 10g at 22K rate',               `₹${(rate.rate22k * 10).toLocaleString('en-IN')}`],
-                ['MK Gold pays 97.5%',                `₹${Math.round(rate.rate22k * 10 * 0.975).toLocaleString('en-IN')}`],
+                ['MCX 24K spot (per 10g)',          `₹${(rate?.mcxRate ?? 0).toLocaleString('en-IN')}`],
+                ['22K purity factor (91.67%)',        `₹${(rate?.rate22k ?? 0).toLocaleString('en-IN')} per gram`],
+                ['For 10g at 22K rate',               `₹${((rate?.rate22k ?? 0) * 10).toLocaleString('en-IN')}`],
+                ['MK Gold pays 97.5%',                `₹${Math.round((rate?.rate22k ?? 0) * 10 * 0.975).toLocaleString('en-IN')}`],
               ].map(([label, value], idx) => (
                 <div
                   key={idx}
