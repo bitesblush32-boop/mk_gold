@@ -16,9 +16,9 @@ function fmt(v: number) {
 export function GoldCalculatorUnlocked() {
   const [weight, setWeight] = useState('');
   const [purity, setPurity] = useState<22 | 24>(22);
-  const { rate22K, rate24K, isLoading } = useGoldRate();
+  const { baseRate22K, baseRate24K, isLoading } = useGoldRate();
 
-  const activeRate = purity === 22 ? rate22K : rate24K;
+  const activeRate = purity === 22 ? baseRate22K : baseRate24K;
   const weightNum  = parseFloat(weight) || 0;
   const estimate   = weightNum > 0 && activeRate > 0
     ? Math.round(activeRate * weightNum * 0.975)
@@ -78,8 +78,7 @@ export function GoldCalculatorUnlocked() {
               </strong>
             </p>
             <p className="gc-disclaimer">
-              *Today&apos;s gold rate is indicative and may vary based on market
-              fluctuations, purity, and final evaluation at the time of transaction.
+              *Rate set by MK Gold. Final value confirmed at branch after XRF purity test.
             </p>
           </div>
 

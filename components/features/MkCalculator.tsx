@@ -50,11 +50,11 @@ export function MkCalculator({
   const [purity,    setPurity]    = useState<22 | 24>(22);
   const [weight,    setWeight]    = useState('');
 
-  const { rate24K, rate22K, isLoading } = useGoldRate();
+  const { baseRate24K, baseRate22K, isLoading } = useGoldRate();
 
   const rateMap: Record<22 | 24, number> = {
-    24: rate24K,
-    22: rate22K,
+    24: baseRate24K,
+    22: baseRate22K,
   };
 
   async function handleGateSubmit(e: React.FormEvent) {
@@ -73,7 +73,7 @@ export function MkCalculator({
     // Map form field names to API field names
     const puritiyKarat = gateForm.purity === '24k' ? 24 : gateForm.purity === '22k' ? 22 : undefined;
     const weightGrams  = gateForm.weight ? parseFloat(gateForm.weight) : undefined;
-    const estRate      = puritiyKarat === 24 ? rate24K : puritiyKarat === 22 ? rate22K : undefined;
+    const estRate      = puritiyKarat === 24 ? baseRate24K : puritiyKarat === 22 ? baseRate22K : undefined;
     const estimatedValue = estRate && weightGrams ? Math.round(estRate * weightGrams * 0.975) : undefined;
 
     try {

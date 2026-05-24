@@ -10,19 +10,22 @@ import type { GoldKarat, UseGoldRateReturn } from '@/types/gold-rate';
  * Must be used inside <GoldRateProvider>.
  */
 export function useGoldRate(): UseGoldRateReturn {
-  const { rates, mcxRate, lastUpdated, isLoading, isError } =
+  const { rates, baseRates, mcxRate, lastUpdated, isLoading, isError } =
     useGoldRateContext();
 
-  function getRate(karat: GoldKarat): number {
-    return rates.find((r) => r.karat === karat)?.value ?? 0;
+  function getRate(karat: GoldKarat, src: typeof rates): number {
+    return src.find((r) => r.karat === karat)?.value ?? 0;
   }
 
-  const rate22K = getRate(22);
+  const rate22K     = getRate(22, rates);
+  const baseRate22K = getRate(22, baseRates);
 
   return {
-    rate24K:     getRate(24),
+    rate24K:      getRate(24, rates),
     rate22K,
-    mkRate22K:   Math.round(rate22K * 0.975),
+    baseRate24K:  getRate(24, baseRates),
+    baseRate22K,
+    mkRate22K:    Math.round(baseRate22K * 0.975),
     mcxRate,
     lastUpdated,
     isLoading,

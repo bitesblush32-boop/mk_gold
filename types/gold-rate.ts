@@ -41,6 +41,8 @@ export interface GoldRateData {
 /** Shape of values exposed by GoldRateContext */
 export interface GoldRateContextValue {
   rates: KaratRate[];
+  /** Stable admin-set base rates (no ±200 variation) — use these in calculators */
+  baseRates: KaratRate[];
   /** MCX price in ₹/10g */
   mcxRate: number;
   /** ISO timestamp of last successful fetch, null if never fetched */
@@ -55,7 +57,11 @@ export interface GoldRateContextValue {
 export interface UseGoldRateReturn {
   rate24K: number;
   rate22K: number;
-  /** MK Gold's 22K buying rate = rate22K × 0.975 */
+  /** Stable admin-set 24K base rate — no ±200 variation, use in calculators */
+  baseRate24K: number;
+  /** Stable admin-set 22K base rate — no ±200 variation, use in calculators */
+  baseRate22K: number;
+  /** MK Gold's 22K buying rate = baseRate22K × 0.975 */
   mkRate22K: number;
   /** Raw MCX price in ₹/10g */
   mcxRate: number;

@@ -2586,6 +2586,8 @@
 
 .mk-about-split__left {
   /* Pull-quote column — no padding override needed */
+  /* placeholder — linter requires non-empty rulesets */
+  min-width: 0;
 }
 
 .mk-about-split__divider {
@@ -2602,6 +2604,7 @@
 
 .mk-about-split__right {
   /* Body text column */
+  min-width: 0;
 }
 
 @media (max-width: 768px) {
@@ -2859,7 +2862,9 @@
 }
 
 /* ── City section heading ── */
-.mk-city-section {}
+.mk-city-section {
+  display: block;
+}
 
 .mk-city-section--mt {
   margin-top: var(--s-10);
@@ -3170,6 +3175,7 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-clamp: 2;
 }
 
 .mk-blog-card__foot {
@@ -3274,6 +3280,7 @@
 /* ── Article prose ── */
 .mk-article {
   /* all type tokens from article context */
+  display: block;
 }
 
 .mk-article__para {
@@ -4312,6 +4319,7 @@ body {
   display: -webkit-box;
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
+  line-clamp: 5;
 }
 
 .sc-review-author {
@@ -5216,6 +5224,7 @@ body {
 
 .gc-weight-input[type=number] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 .gc-weight-unit {

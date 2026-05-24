@@ -16,6 +16,7 @@ import type {
 
 const GoldRateContext = createContext<GoldRateContextValue>({
   rates:       [],
+  baseRates:   [],
   mcxRate:     0,
   lastUpdated: null,
   isLoading:   true,
@@ -49,10 +50,15 @@ export function GoldRateProvider({ children, initialData }: GoldRateProviderProp
     return () => clearInterval(id);
   }, []);
 
+  const rawRates  = data?.rates ?? [];
+  // baseRates: use the stable admin-set `base` field where available, else fall back to `value`
+  const baseRates = rawRates.map(r => ({ ...r, value: r.base ?? r.value }));
+
   return (
     <GoldRateContext.Provider
       value={{
-        rates:       data?.rates     ?? [],
+        rates:       rawRates,
+        baseRates,
         mcxRate:     data?.mcxRate   ?? 0,
         lastUpdated: data?.updatedAt ?? null,
         isLoading,
