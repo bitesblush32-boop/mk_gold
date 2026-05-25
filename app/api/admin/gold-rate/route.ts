@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       rate_24k: String(rate_24k),
       rate_22k: String(rate_22k),
     });
-    revalidateTag('gold-rate');        // invalidates unstable_cache instantly
+    revalidateTag('gold-rate', { expire: 0 });        // invalidates unstable_cache instantly
     revalidatePath('/gold-rate-today');
     revalidatePath('/');
     return NextResponse.json({ success: true, override: row });
@@ -67,7 +67,7 @@ export async function DELETE(req: NextRequest) {
 
   try {
     await clearGoldRateOverride();
-    revalidateTag('gold-rate');
+    revalidateTag('gold-rate', { expire: 0 });
     revalidatePath('/gold-rate-today');
     revalidatePath('/');
     return NextResponse.json({ success: true });
