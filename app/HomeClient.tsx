@@ -807,13 +807,13 @@ function BottomNav() {
 
 export default function HomePage({ homeFaqs, initialBanners = [] }: {
   homeFaqs?: FaqItem[];
-  initialBanners?: { src: string; alt: string }[];
+  initialBanners?: { src: string; alt: string; src_mobile?: string | null }[];
 }) {
   const progressBarRef = useRef<HTMLDivElement>(null);
 
   const [slide, setSlide] = useState(0);
   const [rateUnlocked, setRateUnlocked] = useState(false);
-  const [banners, setBanners] = useState<{ src: string; alt: string }[]>(initialBanners);
+  const [banners, setBanners] = useState<{ src: string; alt: string; src_mobile?: string | null }[]>(initialBanners);
   const [googleReviews, setGoogleReviews] = useState<{ name: string; area: string; rating: number; text: string; initials: string }[]>([]);
 
   useEffect(() => {
@@ -843,7 +843,7 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data.banners) && data.banners.length > 0) {
-          setBanners(data.banners.map((b: { src: string; alt: string }) => ({ src: b.src, alt: b.alt })));
+          setBanners(data.banners.map((b: { src: string; alt: string; src_mobile?: string | null }) => ({ src: b.src, alt: b.alt, src_mobile: b.src_mobile ?? null })));
         }
       })
       .catch(() => { /* keep current banners */ });
@@ -899,19 +899,50 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="sc-hero mk-bg-dark" aria-label="Hero">
         {banners.map((b, i) => (
-          <Image
-            key={b.src}
-            src={b.src}
-            alt={b.alt}
-            fill
-            sizes="100vw"
-            quality={85}
-            priority={i === 0}
-            className={`sc-hero__banner${i === slide ? ' sc-hero__banner--active' : ''}`}
-            aria-hidden={i !== slide}
-            draggable={false}
-            style={{ objectFit: 'cover' }}
-          />
+          b.src_mobile ? (
+            // Mobile + desktop versions exist — show the right one per screen size
+            <React.Fragment key={b.src}>
+              <Image
+                src={b.src}
+                alt={b.alt}
+                fill
+                sizes="100vw"
+                quality={85}
+                priority={i === 0}
+                className={`sc-hero__banner sc-hero__banner--desktop${i === slide ? ' sc-hero__banner--active' : ''}`}
+                aria-hidden={i !== slide}
+                draggable={false}
+                style={{ objectFit: 'cover' }}
+              />
+              <Image
+                src={b.src_mobile}
+                alt={b.alt}
+                fill
+                sizes="100vw"
+                quality={85}
+                priority={i === 0}
+                className={`sc-hero__banner sc-hero__banner--mobile${i === slide ? ' sc-hero__banner--active' : ''}`}
+                aria-hidden={i !== slide}
+                draggable={false}
+                style={{ objectFit: 'cover' }}
+              />
+            </React.Fragment>
+          ) : (
+            // Desktop-only banner — crops on mobile (existing behaviour)
+            <Image
+              key={b.src}
+              src={b.src}
+              alt={b.alt}
+              fill
+              sizes="100vw"
+              quality={85}
+              priority={i === 0}
+              className={`sc-hero__banner${i === slide ? ' sc-hero__banner--active' : ''}`}
+              aria-hidden={i !== slide}
+              draggable={false}
+              style={{ objectFit: 'cover' }}
+            />
+          )
         ))}
         <div className="sc-hero__overlay" />
         <div className="sc-grain" />

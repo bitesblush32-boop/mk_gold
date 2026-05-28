@@ -71,7 +71,8 @@ export const goldRateOverride = pgTable('gold_rate_override', {
 
 export const heroBanners = pgTable('hero_banners', {
   id:         serial('id').primaryKey(),
-  src:        text('src').notNull(),              // URL or /public path
+  src:        text('src').notNull(),              // URL or /public path — desktop/landscape
+  src_mobile: text('src_mobile'),                 // optional portrait URL for phones
   alt:        text('alt').notNull(),
   order:      integer('order').notNull().default(0),
   is_active:  boolean('is_active').notNull().default(true),

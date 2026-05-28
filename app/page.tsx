@@ -73,11 +73,12 @@ export default async function HomePage() {
     getFaqsByPage('general').catch(() => []),
     getActiveBanners().catch(() => []),
   ]);
+  const typedBanners = initialBanners as { src: string; alt: string; src_mobile?: string | null }[];
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_SCHEMA) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }} />
-      <HomeClient homeFaqs={faqs} initialBanners={initialBanners} />
+      <HomeClient homeFaqs={faqs} initialBanners={typedBanners} />
     </>
   );
 }

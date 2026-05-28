@@ -3714,6 +3714,18 @@ body {
   opacity: 1;
 }
 
+/* Responsive variants: desktop hides on phones, mobile portrait shows on phones */
+.sc-hero__banner--desktop {
+  display: block; /* visible on tablet+ */
+}
+.sc-hero__banner--mobile {
+  display: none;  /* hidden on tablet+ */
+}
+@media (max-width: 767px) {
+  .sc-hero__banner--desktop { display: none; }
+  .sc-hero__banner--mobile  { display: block; }
+}
+
 .sc-hero__dots {
   position: absolute;
   bottom: 1.75rem;

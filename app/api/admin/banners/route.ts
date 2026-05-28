@@ -52,18 +52,18 @@ export async function POST(req: NextRequest) {
 
   /* ── Shape A: JSON { src, alt } ── */
   if (contentType.includes('application/json')) {
-    let body: { src?: string; alt?: string };
+    let body: { src?: string; alt?: string; src_mobile?: string | null };
     try {
       body = await req.json();
     } catch {
       return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
-    const { src, alt } = body;
+    const { src, alt, src_mobile } = body;
     if (!src || !alt) {
       return NextResponse.json({ error: 'src and alt are required' }, { status: 400 });
     }
     try {
-      const banner = await createBanner({ src, alt, order: 99 });
+      const banner = await createBanner({ src, alt, src_mobile: src_mobile || null, order: 99 });
       revalidatePath('/');
       revalidatePath('/api/banners');
       return NextResponse.json({ success: true, banner }, { status: 201 });
