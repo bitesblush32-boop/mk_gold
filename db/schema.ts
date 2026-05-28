@@ -88,6 +88,7 @@ export const blogPosts = pgTable('blog_posts', {
   body_json:       text('body_json').notNull(),   // Portable Text JSON or plain text
   category:        text('category').notNull(),     // Gold Rate|Sell Gold|Pledged Gold|Market Insights|News
   cover_image_url: text('cover_image_url'),
+  is_featured:     boolean('is_featured').notNull().default(false),
   published:       boolean('published').notNull().default(false),
   published_at:    timestamp('published_at').defaultNow().notNull(),
   created_at:      timestamp('created_at').defaultNow().notNull(),

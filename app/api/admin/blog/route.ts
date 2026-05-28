@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { title, slug, excerpt, body_json, category, cover_image_url, published } = body;
+  const { title, slug, excerpt, body_json, category, cover_image_url, is_featured, published } = body;
 
   if (!title || typeof title !== 'string' || title.trim() === '') {
     return NextResponse.json({ error: 'title is required' }, { status: 400 });
@@ -102,6 +102,7 @@ export async function POST(req: NextRequest) {
       body_json:       String(body_json),
       category,
       cover_image_url: cover_image_url ? String(cover_image_url) : undefined,
+      is_featured:     Boolean(is_featured),
       published:       isPublished,
       published_at:    isPublished ? new Date() : undefined,
     });
@@ -183,7 +184,7 @@ export async function DELETE(req: NextRequest) {
 /* ─── Helpers ────────────────────────────────────────────────────── */
 
 function sanitiseFields(fields: Record<string, unknown>) {
-  const allowed = ['title', 'slug', 'excerpt', 'body_json', 'category', 'cover_image_url'];
+  const allowed = ['title', 'slug', 'excerpt', 'body_json', 'category', 'cover_image_url', 'is_featured'];
   const out: Record<string, unknown> = {};
   for (const key of allowed) {
     if (key in fields) out[key] = fields[key];

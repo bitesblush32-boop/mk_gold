@@ -317,16 +317,22 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
     markersRef.current.forEach(({ marker }) => { marker.map = null; });
     markersRef.current = [];
 
-    const map = new g.Map(mapDivRef.current, {
-      center: { lat: center.lat, lng: center.lng },
-      zoom: center.zoom,
-      mapId: process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID || 'DEMO_MAP_ID',
-      styles: MAP_STYLES,
-      disableDefaultUI: true,
-      zoomControl: true,
-      gestureHandling: 'cooperative',
-      clickableIcons: false,
-    });
+    let map: any;
+    try {
+      map = new g.Map(mapDivRef.current, {
+        center: { lat: center.lat, lng: center.lng },
+        zoom: center.zoom,
+        mapId: process.env.NEXT_PUBLIC_GOOGLE_MAPS_ID || 'DEMO_MAP_ID',
+        styles: MAP_STYLES,
+        disableDefaultUI: true,
+        zoomControl: true,
+        gestureHandling: 'cooperative',
+        clickableIcons: false,
+      });
+    } catch {
+      setMapError(true);
+      return;
+    }
 
     markersRef.current = cityBranches.map(branch => {
       const isActive = activeBranchRef.current?.slug === branch.slug;

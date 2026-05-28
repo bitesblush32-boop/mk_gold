@@ -8,6 +8,7 @@ interface Post {
   title:        string;
   slug:         string;
   category:     string;
+  is_featured:  boolean;
   published:    boolean;
   published_at: string | null;
   created_at:   string;
@@ -105,6 +106,7 @@ export default function BlogListPage() {
                 <tr>
                   <th>Title</th>
                   <th>Category</th>
+                  <th>Featured</th>
                   <th>Status</th>
                   <th>Published</th>
                   <th>Created</th>
@@ -121,6 +123,24 @@ export default function BlogListPage() {
                     </td>
                     <td>
                       <span className="mk-admin-category-tag">{post.category}</span>
+                    </td>
+                    <td>
+                      {post.is_featured && (
+                        <span style={{
+                          fontFamily: 'Poppins, sans-serif',
+                          fontSize: '0.7rem',
+                          fontWeight: 700,
+                          letterSpacing: '0.06em',
+                          textTransform: 'uppercase',
+                          background: 'rgba(223,193,96,0.18)',
+                          color: '#7a5500',
+                          border: '1px solid rgba(223,193,96,0.5)',
+                          borderRadius: 4,
+                          padding: '2px 7px',
+                        }}>
+                          Featured
+                        </span>
+                      )}
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>

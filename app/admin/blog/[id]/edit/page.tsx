@@ -28,6 +28,7 @@ export default function EditBlogPostPage({ params }: Props) {
             body_json:       d.post.body_json ?? '',
             category:        d.post.category ?? 'Guide',
             cover_image_url: d.post.cover_image_url ?? '',
+            is_featured:     d.post.is_featured ?? false,
             published:       d.post.published ?? false,
           });
         } else {
