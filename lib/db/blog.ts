@@ -15,6 +15,7 @@ export interface BlogPost {
   is_featured: boolean;
   published: boolean;
   published_at: string; // ISO date string
+  updated_at: string;   // ISO date string — used for SEO dateModified
 }
 
 /* ─── Row normaliser ─────────────────────────────────────────────── */
@@ -34,6 +35,9 @@ function toPost(row: any): BlogPost {
     published_at:    row.published_at instanceof Date
       ? row.published_at.toISOString()
       : String(row.published_at),
+    updated_at:      row.updated_at instanceof Date
+      ? row.updated_at.toISOString()
+      : String(row.updated_at ?? row.published_at),
   };
 }
 

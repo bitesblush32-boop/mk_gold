@@ -24,6 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: 'Post Not Found | MK Gold' };
+
+  const ogImage = post.cover_image_url
+    ? [{ url: post.cover_image_url, width: 1200, height: 630, alt: post.title }]
+    : [{ url: 'https://mkgold.in/brand/og-default.jpg', width: 1200, height: 630, alt: 'MK Gold — Gold Buying Experts' }];
+
   return {
     title: `${post.title} | MK Gold`,
     description: post.excerpt,
@@ -36,6 +41,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: 'en_IN',
       type: 'article',
       publishedTime: post.published_at,
+      modifiedTime: post.updated_at,
+      section: post.category,
+      authors: ['MK Gold Editorial Team'],
+      images: ogImage,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: ogImage.map(i => i.url),
     },
     robots: { index: true, follow: true },
   };
@@ -67,8 +82,22 @@ function renderBody(bodyJson: string): React.ReactNode {
   // HTML content from the rich-text editor — detect any HTML tag anywhere in the string,
   // not just at the start (e.g. "Text... <a href="...">link</a> ...more text")
   if (/<[a-z][^>]*>/i.test(bodyJson)) {
-    // Ensure every <a> opens in a new tab with safe rel attributes
-    const safe = bodyJson.replace(/<a\s/gi, '<a target="_blank" rel="noopener noreferrer" ');
+    // External links: open new tab + rel="noopener noreferrer"
+    // Internal links (start with / or point to mkgold.in): stay in same tab, pass link equity
+    const safe = bodyJson.replace(/<a(\s[^>]*)>/gi, (_match, attrs) => {
+      const hrefMatch = attrs.match(/href=["']([^"']*)["']/i);
+      const href = hrefMatch ? hrefMatch[1] : '';
+      const isExternal = /^https?:\/\/(?!(?:www\.)?mkgold\.in)/i.test(href);
+      if (isExternal) {
+        const hasTarget = /\btarget=/i.test(attrs);
+        const hasRel    = /\brel=/i.test(attrs);
+        let out = attrs;
+        if (!hasTarget) out += ' target="_blank"';
+        if (!hasRel)    out += ' rel="noopener noreferrer"';
+        return `<a${out}>`;
+      }
+      return `<a${attrs}>`;
+    });
     return <div className="mk-article__body" dangerouslySetInnerHTML={{ __html: safe }} />;
   }
 
@@ -150,7 +179,7 @@ export default async function BlogPostPage({ params }: Props) {
     description:   post.excerpt,
     url:           `https://mkgold.in/blog/${slug}`,
     datePublished: post.published_at,
-    dateModified:  post.published_at,
+    dateModified:  post.updated_at,   // real last-edit timestamp
     imageUrl:      post.cover_image_url,
   });
 
@@ -186,15 +215,19 @@ export default async function BlogPostPage({ params }: Props) {
         {/* Cover image + overlay — only when an image exists */}
         {post.cover_image_url && (
           <>
-            {/* Background image layer */}
-            <div
-              aria-hidden="true"
+            {/* Actual <img> tag — required for Google Images + Discover indexing.
+                CSS background-image is invisible to crawlers. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={post.cover_image_url}
+              alt={post.title}
               style={{
                 position: 'absolute',
                 inset: 0,
-                backgroundImage: `url(${post.cover_image_url})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center',
                 zIndex: 0,
               }}
             />
