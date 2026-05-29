@@ -173,41 +173,79 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* ── 1. Breadcrumb + post hero ─────────────────────────────── */}
       <section
-        className="mk-bg-dark section"
-        style={{ paddingTop: 'calc(var(--chrome-h) + var(--s-8))', paddingBottom: 'var(--s-10)' }}
+        className={post.cover_image_url ? 'section' : 'mk-bg-dark section'}
+        style={{
+          paddingTop: 'calc(var(--chrome-h) + var(--s-8))',
+          paddingBottom: 'var(--s-10)',
+          position: 'relative',
+          overflow: 'hidden',
+          // Fallback bg colour when no image
+          backgroundColor: post.cover_image_url ? 'var(--plum-deep)' : undefined,
+        }}
       >
-        <div className="mk-container" style={{ maxWidth: '860px', margin: '0 auto' }}>
-          <nav aria-label="Breadcrumb" className="mk-breadcrumb reveal">
-            <a href="/" className="mk-breadcrumb__link">Home</a>
-            <span className="mk-breadcrumb__sep" aria-hidden="true">›</span>
-            <a href="/blog" className="mk-breadcrumb__link">Blog</a>
-            <span className="mk-breadcrumb__sep" aria-hidden="true">›</span>
-            <span className="mk-breadcrumb__current">{post.category}</span>
-          </nav>
-
-          <div className="reveal delay-1" style={{ marginTop: 'var(--s-5)' }}>
-            <MkBadge variant={BADGE_VARIANT[post.category] ?? 'white'}>
-              {post.category}
-            </MkBadge>
-
-            <h1
+        {/* Cover image + overlay — only when an image exists */}
+        {post.cover_image_url && (
+          <>
+            {/* Background image layer */}
+            <div
+              aria-hidden="true"
               style={{
-                fontFamily: 'Tanker, serif',
-                fontSize: 'var(--t-h1)',
-                color: 'var(--white)',
-                margin: '0.875rem 0 1.25rem',
-                lineHeight: 1.1,
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: `url(${post.cover_image_url})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                zIndex: 0,
               }}
-            >
-              {post.title}
-            </h1>
+            />
+            {/* Dark gradient overlay — darker at edges so text is readable */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(to bottom, rgba(27,8,36,0.88) 0%, rgba(27,8,36,0.60) 45%, rgba(27,8,36,0.82) 100%)',
+                zIndex: 1,
+              }}
+            />
+          </>
+        )}
 
-            <div className="mk-post-hero-meta">
-              <time dateTime={post.published_at} className="mk-post-hero-meta__date">
-                {fmtDate(post.published_at)}
-              </time>
-              <span className="mk-post-hero-meta__sep" aria-hidden="true">·</span>
-              <span className="mk-post-hero-meta__author">By MK Gold Editorial Team</span>
+        {/* Content sits above image + overlay */}
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <div className="mk-container" style={{ maxWidth: '860px', margin: '0 auto' }}>
+            <nav aria-label="Breadcrumb" className="mk-breadcrumb reveal">
+              <a href="/" className="mk-breadcrumb__link">Home</a>
+              <span className="mk-breadcrumb__sep" aria-hidden="true">›</span>
+              <a href="/blog" className="mk-breadcrumb__link">Blog</a>
+              <span className="mk-breadcrumb__sep" aria-hidden="true">›</span>
+              <span className="mk-breadcrumb__current">{post.category}</span>
+            </nav>
+
+            <div className="reveal delay-1" style={{ marginTop: 'var(--s-5)' }}>
+              <MkBadge variant={BADGE_VARIANT[post.category] ?? 'white'}>
+                {post.category}
+              </MkBadge>
+
+              <h1
+                style={{
+                  fontFamily: 'Tanker, serif',
+                  fontSize: 'var(--t-h1)',
+                  color: 'var(--white)',
+                  margin: '0.875rem 0 1.25rem',
+                  lineHeight: 1.1,
+                }}
+              >
+                {post.title}
+              </h1>
+
+              <div className="mk-post-hero-meta">
+                <time dateTime={post.published_at} className="mk-post-hero-meta__date">
+                  {fmtDate(post.published_at)}
+                </time>
+                <span className="mk-post-hero-meta__sep" aria-hidden="true">·</span>
+                <span className="mk-post-hero-meta__author">By MK Gold Editorial Team</span>
+              </div>
             </div>
           </div>
         </div>
