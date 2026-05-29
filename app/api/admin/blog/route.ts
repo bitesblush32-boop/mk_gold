@@ -141,8 +141,9 @@ export async function PATCH(req: NextRequest) {
 
   try {
     // If published is changing to true, use publishPost for correct published_at timestamp
+    // then also save all other field edits (body_json, title, etc.) in the same operation
     if (published === true) {
-      await publishPost(id);
+      await updatePost(id, { published: true, published_at: new Date(), ...sanitiseFields(fields) });
     } else if (published === false) {
       await updatePost(id, { published: false, ...sanitiseFields(fields) });
     } else {

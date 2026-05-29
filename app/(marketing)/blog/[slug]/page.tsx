@@ -64,9 +64,12 @@ function fmtDate(iso: string): string {
  * Swap for @portabletext/react when Sanity is integrated in Phase 3.
  */
 function renderBody(bodyJson: string): React.ReactNode {
-  // HTML content from the rich-text editor (admin-authored, trusted source)
-  if (bodyJson.trim().startsWith('<')) {
-    return <div className="mk-article__body" dangerouslySetInnerHTML={{ __html: bodyJson }} />;
+  // HTML content from the rich-text editor — detect any HTML tag anywhere in the string,
+  // not just at the start (e.g. "Text... <a href="...">link</a> ...more text")
+  if (/<[a-z][^>]*>/i.test(bodyJson)) {
+    // Ensure every <a> opens in a new tab with safe rel attributes
+    const safe = bodyJson.replace(/<a\s/gi, '<a target="_blank" rel="noopener noreferrer" ');
+    return <div className="mk-article__body" dangerouslySetInnerHTML={{ __html: safe }} />;
   }
 
   // Attempt Portable Text JSON

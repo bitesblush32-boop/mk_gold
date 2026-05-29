@@ -3315,6 +3315,17 @@
   border-radius: 0 var(--r-lg) var(--r-lg) 0;
 }
 
+/* ── Links inside rich-text body (overrides global a reset) ── */
+.mk-article__body a {
+  color: var(--purple);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--t-fast);
+}
+.mk-article__body a:hover {
+  color: var(--plum);
+}
+
 .mk-article__blockquote p {
   font-family: 'Poppins', sans-serif;
   font-size: var(--t-base);

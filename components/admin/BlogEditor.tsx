@@ -73,7 +73,7 @@ export default function BlogEditor({ initialValues, mode }: Props) {
   const router  = useRouter();
   const editorRef = useRef<HTMLDivElement>(null);
 
-  const [form, setForm] = useState<BlogEditorPost>({
+  const initialForm: BlogEditorPost = {
     title:           initialValues?.title           ?? '',
     slug:            initialValues?.slug            ?? '',
     excerpt:         initialValues?.excerpt         ?? '',
@@ -83,13 +83,28 @@ export default function BlogEditor({ initialValues, mode }: Props) {
     is_featured:     initialValues?.is_featured     ?? false,
     published:       initialValues?.published       ?? false,
     id:              initialValues?.id,
-  });
+  };
+
+  const [form, setForm] = useState<BlogEditorPost>(initialForm);
+
+  // Track last-saved state so we can derive isDirty
+  const savedSnapshot = useRef<BlogEditorPost>(initialForm);
+
+  const isDirty = mode === 'new' || JSON.stringify(form) !== JSON.stringify(savedSnapshot.current);
 
   const [saving,       setSaving]       = useState(false);
   const [message,      setMessage]      = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
   const [imgUploading, setImgUploading] = useState(false);
   const [imgPreview,   setImgPreview]   = useState<string>(initialValues?.cover_image_url ?? '');
   const imgInputRef = useRef<HTMLInputElement>(null);
+
+  // Auto-clear success messages after 3 seconds
+  useEffect(() => {
+    if (message?.type === 'ok') {
+      const t = setTimeout(() => setMessage(null), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [message]);
 
   // Populate contenteditable on mount / when editing
   useEffect(() => {
@@ -189,11 +204,18 @@ export default function BlogEditor({ initialValues, mode }: Props) {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage({ type: 'ok', text: mode === 'new' ? 'Post created.' : 'Post saved.' });
         if (mode === 'new') {
+          setMessage({ type: 'ok', text: 'Post created.' });
           router.push('/admin/blog');
         } else {
-          setForm(f => ({ ...f, published: publishNow ?? f.published }));
+          const savedForm: BlogEditorPost = {
+            ...form,
+            body_json: currentBody,
+            published: publishNow ?? form.published,
+          };
+          setForm(savedForm);
+          savedSnapshot.current = savedForm;
+          setMessage({ type: 'ok', text: '✓ Changes saved.' });
         }
       } else {
         setMessage({ type: 'err', text: data.error ?? 'Save failed.' });
@@ -506,8 +528,13 @@ export default function BlogEditor({ initialValues, mode }: Props) {
       {/* ── Actions ── */}
       <div className="mk-admin-section mk-admin-form-actions" style={{ marginTop: 'var(--s-5)' }}>
         <div style={{ display: 'flex', gap: 'var(--s-3)', flexWrap: 'wrap', alignItems: 'center' }}>
-          <button type="submit" className="mk-admin-btn mk-admin-btn--gold" disabled={saving}>
-            {saving ? 'Saving…' : 'Save Draft'}
+          <button
+            type="submit"
+            className="mk-admin-btn mk-admin-btn--gold"
+            disabled={saving || !isDirty}
+            title={!isDirty ? 'No changes to save' : undefined}
+          >
+            {saving ? 'Saving…' : mode === 'new' ? 'Save Draft' : 'Save Edits'}
           </button>
 
           {!form.published && (
