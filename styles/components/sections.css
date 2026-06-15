@@ -3587,13 +3587,14 @@ body {
 
 /* ── Chrome overrides ────────────────────────────────────────────── */
 :root {
-  --navbar-h: 90px;
-  --chrome-h: 126px;
+  --ticker-h: 25px;
+  --navbar-h: 70px;
+  --chrome-h: 95px;
 }
 
 /* ── Navbar: glassmorphism panel ──────────────────────────────────── */
 .mk-navbar {
-  height: 90px !important;
+  height: 70px !important;
   background: rgba(40, 12, 56, 0.88) !important;
   backdrop-filter: blur(32px) saturate(1.4) !important;
   -webkit-backdrop-filter: blur(32px) saturate(1.4) !important;
@@ -3604,9 +3605,9 @@ body {
   background: rgba(59, 24, 72, 0.3) !important;
   border-radius: 14px !important;
   border: 1px solid rgba(223, 193, 96, 0.14) !important;
-  margin: 10px 24px !important;
+  margin: 5px 24px !important;
   padding: 0 1.5rem !important;
-  height: 70px !important;
+  height: 60px !important;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
   max-width: unset !important;
   gap: 1rem !important;
@@ -3637,6 +3638,30 @@ body {
 
 .mk-ticker {
   top: 0 !important;
+}
+
+.mk-ticker__item {
+  font-size: 0.75rem !important;
+}
+
+.mk-ticker__karat,
+.mk-ticker__change,
+.mk-ticker__sep,
+.mk-ticker__note {
+  font-size: 0.6875rem !important;
+}
+
+.mk-ticker__live-label {
+  font-size: 0.6875rem !important;
+}
+
+.mk-ticker__indicator {
+  font-size: 0.625rem !important;
+}
+
+.mk-ticker__live-dot {
+  width: 5px !important;
+  height: 5px !important;
 }
 
 .mk-navbar__actions .mk-btn {
@@ -3670,7 +3695,7 @@ body {
 /* ── Hero ──────────────────────────────────────────────────────── */
 .sc-hero {
   position: relative;
-  height: 100svh !important;
+  height: calc(100svh - var(--chrome-h)) !important;
   min-height: 560px !important;
   display: flex;
   flex-direction: column;
@@ -3693,6 +3718,144 @@ body {
 
   .sc-hero__dots {
     bottom: 0.75rem !important;
+  }
+}
+
+/* ── Tagline bridge card — trapezoid sits at hero/how-it-works boundary */
+.sc-tagline-bridge {
+  position: relative;
+  z-index: 4;
+  margin-top: -2.5rem;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.sc-tagline-card {
+  background: #fff;
+  padding: 0.6rem 2.5rem;
+  text-align: center;
+  white-space: nowrap;
+  clip-path: polygon(
+    calc(8% + 3px) 0, calc(92% - 3px) 0,
+    92% 3px,
+    100% 100%, 0 100%,
+    8% 3px
+  );
+}
+
+.sc-tagline-card__text {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--plum);
+  line-height: 1;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .sc-tagline-bridge {
+    display: none;
+  }
+}
+
+/* ── How it works — sits above rate section in stacking order ──────── */
+#how-it-works {
+  position: relative;
+  z-index: 3;
+}
+
+/* ── Quick-nav CTA bar ────────────────────────────────────────────── */
+.sc-cta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #7b2c91;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 2.5rem;
+  gap: 0.25rem;
+  padding: 0.35rem 0.5rem;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.sc-cta-bar--dark {
+  margin-top: 2rem;
+  margin-bottom: 0.25rem;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.sc-cta-bar__link {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  transition: background 160ms ease, color 160ms ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.sc-cta-bar__link:hover,
+.sc-cta-bar__link:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.sc-cta-bar__btn {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #7b2c91;
+  background: #fff;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  padding: 0.45rem 1.25rem;
+  border-radius: 9999px;
+  margin-left: 0.5rem;
+  transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  line-height: 1;
+}
+
+.sc-cta-bar__btn:hover,
+.sc-cta-bar__btn:focus-visible {
+  background: var(--gold-light);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.22);
+}
+
+@media (max-width: 640px) {
+  .sc-cta-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-radius: 6px;
+    padding: 0.25rem;
+    gap: 0.15rem;
+  }
+
+  .sc-cta-bar__link {
+    padding: 0.65rem 0.5rem;
+    justify-content: center;
+    font-size: 0.75rem;
+    border-radius: 4px;
+  }
+
+  .sc-cta-bar__btn {
+    grid-column: 1 / -1;
+    margin: 0.2rem auto 0;
+    justify-content: center;
+    width: fit-content;
   }
 }
 

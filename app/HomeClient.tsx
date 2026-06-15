@@ -697,6 +697,14 @@ function LocalStepsSection() {
             </li>
           ))}
         </ol>
+
+        {/* ── Quick-nav CTA bar ──────────────────────────────────── */}
+        <nav className="sc-cta-bar" aria-label="Quick navigation">
+          <a href="#find-branch" className="sc-cta-bar__link">Find Nearest Branch</a>
+          <a href="#gold-rate"   className="sc-cta-bar__link">Live Gold Rate</a>
+          <a href="/contact"     className="sc-cta-bar__link">Contact Us</a>
+          <a href="/sell-gold"   className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</a>
+        </nav>
       </div>
     </section>
   );
@@ -971,20 +979,17 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
           </div>
         </div>
 
-        {/* Slide dots */}
-        <div className="sc-hero__dots" role="tablist" aria-label="Hero slides">
-          {banners.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goToSlide(i)}
-              className={`sc-hero__dot${slide === i ? ' sc-hero__dot--active' : ''}`}
-              role="tab"
-              aria-selected={slide === i}
-              aria-label={`Slide ${i + 1}`}
-            />
-          ))}
-        </div>
       </section>
+
+      {/* ── Tagline bridge card — trapezoid between hero and how-it-works ── */}
+      <div className="sc-tagline-bridge" aria-hidden="true">
+        <div className="sc-tagline-card">
+          <span className="sc-tagline-card__text">Instant Money. Lasting Trust.</span>
+        </div>
+      </div>
+
+      {/* ── How it works — directly below hero ─────────────────── */}
+      <LocalStepsSection />
 
       {/* ── Rate section — continuous dark bg ──────────────────── */}
       <div className="mk-bg-dark sc-no-gap">
@@ -1029,15 +1034,17 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
             {rateUnlocked && (
               <GoldCalculatorUnlocked />
             )}
+
+            {/* ── Quick-nav CTA bar (bottom of rate section) ───────── */}
+            <nav className="sc-cta-bar sc-cta-bar--dark" aria-label="Quick navigation">
+              <a href="#find-branch" className="sc-cta-bar__link">Find Nearest Branch</a>
+              <a href="#gold-rate"   className="sc-cta-bar__link">Live Gold Rate</a>
+              <a href="/contact"     className="sc-cta-bar__link">Contact Us</a>
+              <a href="/sell-gold"   className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</a>
+            </nav>
           </div>
         </section>
-      </div>{/* end continuous dark: StatBand + Rate */}
-
-      {/* ── How it works ────────────────────────────────────────── */}
-      <LocalStepsSection />
-
-      {/* ── Emergency callout ───────────────────────────────────── */}
-      <MkEmergency />
+      </div>{/* end continuous dark: Rate */}
 
       {/* ── Trust architecture ──────────────────────────────────── */}
       <LocalTrustSection />
