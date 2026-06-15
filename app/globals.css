@@ -59,3 +59,26 @@
   --shadow-gold: 0 4px 20px rgba(223, 193, 96, 0.28);
   --shadow-purple: 0 4px 24px rgba(123, 44, 145, 0.25);
 }
+
+/* ── Overrides ───────────────────────────────────────────────── */
+.mk-navbar__inner {
+  height: 60px !important;
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
+}
+
+@media (max-width: 480px) {
+  .mk-navbar__inner {
+    height: 60px !important;
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .mk-navbar__inner {
+    height: 60px !important;
+    margin-top: 6px !important;
+    margin-bottom: 6px !important;
+  }
+}

@@ -292,13 +292,13 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
           {/* Calculator — gated behind lead form */}
           {!calcUnlocked ? (
             <div className="mk-rate-widget__calc">
-              <p style={{ fontFamily: 'Poppins,sans-serif', fontWeight: 600, fontSize: 'var(--t-sm)', color: 'white', marginBottom: '0.25rem' }}>
+              <p style={{ fontFamily: 'Poppins,sans-serif', fontWeight: 600, fontSize: 'var(--t-sm)', color: 'white', marginBottom: '0.15rem' }}>
                 Request a Call Back
               </p>
-              <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-xs)', color: 'rgba(255,255,255,0.6)', marginBottom: '1rem' }}>
+              <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-xs)', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem' }}>
                 Fill in your details to unlock the calculator
               </p>
-              <form onSubmit={handleGateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+              <form onSubmit={handleGateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 <input type="text" className="mk-input mk-input--dark" placeholder="Full Name" required value={gateForm.name} onChange={e => setGateForm(f => ({ ...f, name: e.target.value }))} />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                   <input
