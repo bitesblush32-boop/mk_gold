@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { requireAdmin } from '@/lib/admin-auth';
 import {
   getGoldRateOverride,
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { rate_24k, rate_22k, hours = 24 } = body as Record<string, unknown>;
+  const { rate_24k, rate_22k } = body as Record<string, unknown>;
 
   if (!rate_24k || !rate_22k) {
     return NextResponse.json(
@@ -44,15 +44,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const overrideUntil = new Date(Date.now() + Number(hours) * 3_600_000);
-
   try {
     const row = await setGoldRateOverride({
-      rate_24k:       String(rate_24k),
-      rate_22k:       String(rate_22k),
-      override_until: overrideUntil,
+      rate_24k: String(rate_24k),
+      rate_22k: String(rate_22k),
     });
-    revalidatePath('/api/gold-rate');
+    revalidateTag('gold-rate', { expire: 0 });        // invalidates unstable_cache instantly
     revalidatePath('/gold-rate-today');
     revalidatePath('/');
     return NextResponse.json({ success: true, override: row });
@@ -70,7 +67,7 @@ export async function DELETE(req: NextRequest) {
 
   try {
     await clearGoldRateOverride();
-    revalidatePath('/api/gold-rate');
+    revalidateTag('gold-rate', { expire: 0 });
     revalidatePath('/gold-rate-today');
     revalidatePath('/');
     return NextResponse.json({ success: true });

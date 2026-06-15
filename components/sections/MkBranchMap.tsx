@@ -44,7 +44,7 @@ export function MkBranchMap() {
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <p className="mk-section-overline">Our Presence</p>
           <h2 style={{ fontFamily: 'Tanker, serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', lineHeight: 1.1, margin: '0.5rem 0 1rem' }}>
-            16 branches across Karnataka
+            Branches across Karnataka
           </h2>
           <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', maxWidth: '480px', margin: '0 auto' }}>
             Bangalore is fully operational. Other cities coming soon.

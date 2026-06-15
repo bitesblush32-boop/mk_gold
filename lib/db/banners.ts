@@ -34,10 +34,10 @@ export async function getAllBanners() {
 
 /* ─── Create ─────────────────────────────────────────────────────── */
 
-export async function createBanner(data: { src: string; alt: string; order?: number }) {
+export async function createBanner(data: { src: string; alt: string; src_mobile?: string | null; order?: number }) {
   const [row] = await db
     .insert(heroBanners)
-    .values({ src: data.src, alt: data.alt, order: data.order ?? 99, is_active: true })
+    .values({ src: data.src, src_mobile: data.src_mobile ?? null, alt: data.alt, order: data.order ?? 99, is_active: true })
     .returning();
   return row;
 }

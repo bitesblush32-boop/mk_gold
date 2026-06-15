@@ -7,6 +7,24 @@ import type { Lead } from '@/db/schema';
 
 /* ─── Google Sheets sync (non-blocking, best-effort) ────────────── */
 
+function sourceLabel(source: string, utmMedium?: string | null, utmSource?: string | null): string {
+  const s = source.toLowerCase();
+  if (s === 'admin') return 'Admin (Manual)';
+  if (s.includes('whatsapp')) return 'WhatsApp';
+  if (utmMedium === 'cpc' || utmMedium === 'ppc') return 'Paid Ad';
+  if (utmSource?.toLowerCase().includes('facebook') || utmSource?.toLowerCase().includes('instagram')) return 'Social Ad';
+  if (s === 'popup-lead-form' || s === 'popup') return 'Website Popup';
+  if (s === 'calculator-gate') return 'Calculator Lead Form';
+  if (s === 'sample-c-callback') return 'Callback Form';
+  if (s === 'contact-form') return 'Contact Form';
+  if (s === 'appointment') return 'Appointment Form';
+  if (s === 'branch-page') return 'Branch Page';
+  if (s === 'sell-gold-page') return 'Sell Gold Page';
+  if (s === 'pledged-gold-page') return 'Pledged Gold Page';
+  if (s === 'chatbot') return 'AI Chatbot';
+  return 'Website';
+}
+
 async function syncLeadToSheets(lead: Lead): Promise<void> {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   if (!url) return;
@@ -16,15 +34,15 @@ async function syncLeadToSheets(lead: Lead): Promise<void> {
 
   const payload = JSON.stringify({
     date:         istDate,
-    channel:      lead.source,
+    created_time: ist,
     name:         lead.name,
     phone:        lead.phone,
-    gold_type:    lead.gold_type ?? '',
     city:         lead.city ?? '',
+    gold_type:    lead.gold_type ?? '',
     weight:       lead.weight_grams ?? '',
-    email:        lead.email ?? '',
     purity:       lead.purity_karat ? `${lead.purity_karat}K` : '',
-    created_time: ist,
+    email:        lead.email ?? '',
+    channel:      sourceLabel(lead.source, lead.utm_medium, lead.utm_source),
   });
 
   const postOptions: RequestInit = {

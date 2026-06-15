@@ -18,12 +18,12 @@ import { HOW_IT_WORKS, LENDERS, PAYMENT_METHODS } from '@/lib/data/pledged-gold'
 export const metadata: Metadata = {
   title: 'Release Pledged Gold | Confidential Help | MK Gold Karnataka',
   description:
-    'We help you release gold pledged at banks and NBFCs across Karnataka. We pay the lender directly in front of you. Confidential, dignified service. 16 branches.',
+    'We help you release gold pledged at banks and NBFCs across Karnataka. We pay the lender directly in front of you. Confidential, dignified service.', // was: 16 branches
   alternates: { canonical: 'https://mkgold.in/release-pledged-gold' },
   openGraph: {
     title: 'Release Pledged Gold | Confidential Help | MK Gold',
     description:
-      'We pay your lender directly. You receive the difference. Confidential service across 16 branches in Karnataka. Trusted since 2014.',
+      'We pay your lender directly. You receive the difference. Confidential service across Karnataka. Trusted since 2014.', // was: 16 branches
     url: 'https://mkgold.in/release-pledged-gold',
     siteName: 'MK Gold',
     locale: 'en_IN',
@@ -95,7 +95,7 @@ export default async function PledgedGoldPage() {
             {/* Badges */}
             <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
               <MkBadge variant="gold">Confidential</MkBadge>
-              <MkBadge variant="gold">16 Branches</MkBadge>
+              {/* <MkBadge variant="gold">16 Branches</MkBadge> */}
               <MkBadge variant="gold">Same Day</MkBadge>
             </div>
 
@@ -382,7 +382,7 @@ export default async function PledgedGoldPage() {
             </MkTrustBlock>
 
             <MkTrustBlock className="reveal delay-2">
-              Private consultation available at all 16 branches. You do not need to discuss your situation in an open area.
+              Private consultation available at all our branches. You do not need to discuss your situation in an open area.
             </MkTrustBlock>
 
             <MkTrustBlock className="reveal delay-3">
@@ -511,7 +511,7 @@ export default async function PledgedGoldPage() {
                 color: 'rgba(255,255,255,0.3)',
               }}
             >
-              16 branches across Bangalore, Mysore, Mangalore &amp; Davangere
+              Branches across Bangalore, Mysore, Mangalore &amp; Davangere
               &nbsp;&middot;&nbsp; Open Mon–Sat, 9:30 AM – 7:00 PM
             </p>
 

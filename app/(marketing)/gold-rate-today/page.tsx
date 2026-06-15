@@ -96,7 +96,7 @@ export default async function GoldRateTodayPage() {
   });
 
   /* Derived values for display */
-  const mkBuyRate24k = Math.round(rate.mcxRate * 0.975);
+  const mkBuyRate24k = rate ? Math.round(rate.mcxRate * 0.975) : 0;
 
   /* JSON-LD: BreadcrumbList */
   const breadcrumbSchema = {
@@ -168,15 +168,15 @@ export default async function GoldRateTodayPage() {
                 letterSpacing: '0.02em',
               }}
             >
-              MCX-linked rates · Verified XRF purity · 16 branches across Karnataka
+              MCX-linked rates · Verified XRF purity · Branches across Karnataka
             </p>
           </div>
 
           {/* ── Rate grid — 2×2 ─────────────────────────────────────── */}
           <div className="mk-rate-grid">
             {[
-              { label: '24K Gold', purity: '999 Fine',     r: rate.rate24k },
-              { label: '22K Gold', purity: '916 Hallmark', r: rate.rate22k },
+              { label: '24K Gold', purity: '999 Fine',     r: rate?.rate24k ?? 0 },
+              { label: '22K Gold', purity: '916 Hallmark', r: rate?.rate22k ?? 0 },
             ].map(({ label, purity, r }) => (
               <div key={label} className="mk-rate-cell">
                 <p className="mk-rate-cell__label">{label}</p>
@@ -198,8 +198,8 @@ export default async function GoldRateTodayPage() {
             }}
           >
             Updated every 5 minutes from MCX
-            {rate.source === 'fallback' &&
-              ' · Indicative rates — live feed updating shortly'}
+            {!rate &&
+              ' · Rates not yet configured — contact admin'}
           </p>
 
           {/* ── N04 — MCX vs MK margin row ──────────────────────────── */}
@@ -207,7 +207,7 @@ export default async function GoldRateTodayPage() {
             <div className="mk-rate-margin__col">
               <p className="mk-rate-margin__label">MCX Spot (24K / 10g)</p>
               <p className="mk-rate-margin__value">
-                ₹{rate.mcxRate.toLocaleString('en-IN')}
+                ₹{(rate?.mcxRate ?? 0).toLocaleString('en-IN')}
               </p>
             </div>
 
@@ -355,10 +355,10 @@ export default async function GoldRateTodayPage() {
                 Live example — 10g of 22K gold at today&apos;s rate
               </p>
               {[
-                ['MCX 24K spot (per 10g)',          `₹${rate.mcxRate.toLocaleString('en-IN')}`],
-                ['22K purity factor (91.67%)',        `₹${rate.rate22k.toLocaleString('en-IN')} per gram`],
-                ['For 10g at 22K rate',               `₹${(rate.rate22k * 10).toLocaleString('en-IN')}`],
-                ['MK Gold pays 97.5%',                `₹${Math.round(rate.rate22k * 10 * 0.975).toLocaleString('en-IN')}`],
+                ['MCX 24K spot (per 10g)',          `₹${(rate?.mcxRate ?? 0).toLocaleString('en-IN')}`],
+                ['22K purity factor (91.67%)',        `₹${(rate?.rate22k ?? 0).toLocaleString('en-IN')} per gram`],
+                ['For 10g at 22K rate',               `₹${((rate?.rate22k ?? 0) * 10).toLocaleString('en-IN')}`],
+                ['MK Gold pays 97.5%',                `₹${Math.round((rate?.rate22k ?? 0) * 10 * 0.975).toLocaleString('en-IN')}`],
               ].map(([label, value], idx) => (
                 <div
                   key={idx}

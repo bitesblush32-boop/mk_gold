@@ -8,7 +8,12 @@ import postgres from 'postgres';
 const connectionString = process.env.DATABASE_URL ?? 'postgresql://localhost:5432/mkgold_dev';
 
 // Raw SQL client — used by API routes that predate Drizzle migration
-export const sql = postgres(connectionString, { prepare: false });
+export const sql = postgres(connectionString, {
+  prepare: false,
+  ssl: connectionString.includes('railway') || process.env.NODE_ENV === 'production'
+    ? { rejectUnauthorized: false }
+    : false,
+});
 
 // Re-export Drizzle db instance for convenience
 export { db } from '@/db';

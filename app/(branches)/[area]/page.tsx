@@ -608,7 +608,7 @@ export default async function BranchPage({ params }: Props) {
             <p style={{ textAlign: 'center', fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-sm)', color: 'var(--mist)', margin: 0 }}>
               This is our only branch in {branch.city}.{' '}
               <a href="/contact" style={{ color: 'var(--plum)', fontWeight: 600, textDecoration: 'none' }}>
-                View all 16 branches across Karnataka &rsaquo;
+                View all branches across Karnataka &rsaquo;
               </a>
             </p>
           )}

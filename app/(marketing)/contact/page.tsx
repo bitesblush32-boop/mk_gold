@@ -1,3 +1,5 @@
+// TODO: Contact/branches page hidden until all branches are live. Restore by removing the redirect below.
+import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 
 export const revalidate = 3600; // ISR: branch data changes infrequently
@@ -11,14 +13,14 @@ import { MkSectionHeader } from '@/components/ui/MkSectionHeader';
 import { AppointmentForm } from './AppointmentForm';
 
 export const metadata: Metadata = {
-  title: 'Contact MK Gold | 16 Branches | Karnataka',
+  title: 'Contact MK Gold | Karnataka', // was: Contact MK Gold | 16 Branches | Karnataka
   description:
-    'Find your nearest MK Gold branch. 16 locations across Bangalore, Mysore, Mangalore and Davangere. Walk in or book an appointment.',
+    'Find your nearest MK Gold branch. Locations across Bangalore, Mysore, Mangalore and Davangere. Walk in or book an appointment.', // was: 16 locations
   alternates: { canonical: 'https://mkgold.in/contact' },
   openGraph: {
-    title: 'Contact MK Gold | 16 Branches | Karnataka',
+    title: 'Contact MK Gold | Karnataka', // was: Contact MK Gold | 16 Branches | Karnataka
     description:
-      'Find your nearest MK Gold branch. 16 locations across Bangalore, Mysore, Mangalore and Davangere. Walk in or book an appointment.',
+      'Find your nearest MK Gold branch. Locations across Bangalore, Mysore, Mangalore and Davangere. Walk in or book an appointment.', // was: 16 locations
     url: 'https://mkgold.in/contact',
     siteName: 'MK Gold',
     locale: 'en_IN',
@@ -42,6 +44,7 @@ function mapsUrl(branch: Branch): string {
 }
 
 export default function ContactPage() {
+  redirect('/'); // TODO: remove redirect when all branches are live
   return (
     <main>
       <MkNavbar />
@@ -53,7 +56,7 @@ export default function ContactPage() {
       >
         <div className="mk-container">
           <div className="reveal" style={{ maxWidth: '700px' }}>
-            <p className="mk-section-overline">16 Branches · 4 Cities</p>
+            <p className="mk-section-overline">Branches · 4 Cities</p>
             <h1
               style={{
                 fontFamily: 'Tanker, serif',

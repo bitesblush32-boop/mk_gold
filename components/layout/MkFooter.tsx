@@ -11,7 +11,7 @@ const FOOTER_LINKS = {
   Company: [
     { href: '/about',        label: 'About Us' },
     { href: '/testimonials', label: 'Reviews' },
-    { href: '/contact',      label: 'All Branches' },
+    // { href: '/contact', label: 'All Branches' }, // TODO: restore when all branches are live
     { href: '/blog',         label: 'Blog' },
     { href: '/referral',     label: 'Refer & Earn' },
   ],
@@ -26,7 +26,7 @@ const FOOTER_LINKS = {
 const TRUST_BADGES = [
   { label: '15+ Years', sub: 'Est. 2014' },
   { label: 'ISO 9001', sub: '2015 Certified' },
-  { label: '16 Branches', sub: 'Karnataka' },
+  // { label: '16 Branches', sub: 'Karnataka' }, // TODO: restore when all branches are live
   { label: 'XRF Tested', sub: 'German Spectrometer' },
 ];
 
@@ -56,7 +56,7 @@ export function MkFooter() {
             </p>
 
             <p className="mk-footer__desc">
-              Karnataka&apos;s trusted gold buyer since 2014. 16 branches across Bangalore,
+              Karnataka&apos;s trusted gold buyer since 2014. Branches across Bangalore,
               Mysore, Mangalore and Davangere. Fair rates, XRF purity test, payment in
               30 minutes.
             </p>
@@ -83,6 +83,11 @@ export function MkFooter() {
               <a href="mailto:info@mkgold.in" className="mk-footer__contact-link">
                 info@mkgold.in
               </a>
+              <address className="mk-footer__address">
+                3rd Block, 29, 2nd, 1st Main Rd, 3rd Stage,<br />
+                Basaveshwar Nagar, Bengaluru,<br />
+                Karnataka 560079
+              </address>
             </div>
             {/* Social icons */}
             <div className="mk-footer__social">

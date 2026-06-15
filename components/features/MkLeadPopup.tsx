@@ -56,9 +56,13 @@ export function MkLeadPopup() {
     const weightGrams  = form.weight ? parseFloat(form.weight) : undefined;
 
     try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 15000);
+
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           name:         form.name,
           phone:        cleanPhone,
@@ -71,6 +75,7 @@ export function MkLeadPopup() {
           ...getUtmParams(),
         }),
       });
+      clearTimeout(timer);
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         if (data?.error?.toLowerCase().includes('phone') || data?.error?.toLowerCase().includes('mobile')) {

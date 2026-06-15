@@ -1,37 +1,37 @@
-// F07 — 6-step sell gold process
+// F07 — 4-step gold evaluation process
+
+import Image from 'next/image';
 
 /* ─── Data ────────────────────────────────────────────────────── */
 
 const STEPS = [
   {
     n:     '01',
-    title: 'Book Appointment',
-    body:  'Call, WhatsApp, or book online in 30 seconds. No documents or paperwork needed at this stage.',
+    title: 'Weight Check',
+    body:  'Accurate weight checking systems — your gold weighed on certified precision scales in front of you.',
+    icon:  '/weight.png',
+    alt:   'Weight check scale',
   },
   {
     n:     '02',
-    title: 'Visit Any Branch',
-    body:  'Walk into any of our 16 branches with your gold and a valid government ID. Walk-ins always welcome.',
+    title: 'Purity Verification',
+    body:  'Using advanced XRF Machine — German spectrometer reads exact gold content in under 2 minutes. No acid test.',
+    icon:  '/purity.png',
+    alt:   'XRF purity verification machine',
   },
   {
     n:     '03',
-    title: 'Weigh & Assess',
-    body:  'Your gold is weighed on certified precision scales in front of you. Transparent process, zero hidden deductions.',
+    title: 'Rate Calculation',
+    body:  'Based on live markets — your offer is calculated against live MCX rates. We show our margin openly.',
+    icon:  '/rate_calc.png',
+    alt:   'Rate calculation chart',
   },
   {
     n:     '04',
-    title: 'XRF Purity Test',
-    body:  'Our German XRF spectrometer reads exact gold content in under 2 minutes. No acid test. No scratches.',
-  },
-  {
-    n:     '05',
-    title: 'Receive Your Offer',
-    body:  'You get an offer based on live MCX rates. We show you our margin openly, side by side. Zero pressure.',
-  },
-  {
-    n:     '06',
-    title: 'Get Paid Instantly',
-    body:  'Accept and receive payment in cash, NEFT, or UPI within 30 minutes. Walk in with gold, walk out with money.',
+    title: 'Payment Transfer',
+    body:  'Instant payment to your bank account — receive cash, NEFT, or UPI within 30 minutes of evaluation.',
+    icon:  '/payment.png',
+    alt:   'Instant payment transfer',
   },
 ] as const;
 
@@ -46,30 +46,30 @@ export function MkSteps() {
         <div className="mk-steps__header reveal">
           <p className="mk-section-overline">How It Works</p>
           <h2 className="mk-steps__title">
-            Six steps. 30 minutes.<br />
-            That&apos;s all it takes.
+            Our Gold Evaluation Process
           </h2>
           <p className="mk-steps__subtitle">
-            Sell your gold at fair, transparent rates backed by live MCX prices
-            and certified XRF purity testing.
+            We follow a transparent process to ensure you get the best value
           </p>
         </div>
 
         {/* Grid */}
-        <ol className="mk-steps__grid" aria-label="Steps to sell your gold">
+        <ol className="mk-steps__grid" aria-label="Gold evaluation process steps">
           {STEPS.map((step, i) => (
             <li
               key={step.n}
-              className={`mk-step reveal delay-${(i % 3) + 1}`}
+              className={`mk-step reveal delay-${i + 1}`}
             >
-              <div className="mk-step__circle-wrap">
-                <div className="mk-step__line" aria-hidden="true" />
-                <div className="mk-step__coin">
-                  <div className="mk-step__circle">
-                    <span className="mk-step__num">{step.n}</span>
-                  </div>
-                </div>
+              <div className="mk-step__icon-wrap">
+                <Image
+                  src={step.icon}
+                  alt={step.alt}
+                  width={80}
+                  height={80}
+                  className="mk-step__icon"
+                />
               </div>
+              <span className="mk-step__num">{step.n}</span>
               <h3 className="mk-step__title">{step.title}</h3>
               <p className="mk-step__body">{step.body}</p>
             </li>

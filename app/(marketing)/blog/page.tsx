@@ -5,7 +5,7 @@ import { MkFooter }        from '@/components/layout/MkFooter';
 import { MkBadge }         from '@/components/ui/MkBadge';
 import { MkButton }        from '@/components/ui/MkButton';
 import { MkCtaBand }       from '@/components/sections/MkCtaBand';
-import { getPublishedPosts } from '@/lib/db/blog';
+import { getPublishedPosts, getFeaturedPost } from '@/lib/db/blog';
 import { BlogPostGrid }    from './BlogPostGrid';
 
 export const revalidate = 300; // ISR: blog is manually published, 5-min cadence is sufficient
@@ -41,8 +41,7 @@ function fmtDate(iso: string): string {
 }
 
 export default async function BlogPage() {
-  const posts = await getPublishedPosts();
-  const [featured, ...rest] = posts;
+  const [featured, posts] = await Promise.all([getFeaturedPost(), getPublishedPosts()]);
 
   return (
     <main>
@@ -51,7 +50,7 @@ export default async function BlogPage() {
       {/* ── 1. Hero ───────────────────────────────────────────────── */}
       <section
         className="mk-bg-dark section"
-        style={{ paddingTop: 'calc(var(--chrome-h) + var(--s-10))', paddingBottom: 'var(--s-10)' }}
+        style={{ paddingTop: 'calc(var(--chrome-h) + var(--s-5))', paddingBottom: 'var(--s-5)' }}
       >
         <div className="mk-container">
           <div className="reveal" style={{ maxWidth: '640px' }}>
@@ -98,9 +97,9 @@ export default async function BlogPage() {
               Featured Article
             </p>
             <article className="mk-blog-featured reveal delay-1">
-              {/* Cover image / placeholder */}
-              <div className="mk-blog-featured__img">
-                {featured.cover_image_url ? (
+              {/* Cover image — only shown when admin has uploaded one */}
+              {featured.cover_image_url && (
+                <div className="mk-blog-featured__img">
                   <Image
                     src={featured.cover_image_url}
                     alt={featured.title}
@@ -109,14 +108,8 @@ export default async function BlogPage() {
                     style={{ objectFit: 'cover' }}
                     priority
                   />
-                ) : (
-                  <div className="mk-blog-featured__placeholder mk-bg-dark">
-                    <span className="mk-blog-featured__placeholder-karat">
-                      24K
-                    </span>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Content */}
               <div className="mk-blog-featured__content">
@@ -156,7 +149,7 @@ export default async function BlogPage() {
       )}
 
       {/* ── 3 & 4. Category filter + Post grid (client island) ────── */}
-      <BlogPostGrid posts={rest} />
+      <BlogPostGrid posts={posts} />
 
       {/* ── 5. CTA band + Footer ──────────────────────────────────── */}
       <MkCtaBand />

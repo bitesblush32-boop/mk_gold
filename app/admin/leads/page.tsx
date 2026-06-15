@@ -453,6 +453,7 @@ export default function LeadsPage() {
                   <th>Weight</th>
                   <th>Channel</th>
                   <th>Date</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -494,12 +495,27 @@ export default function LeadsPage() {
                         })()}
                       </td>
                       <td>{fmtDate(lead.created_at)}</td>
+                      <td onClick={e => e.stopPropagation()} style={{ width: '1%', whiteSpace: 'nowrap' }}>
+                        <button
+                          className="mk-admin-btn"
+                          style={{
+                            fontSize: '0.75rem', padding: '0.25rem 0.7rem',
+                            background: deletingId === lead.id ? '#e8b4b8' : '#fef2f2',
+                            color: '#c0392b', border: '1px solid #fca5a5',
+                            cursor: deletingId === lead.id ? 'not-allowed' : 'pointer',
+                          }}
+                          disabled={deletingId === lead.id}
+                          onClick={() => handleDelete(lead.id)}
+                        >
+                          {deletingId === lead.id ? '…' : 'Delete'}
+                        </button>
+                      </td>
                     </tr>
 
                     {/* Expanded row */}
                     {expandId === lead.id && (
                       <tr className="mk-admin-expand-row">
-                        <td colSpan={8}>
+                        <td colSpan={9}>
                           <div className="mk-admin-expand-grid">
                             <div><span className="mk-admin-expand-label">Email</span>{cell(lead.email)}</div>
                             <div><span className="mk-admin-expand-label">Area</span>{cell(lead.area)}</div>

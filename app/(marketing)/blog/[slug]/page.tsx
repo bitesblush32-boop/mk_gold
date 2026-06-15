@@ -24,6 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
   if (!post) return { title: 'Post Not Found | MK Gold' };
+
+  const ogImage = post.cover_image_url
+    ? [{ url: post.cover_image_url, width: 1200, height: 630, alt: post.title }]
+    : [{ url: 'https://mkgold.in/brand/og-default.jpg', width: 1200, height: 630, alt: 'MK Gold — Gold Buying Experts' }];
+
   return {
     title: `${post.title} | MK Gold`,
     description: post.excerpt,
@@ -36,6 +41,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: 'en_IN',
       type: 'article',
       publishedTime: post.published_at,
+      modifiedTime: post.updated_at,
+      section: post.category,
+      authors: ['MK Gold Editorial Team'],
+      images: ogImage,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+      images: ogImage.map(i => i.url),
     },
     robots: { index: true, follow: true },
   };
@@ -64,6 +79,28 @@ function fmtDate(iso: string): string {
  * Swap for @portabletext/react when Sanity is integrated in Phase 3.
  */
 function renderBody(bodyJson: string): React.ReactNode {
+  // HTML content from the rich-text editor — detect any HTML tag anywhere in the string,
+  // not just at the start (e.g. "Text... <a href="...">link</a> ...more text")
+  if (/<[a-z][^>]*>/i.test(bodyJson)) {
+    // External links: open new tab + rel="noopener noreferrer"
+    // Internal links (start with / or point to mkgold.in): stay in same tab, pass link equity
+    const safe = bodyJson.replace(/<a(\s[^>]*)>/gi, (_match, attrs) => {
+      const hrefMatch = attrs.match(/href=["']([^"']*)["']/i);
+      const href = hrefMatch ? hrefMatch[1] : '';
+      const isExternal = /^https?:\/\/(?!(?:www\.)?mkgold\.in)/i.test(href);
+      if (isExternal) {
+        const hasTarget = /\btarget=/i.test(attrs);
+        const hasRel    = /\brel=/i.test(attrs);
+        let out = attrs;
+        if (!hasTarget) out += ' target="_blank"';
+        if (!hasRel)    out += ' rel="noopener noreferrer"';
+        return `<a${out}>`;
+      }
+      return `<a${attrs}>`;
+    });
+    return <div className="mk-article__body" dangerouslySetInnerHTML={{ __html: safe }} />;
+  }
+
   // Attempt Portable Text JSON
   let parsed: unknown = null;
   try { parsed = JSON.parse(bodyJson); } catch { /* not JSON */ }
@@ -142,7 +179,7 @@ export default async function BlogPostPage({ params }: Props) {
     description:   post.excerpt,
     url:           `https://mkgold.in/blog/${slug}`,
     datePublished: post.published_at,
-    dateModified:  post.published_at,
+    dateModified:  post.updated_at,   // real last-edit timestamp
     imageUrl:      post.cover_image_url,
   });
 
@@ -165,41 +202,83 @@ export default async function BlogPostPage({ params }: Props) {
 
       {/* ── 1. Breadcrumb + post hero ─────────────────────────────── */}
       <section
-        className="mk-bg-dark section"
-        style={{ paddingTop: 'calc(var(--chrome-h) + var(--s-8))', paddingBottom: 'var(--s-10)' }}
+        className={post.cover_image_url ? 'section' : 'mk-bg-dark section'}
+        style={{
+          paddingTop: 'calc(var(--chrome-h) + var(--s-8))',
+          paddingBottom: 'var(--s-10)',
+          position: 'relative',
+          overflow: 'hidden',
+          // Fallback bg colour when no image
+          backgroundColor: post.cover_image_url ? 'var(--plum-deep)' : undefined,
+        }}
       >
-        <div className="mk-container" style={{ maxWidth: '860px', margin: '0 auto' }}>
-          <nav aria-label="Breadcrumb" className="mk-breadcrumb reveal">
-            <a href="/" className="mk-breadcrumb__link">Home</a>
-            <span className="mk-breadcrumb__sep" aria-hidden="true">›</span>
-            <a href="/blog" className="mk-breadcrumb__link">Blog</a>
-            <span className="mk-breadcrumb__sep" aria-hidden="true">›</span>
-            <span className="mk-breadcrumb__current">{post.category}</span>
-          </nav>
-
-          <div className="reveal delay-1" style={{ marginTop: 'var(--s-5)' }}>
-            <MkBadge variant={BADGE_VARIANT[post.category] ?? 'white'}>
-              {post.category}
-            </MkBadge>
-
-            <h1
+        {/* Cover image + overlay — only when an image exists */}
+        {post.cover_image_url && (
+          <>
+            {/* Actual <img> tag — required for Google Images + Discover indexing.
+                CSS background-image is invisible to crawlers. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={post.cover_image_url}
+              alt={post.title}
               style={{
-                fontFamily: 'Tanker, serif',
-                fontSize: 'var(--t-h1)',
-                color: 'var(--white)',
-                margin: '0.875rem 0 1.25rem',
-                lineHeight: 1.1,
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center',
+                zIndex: 0,
               }}
-            >
-              {post.title}
-            </h1>
+            />
+            {/* Dark gradient overlay — darker at edges so text is readable */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(to bottom, rgba(27,8,36,0.88) 0%, rgba(27,8,36,0.60) 45%, rgba(27,8,36,0.82) 100%)',
+                zIndex: 1,
+              }}
+            />
+          </>
+        )}
 
-            <div className="mk-post-hero-meta">
-              <time dateTime={post.published_at} className="mk-post-hero-meta__date">
-                {fmtDate(post.published_at)}
-              </time>
-              <span className="mk-post-hero-meta__sep" aria-hidden="true">·</span>
-              <span className="mk-post-hero-meta__author">By MK Gold Editorial Team</span>
+        {/* Content sits above image + overlay */}
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <div className="mk-container" style={{ maxWidth: '860px', margin: '0 auto' }}>
+            <nav aria-label="Breadcrumb" className="mk-breadcrumb reveal">
+              <a href="/" className="mk-breadcrumb__link">Home</a>
+              <span className="mk-breadcrumb__sep" aria-hidden="true">›</span>
+              <a href="/blog" className="mk-breadcrumb__link">Blog</a>
+              <span className="mk-breadcrumb__sep" aria-hidden="true">›</span>
+              <span className="mk-breadcrumb__current">{post.category}</span>
+            </nav>
+
+            <div className="reveal delay-1" style={{ marginTop: 'var(--s-5)' }}>
+              <MkBadge variant={BADGE_VARIANT[post.category] ?? 'white'}>
+                {post.category}
+              </MkBadge>
+
+              <h1
+                style={{
+                  fontFamily: 'Tanker, serif',
+                  fontSize: 'var(--t-h1)',
+                  color: 'var(--white)',
+                  margin: '0.875rem 0 1.25rem',
+                  lineHeight: 1.1,
+                }}
+              >
+                {post.title}
+              </h1>
+
+              <div className="mk-post-hero-meta">
+                <time dateTime={post.published_at} className="mk-post-hero-meta__date">
+                  {fmtDate(post.published_at)}
+                </time>
+                <span className="mk-post-hero-meta__sep" aria-hidden="true">·</span>
+                <span className="mk-post-hero-meta__author">By MK Gold Editorial Team</span>
+              </div>
             </div>
           </div>
         </div>

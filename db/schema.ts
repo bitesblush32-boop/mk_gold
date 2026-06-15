@@ -71,7 +71,8 @@ export const goldRateOverride = pgTable('gold_rate_override', {
 
 export const heroBanners = pgTable('hero_banners', {
   id:         serial('id').primaryKey(),
-  src:        text('src').notNull(),              // URL or /public path
+  src:        text('src').notNull(),              // URL or /public path — desktop/landscape
+  src_mobile: text('src_mobile'),                 // optional portrait URL for phones
   alt:        text('alt').notNull(),
   order:      integer('order').notNull().default(0),
   is_active:  boolean('is_active').notNull().default(true),
@@ -88,6 +89,7 @@ export const blogPosts = pgTable('blog_posts', {
   body_json:       text('body_json').notNull(),   // Portable Text JSON or plain text
   category:        text('category').notNull(),     // Gold Rate|Sell Gold|Pledged Gold|Market Insights|News
   cover_image_url: text('cover_image_url'),
+  is_featured:     boolean('is_featured').notNull().default(false),
   published:       boolean('published').notNull().default(false),
   published_at:    timestamp('published_at').defaultNow().notNull(),
   created_at:      timestamp('created_at').defaultNow().notNull(),

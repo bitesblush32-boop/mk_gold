@@ -3,6 +3,49 @@ import { createAppointment, getSlotBookings } from '@/lib/db/appointments';
 import { getBranchBySlug } from '@/lib/branch-router';
 import { sendWhatsApp } from '@/lib/whatsapp';
 
+/* ─── Google Sheets sync ─────────────────────────────────────────── */
+
+async function syncAppointmentToSheets(data: {
+  name: string; phone: string; city: string; gold_type: string;
+  slot_date: string; slot_time: string;
+}): Promise<void> {
+  const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+  if (!url) return;
+
+  const now     = new Date();
+  const ist     = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+  const istDate = now.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+  const payload = JSON.stringify({
+    date:         istDate,
+    created_time: ist,
+    name:         data.name,
+    phone:        data.phone,
+    city:         data.city,
+    gold_type:    data.gold_type,
+    weight:       '',
+    purity:       '',
+    email:        '',
+    channel:      `Appointment Form (${data.slot_date} ${data.slot_time})`,
+  });
+
+  const postOptions: RequestInit = {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    payload,
+  };
+
+  try {
+    const res = await fetch(url, { ...postOptions, redirect: 'manual' });
+    if (res.status === 301 || res.status === 302 || res.status === 307 || res.status === 308) {
+      const location = res.headers.get('location');
+      if (location) await fetch(location, postOptions);
+    }
+  } catch (err) {
+    console.error('[sheets-sync/appointments] failed:', err);
+  }
+}
+
 /* ─── Config ─────────────────────────────────────────────────────── */
 
 const MAX_PER_SLOT = 4;
@@ -88,8 +131,18 @@ export async function POST(req: NextRequest) {
       confirmation_code: confirmationCode,
     });
 
-    // Notify customer and branch (non-blocking)
+    // Sync to Google Sheets (non-blocking)
     const branch = getBranchBySlug(branch_slug);
+    syncAppointmentToSheets({
+      name,
+      phone:     phone.replace(/\s/g, ''),
+      city:      branch?.city ?? '',
+      gold_type: gold_type ?? (notes?.replace('Gold type: ', '') ?? ''),
+      slot_date,
+      slot_time,
+    }).catch(() => {});
+
+    // Notify customer and branch (non-blocking)
     const customerMsg = `MK Gold appointment confirmed!\nDate: ${slot_date} at ${slot_time}\nBranch: ${branch?.name ?? branch_slug}\nAddress: ${branch?.address ?? ''}\nRef: ${confirmationCode}`;
     const branchMsg   = `New appointment:\nName: ${name} | Phone: ${phone}\nDate: ${slot_date} at ${slot_time}${gold_type ? `\nGold: ${gold_type}` : ''}\nRef: ${confirmationCode}`;
 

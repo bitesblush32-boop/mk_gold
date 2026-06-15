@@ -47,7 +47,7 @@ const BLOG_POSTS = [
     published: true,
     body_json: JSON.stringify([
       { type: 'heading', level: 2, text: 'Step 1: Walk in — no appointment needed' },
-      { type: 'paragraph', text: 'MK Gold\'s 16 branches across Karnataka are open Monday to Saturday, 9:30 AM to 7:00 PM. You don\'t need an appointment. Bring your gold and one valid government photo ID — Aadhaar, PAN, Passport, Voter ID, or Driving Licence.' },
+      { type: 'paragraph', text: 'MK Gold\'s branches across Karnataka are open Monday to Saturday, 9:30 AM to 7:00 PM. You don\'t need an appointment. Bring your gold and one valid government photo ID — Aadhaar, PAN, Passport, Voter ID, or Driving Licence.' }, // was: 16 branches
       { type: 'heading', level: 2, text: 'Step 2: Weight check' },
       { type: 'paragraph', text: 'Your gold is weighed on a calibrated digital scale in front of you. The gross weight and the weight of any non-gold components (stones, clasps) are noted separately. Net gold weight is what determines your payout.' },
       { type: 'heading', level: 2, text: 'Step 3: XRF purity test' },

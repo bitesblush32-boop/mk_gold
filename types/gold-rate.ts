@@ -21,6 +21,10 @@ export interface KaratRate {
   karat: GoldKarat;
   /** ₹ per gram, already adjusted for karat purity */
   value: number;
+  /** ±200 offset from admin base (used for up/down arrow direction) */
+  change?: number;
+  /** Admin-set base price — used to determine arrow direction in ticker */
+  base?: number;
 }
 
 /** Full payload from /api/gold-rate */
@@ -28,13 +32,17 @@ export interface GoldRateData {
   rates: KaratRate[];
   /** MCX gold price in ₹ per 10g (raw MCX quote) */
   mcxRate: number;
-  /** ISO 8601 timestamp of last MCX fetch */
-  updatedAt: string;
+  /** ISO 8601 timestamp of last admin rate update, null if no rate set */
+  updatedAt: string | null;
+  /** True when no admin rate has been configured yet */
+  noRate?: boolean;
 }
 
 /** Shape of values exposed by GoldRateContext */
 export interface GoldRateContextValue {
   rates: KaratRate[];
+  /** Stable admin-set base rates (no ±200 variation) — use these in calculators */
+  baseRates: KaratRate[];
   /** MCX price in ₹/10g */
   mcxRate: number;
   /** ISO timestamp of last successful fetch, null if never fetched */
@@ -49,7 +57,11 @@ export interface GoldRateContextValue {
 export interface UseGoldRateReturn {
   rate24K: number;
   rate22K: number;
-  /** MK Gold's 22K buying rate = rate22K × 0.975 */
+  /** Stable admin-set 24K base rate — no ±200 variation, use in calculators */
+  baseRate24K: number;
+  /** Stable admin-set 22K base rate — no ±200 variation, use in calculators */
+  baseRate22K: number;
+  /** MK Gold's 22K buying rate = baseRate22K × 0.975 */
   mkRate22K: number;
   /** Raw MCX price in ₹/10g */
   mcxRate: number;

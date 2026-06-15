@@ -38,7 +38,7 @@ export function MkCtaBand() {
         </div>
 
         <p className="mk-cta-band__note reveal delay-3">
-          16 branches across Bangalore, Mysore, Mangalore &amp; Davangere
+          Branches across Bangalore, Mysore, Mangalore &amp; Davangere
           &nbsp;&middot;&nbsp; Open Mon–Sun, 10:00 AM – 8:00 PM
         </p>
 

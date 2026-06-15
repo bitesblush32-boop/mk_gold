@@ -6,6 +6,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MkRevealObserver } from "@/components/ui/MkRevealObserver";
 import { MkSocialProof } from "@/components/features/MkSocialProof";
 import { GoldRateProvider } from "@/context/GoldRateContext";
+import { getEffectiveGoldRate } from "@/lib/gold-rate";
+import type { GoldRateData } from "@/types/gold-rate";
 import { localBusinessSchema } from "@/lib/schema/local-business";
 import { organizationSchema } from "@/lib/schema/organization";
 import "./globals.css";
@@ -44,7 +46,7 @@ export const metadata: Metadata = {
     template: "%s | MK Gold",
   },
   description:
-    "Karnataka's most trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. 16 branches in Bangalore, Mysore, Mangalore & Davangere.",
+    "Karnataka's most trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. Branches in Bangalore, Mysore, Mangalore & Davangere.", // was: 16 branches
   keywords: [
     "sell gold Karnataka",
     "gold buyer Bangalore",
@@ -72,14 +74,14 @@ export const metadata: Metadata = {
     siteName: "MK Gold",
     title: "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
     description:
-      "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. 16 branches.",
+      "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. Branches across Karnataka.", // was: 16 branches
     images: [{ url: "https://mkgold.in/mkgoldlogo.png", width: 400, height: 400, alt: "MK Gold" }],
   },
   twitter: {
     card: "summary_large_image",
     site: "@mkgold_official",
     title: "MK Gold — Sell Gold in Karnataka",
-    description: "Instant cash for gold. Live MCX rates. 16 branches. Trusted since 2014.",
+    description: "Instant cash for gold. Live MCX rates. Trusted since 2014.", // was: 16 branches
   },
   robots: { index: true, follow: true },
   alternates: { canonical: "https://mkgold.in" },
@@ -99,9 +101,22 @@ const WEBSITE_SCHEMA = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Fetch admin-set rates server-side so the page renders with real rates on first paint
+  const adminRate = await getEffectiveGoldRate();
+  const initialGoldRate: GoldRateData | null = adminRate
+    ? {
+        rates: [
+          { karat: 24, value: adminRate.rate24k },
+          { karat: 22, value: adminRate.rate22k },
+        ],
+        mcxRate:   adminRate.mcxRate,
+        updatedAt: adminRate.timestamp,
+      }
+    : null;
+
   return (
     <html lang="en" className={`${poppins.variable} ${anekKannada.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
@@ -208,7 +223,7 @@ export default function RootLayout({
         )}
 
         <MkRevealObserver />
-        <GoldRateProvider>
+        <GoldRateProvider initialData={initialGoldRate}>
           {children}
         </GoldRateProvider>
         <MkSocialProof />

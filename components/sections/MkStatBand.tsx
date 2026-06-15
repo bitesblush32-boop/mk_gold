@@ -6,7 +6,7 @@ import React from 'react';
 
 const STATS = [
   { number: '15+',     label: 'Years of Trust' },
-  { number: '16',      label: 'Branches Across Karnataka' },
+  // { number: '16', label: 'Branches Across Karnataka' }, // TODO: restore when all branches are live
   { number: '10,000+', label: 'Customers Served' },
   { number: '₹100Cr+', label: 'Gold Purchased Value' },
   { number: '30 min',  label: 'Average Payout Time' },
