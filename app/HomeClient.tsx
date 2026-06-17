@@ -674,14 +674,13 @@ const SC_STEPS = [
 
 function LocalStepsSection() {
   return (
-    <section className="mk-bg-light section" id="how-it-works">
+    <section className="section" style={{ backgroundColor: '#fff', paddingTop: 'calc(var(--section) - 25px)' }} id="how-it-works">
       <div className="mk-container">
         <div className="reveal" style={{ textAlign: 'center', maxWidth: '42rem', margin: '0 auto 3.5rem' }}>
-          <p className="mk-section-overline">How It Works</p>
-          <h2 className="t-h1" style={{ lineHeight: 1.05, marginBottom: '1rem' }}>
+          <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 'var(--t-h2)', lineHeight: 1.15, marginBottom: '1rem', color: '#512561' }}>
             Our Gold Evaluation Process
           </h2>
-          <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', lineHeight: 1.65 }}>
+          <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: '#7B2C91', lineHeight: 1.65 }}>
             We follow a transparent process to ensure you get the best value
           </p>
         </div>
@@ -984,12 +983,27 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
       {/* ── Tagline bridge card — pentagon between hero and how-it-works ── */}
       <div className="sc-tagline-bridge" aria-hidden="true">
         <div className="sc-tagline-card">
+          {/* Trapezoid with 7px bezier curves at both top corners — no sharp points */}
+          <svg className="sc-tagline-card__bg" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 115 0 L 885 0 Q 900 0 910.6 10.6 L 1000 100 L 0 100 L 89.4 10.6 Q 100 0 115 0 Z" fill="#fff" />
+          </svg>
           <span className="sc-tagline-card__text">Instant Money. Lasting Trust.</span>
         </div>
       </div>
 
       {/* ── How it works — directly below hero ─────────────────── */}
       <LocalStepsSection />
+
+      {/* ── Step divider: gallery cap left 35%, slant 35→37%, rounded corner ── */}
+      <svg
+        aria-hidden="true"
+        style={{ display: 'block', width: '100%', height: '25px', marginBottom: '-25px', position: 'relative', zIndex: 2, pointerEvents: 'none' }}
+        viewBox="0 0 1000 25"
+        preserveAspectRatio="none"
+      >
+        {/* Shape: gallery colour covers 0→37%, slants to 35% bottom, rounded corner, back to 0 */}
+        <path d="M 0 0 L 370 0 L 354.4 19.5 Q 350 25 343 25 L 0 25 Z" fill="#FFFFFF" />
+      </svg>
 
       {/* ── Rate section — continuous dark bg ──────────────────── */}
       <div className="mk-bg-dark sc-no-gap">

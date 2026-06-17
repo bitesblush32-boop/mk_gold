@@ -109,7 +109,7 @@
 }
 
 .mk-footer__contact-link:hover {
-  background: rgba(223, 193, 96, 0.14);
+  background: #512561;
   border-color: rgba(223, 193, 96, 0.45);
 }
 
@@ -3733,25 +3733,33 @@ body {
 }
 
 .sc-tagline-card {
-  background: #fff;
-  padding: 0.6rem 2.5rem;
+  background: transparent;
+  padding: calc(0.6rem + 2.5px) calc(2.5rem + 10px);
   text-align: center;
   white-space: nowrap;
-  clip-path: polygon(calc(8% + 3px) 0, calc(92% - 3px) 0,
-      92% 3px,
-      100% 100%, 0 100%,
-      8% 3px);
+  position: relative;
+}
+
+.sc-tagline-card__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
 }
 
 .sc-tagline-card__text {
   font-family: 'Poppins', sans-serif;
-  font-size: 0.6875rem;
-  font-weight: 700;
+  font-size: calc(0.6875rem + 2px);
+  font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--plum);
+  color: #DFC160;
   line-height: 1;
   display: block;
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
@@ -3770,15 +3778,19 @@ body {
 .sc-cta-bar {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   background: #7b2c91;
   border-radius: 8px;
   overflow: hidden;
   margin-top: 2.5rem;
-  gap: 0.25rem;
-  padding: 0.35rem 0.5rem;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
   margin-left: 5px;
   margin-right: 5px;
+}
+
+.sc-cta-bar .sc-cta-bar__btn {
+  margin-left: auto;
 }
 
 .sc-cta-bar--dark {
@@ -3805,6 +3817,8 @@ body {
   border-radius: 6px;
   transition: background 160ms ease, color 160ms ease;
   white-space: nowrap;
+  flex: 1;
+  justify-content: center;
   display: flex;
   align-items: center;
 }
@@ -3824,7 +3838,7 @@ body {
   text-decoration: none;
   letter-spacing: 0.02em;
   padding: 0.45rem 1.25rem;
-  border-radius: 9999px;
+  border-radius: 7px;
   margin-left: 0.5rem;
   transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
   white-space: nowrap;
@@ -3946,6 +3960,7 @@ body {
   z-index: 1;
 }
 
+
 .sc-coin-anchor {
   position: absolute;
   bottom: 20px;
@@ -4012,6 +4027,7 @@ body {
 /* ── Rate + Chart section ────────────────────────────────────────── */
 .sc-rate-section {
   position: relative;
+  background-color: #512561;
   padding-top: 5rem !important;
 }
 
@@ -4344,7 +4360,7 @@ body {
 }
 
 .sc-step {
-  background: var(--white);
+  background: #F0EFEF;
   border: 1.5px solid var(--gallery-dk);
   border-radius: 16px;
   padding: 2rem 1.25rem 1.75rem;
@@ -5435,7 +5451,7 @@ body {
   font-size: var(--t-sm);
   font-weight: 600;
   color: var(--plum);
-  background: rgba(81, 37, 97, 0.06);
+  background: #512561;
   border-left: 1.5px solid var(--gallery-dk);
   white-space: nowrap;
 }
