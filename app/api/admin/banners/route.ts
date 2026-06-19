@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
       await seedDefaultBanners();
       banners = await getAllBanners();
     }
-    return NextResponse.json({ banners });
+    return NextResponse.json({ banners, blob_configured: !!process.env.BLOB_READ_WRITE_TOKEN });
   } catch (err) {
     console.error('[api/admin/banners] GET error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -89,6 +89,9 @@ export async function POST(req: NextRequest) {
   }
   if (!file.type.startsWith('image/')) {
     return NextResponse.json({ error: 'File must be an image' }, { status: 400 });
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    return NextResponse.json({ error: 'File size exceeds 5 MB limit' }, { status: 400 });
   }
 
   try {

@@ -91,9 +91,10 @@ interface Banner {
 const MAX_BANNERS = 8;
 
 export default function BannersPage() {
-  const [banners, setBanners]   = useState<Banner[]>([]);
-  const [loading, setLoading]   = useState(true);
-  const [message, setMessage]   = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  const [banners, setBanners]       = useState<Banner[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [message, setMessage]       = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  const [blobConfigured, setBlobConfigured] = useState<boolean | null>(null);
 
   // Desktop upload state
   const [desktopFile, setDesktopFile]     = useState<File | null>(null);
@@ -117,6 +118,7 @@ export default function BannersPage() {
       const res  = await fetch('/api/admin/banners');
       const data = await res.json();
       setBanners(data.banners ?? []);
+      if ('blob_configured' in data) setBlobConfigured(data.blob_configured);
     } catch {
       setMessage({ type: 'err', text: 'Could not load banners.' });
     } finally {
@@ -160,15 +162,14 @@ export default function BannersPage() {
       // 1. Upload desktop image (required)
       const desktopUrl = await uploadFileToBlob(desktopFile, 'banners/');
 
-      // 2. Upload mobile image (optional)
+      // 2. Upload mobile image (optional) — failure skips mobile, does NOT abort upload
       let mobileUrl: string | null = null;
+      let mobileWarning: string | null = null;
       if (mobileFile) {
         try {
           mobileUrl = await uploadFileToBlob(mobileFile, 'banners/mobile/');
         } catch (err) {
-          setMessage({ type: 'err', text: `Desktop uploaded but mobile upload failed: ${String(err)}` });
-          setUploading(false);
-          return;
+          mobileWarning = `Mobile image could not be uploaded and was skipped: ${String(err)}`;
         }
       }
 
@@ -180,7 +181,8 @@ export default function BannersPage() {
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage({ type: 'ok', text: mobileUrl ? 'Banner uploaded (desktop + mobile).' : 'Banner uploaded (desktop only).' });
+        const successText = mobileUrl ? 'Banner uploaded (desktop + mobile).' : 'Banner uploaded (desktop only).';
+        setMessage({ type: mobileWarning ? 'err' : 'ok', text: mobileWarning ? `${successText} Warning: ${mobileWarning}` : successText });
         setDesktopFile(null); setDesktopPreview(null); setAltText('');
         clearMobile();
         if (desktopInputRef.current) desktopInputRef.current.value = '';
@@ -288,6 +290,18 @@ export default function BannersPage() {
         These appear in the homepage slideshow. Drag to reorder.
         {' '}({banners.length}/{MAX_BANNERS} banners)
       </p>
+
+      {blobConfigured === false && (
+        <div style={{
+          background: 'rgba(223,193,96,0.12)', border: '1px solid rgba(223,193,96,0.4)',
+          borderRadius: 6, padding: '10px 14px', marginBottom: 'var(--s-3)',
+          fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-sm)', color: '#1C0A24', lineHeight: 1.5,
+        }}>
+          <strong>Local mode:</strong> <code>BLOB_READ_WRITE_TOKEN</code> is not set. Uploaded images will be saved to{' '}
+          <code>/public/banners/</code> on the local filesystem. These files will <strong>not persist on Vercel deployments</strong>.
+          Add <code>BLOB_READ_WRITE_TOKEN</code> to your <code>.env.local</code> (from Vercel dashboard &rarr; Storage &rarr; Blob) for production use.
+        </div>
+      )}
 
       {message && (
         <div className={`mk-admin-alert mk-admin-alert--${message.type === 'ok' ? 'success' : 'error'}`}>

@@ -53,7 +53,10 @@ export function MkLeadPopup() {
     setStatus('loading');
 
     const puritiyKarat = form.purity === '24k' ? 24 : form.purity === '22k' ? 22 : undefined;
-    const weightGrams  = form.weight ? parseFloat(form.weight) : undefined;
+    const weightGrams  = form.weight === 'under30' ? 20
+      : form.weight === 'under50' ? 40
+      : form.weight === 'over100' ? 100
+      : undefined;
 
     try {
       const controller = new AbortController();
@@ -192,9 +195,15 @@ export function MkLeadPopup() {
                     placeholder="10-digit mobile number"
                     required
                     inputMode="numeric"
+                    autoComplete="tel"
+                    pattern="[6-9][0-9]{9}"
                     maxLength={10}
                     value={form.phone}
-                    onChange={e => { setForm(f => ({ ...f, phone: e.target.value })); setPhoneError(''); }}
+                    onChange={e => {
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      setForm(f => ({ ...f, phone: digits }));
+                      setPhoneError('');
+                    }}
                   />
                   {phoneError && (
                     <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: '0.72rem', color: '#dc2626', margin: '0.25rem 0 0' }}>
@@ -226,9 +235,14 @@ export function MkLeadPopup() {
                   </select>
                 </div>
                 <div>
-                  <label className="lp-form-label">Approx. Weight (grams)</label>
-                  <input type="number" className="mk-input" placeholder="e.g. 20" min="1"
-                    value={form.weight} onChange={e => setForm(f => ({ ...f, weight: e.target.value }))} />
+                  <label className="lp-form-label">Approx. Weight</label>
+                  <select className="mk-select"
+                    value={form.weight} onChange={e => setForm(f => ({ ...f, weight: e.target.value }))}>
+                    <option value="" disabled>Select weight range</option>
+                    <option value="under30">Under 30 gms</option>
+                    <option value="under50">Under 50 gms</option>
+                    <option value="over100">More than 100 gms</option>
+                  </select>
                 </div>
                 <div>
                   <label className="lp-form-label">Gold Purity</label>

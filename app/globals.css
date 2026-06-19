@@ -64,7 +64,7 @@
 .mk-navbar__inner {
   height: 47px !important;
   margin-top: 5px !important;
-  margin-bottom: 5px !important;
+  margin-bottom: 10px !important;
 }
 
 @media (max-width: 480px) {
