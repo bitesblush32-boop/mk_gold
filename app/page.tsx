@@ -73,7 +73,9 @@ export default async function HomePage() {
     getFaqsByPage('general').catch(() => []),
     getActiveBanners().catch(() => []),
   ]);
-  const typedBanners = initialBanners as { src: string; alt: string; src_mobile?: string | null }[];
+  // Sanitise: DB stores '' for mobile-only rows — convert to null so Next/Image never receives ""
+  const typedBanners = (initialBanners as { src: string; alt: string; src_mobile?: string | null }[])
+    .map(b => ({ ...b, src: b.src || null }));
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(SERVICE_SCHEMA) }} />

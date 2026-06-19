@@ -3712,18 +3712,27 @@ body {
   justify-content: center;
   overflow: visible !important;
   z-index: 2;
+  /* Branded loading placeholder — visible while the first banner image downloads.
+     Purple-to-plum gradient matches brand; looks intentional instead of blank. */
+  background: linear-gradient(160deg, #1C0A24 0%, #3B1848 45%, #512561 100%);
 }
 
 @media (max-width: 768px) {
   .sc-hero {
+    /* Use 9:16 portrait aspect ratio — matches standard phone banner size.
+       A 9:16 image fills this container perfectly with object-fit:cover (zero cropping).
+       max-height:100svh caps it so it never overflows very tall phones. */
     height: auto !important;
+    aspect-ratio: 9 / 16;
+    max-height: 100svh;
     min-height: unset !important;
-    aspect-ratio: 16 / 9;
     overflow: hidden !important;
   }
 
-  .sc-hero__banner {
-    object-position: 25% center !important;
+  /* Portrait mobile images: center crop (default) */
+  .sc-hero__banner--mobile {
+    object-position: center center !important;
+    object-fit: cover;
   }
 
   .sc-hero__dots {
@@ -3914,6 +3923,13 @@ body {
 
 .sc-hero__banner--active {
   opacity: 1;
+}
+
+/* First banner on page load: skip the fade-in so image is immediately visible.
+   The JS adds sc-hero--ready after mount, enabling transitions for slide changes. */
+.sc-hero__banner--first-active {
+  opacity: 1 !important;
+  transition: none !important;
 }
 
 /* Responsive variants: desktop hides on phones, mobile portrait shows on phones */

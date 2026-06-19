@@ -814,14 +814,16 @@ function BottomNav() {
 
 export default function HomePage({ homeFaqs, initialBanners = [] }: {
   homeFaqs?: FaqItem[];
-  initialBanners?: { src: string; alt: string; src_mobile?: string | null }[];
+  initialBanners?: { src: string | null; alt: string; src_mobile?: string | null }[];
 }) {
   const progressBarRef = useRef<HTMLDivElement>(null);
 
   const [slide, setSlide] = useState(0);
   const [rateUnlocked, setRateUnlocked] = useState(false);
-  const [banners, setBanners] = useState<{ src: string; alt: string; src_mobile?: string | null }[]>(initialBanners);
+  const [banners, setBanners] = useState<{ src: string | null; alt: string; src_mobile?: string | null }[]>(initialBanners);
   const [googleReviews, setGoogleReviews] = useState<{ name: string; area: string; rating: number; text: string; initials: string }[]>([]);
+  // heroReady: false on first render so banner 0 skips its fade-in (no blank purple flash)
+  const [heroReady, setHeroReady] = useState(false);
 
   useEffect(() => {
     fetch('/api/reviews')
@@ -841,6 +843,14 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
   }, []);
 
   useEffect(() => {
+    // Enable hero slide transitions after the first image has had time to paint.
+    // Without this, banner-0 starts at opacity:0 and takes 0.9s to fade in,
+    // causing a visible blank-purple flash on page load.
+    const t = setTimeout(() => setHeroReady(true), 80);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
     // Only fetch from the API if the server didn't provide banners.
     // When initialBanners is populated it comes from a direct DB read at SSR time
     // and is always fresher than the edge-cached /api/banners response (which can
@@ -850,7 +860,7 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data.banners) && data.banners.length > 0) {
-          setBanners(data.banners.map((b: { src: string; alt: string; src_mobile?: string | null }) => ({ src: b.src, alt: b.alt, src_mobile: b.src_mobile ?? null })));
+          setBanners(data.banners.map((b: { src: string | null; alt: string; src_mobile?: string | null }) => ({ src: b.src || null, alt: b.alt, src_mobile: b.src_mobile ?? null })));
         }
       })
       .catch(() => { /* keep current banners */ });
@@ -868,12 +878,18 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Split into two independent image pools — no shared slide state between them
+  const desktopBanners = banners.filter(b => !!b.src);
+  const mobileBanners  = banners.filter(b => !!b.src_mobile);
+  // Cycle count = whichever pool is larger (the smaller wraps around)
+  const slideCount = Math.max(desktopBanners.length, mobileBanners.length, 1);
+
   // Auto-advance banner every 5 seconds
   useEffect(() => {
-    if (banners.length < 2) return;
-    const id = setInterval(() => setSlide(p => (p + 1) % banners.length), 5000);
+    if (slideCount < 2) return;
+    const id = setInterval(() => setSlide(p => (p + 1) % slideCount), 5000);
     return () => clearInterval(id);
-  }, [banners.length]);
+  }, [slideCount]);
 
   function goToSlide(i: number) {
     setSlide(i);
@@ -905,52 +921,55 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
 
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="sc-hero mk-bg-dark" aria-label="Hero">
-        {banners.map((b, i) => (
-          b.src_mobile ? (
-            // Mobile + desktop versions exist — show the right one per screen size
-            <React.Fragment key={b.src}>
-              <Image
-                src={b.src}
-                alt={b.alt}
-                fill
-                sizes="100vw"
-                quality={85}
-                priority={i === 0}
-                className={`sc-hero__banner sc-hero__banner--desktop${i === slide ? ' sc-hero__banner--active' : ''}`}
-                aria-hidden={i !== slide}
-                draggable={false}
-                style={{ objectFit: 'cover' }}
-              />
-              <Image
-                src={b.src_mobile}
-                alt={b.alt}
-                fill
-                sizes="100vw"
-                quality={85}
-                priority={i === 0}
-                className={`sc-hero__banner sc-hero__banner--mobile${i === slide ? ' sc-hero__banner--active' : ''}`}
-                aria-hidden={i !== slide}
-                draggable={false}
-                style={{ objectFit: 'cover' }}
-              />
-            </React.Fragment>
-          ) : (
-            // Desktop-only banner — crops on mobile (existing behaviour)
+        {/* ── Desktop banners — tablet & desktop only, never shown on phones ── */}
+        {desktopBanners.map((b, i) => {
+          const dSlide = slide % Math.max(desktopBanners.length, 1);
+          const isActive = i === dSlide;
+          return (
             <Image
-              key={b.src}
-              src={b.src}
+              key={`desktop-${b.src}-${i}`}
+              src={b.src!}
               alt={b.alt}
               fill
               sizes="100vw"
               quality={85}
               priority={i === 0}
-              className={`sc-hero__banner${i === slide ? ' sc-hero__banner--active' : ''}`}
-              aria-hidden={i !== slide}
+              className={[
+                'sc-hero__banner',
+                'sc-hero__banner--desktop',
+                isActive ? (heroReady ? 'sc-hero__banner--active' : 'sc-hero__banner--first-active') : '',
+              ].filter(Boolean).join(' ')}
+              aria-hidden={!isActive}
               draggable={false}
               style={{ objectFit: 'cover' }}
             />
-          )
-        ))}
+          );
+        })}
+
+        {/* ── Mobile banners — phones only, never shown on tablet/desktop ── */}
+        {mobileBanners.map((b, i) => {
+          const mSlide = slide % Math.max(mobileBanners.length, 1);
+          const isActive = i === mSlide;
+          return (
+            <Image
+              key={`mobile-${b.src_mobile}-${i}`}
+              src={b.src_mobile!}
+              alt={b.alt}
+              fill
+              sizes="100vw"
+              quality={85}
+              priority={i === 0}
+              className={[
+                'sc-hero__banner',
+                'sc-hero__banner--mobile',
+                isActive ? (heroReady ? 'sc-hero__banner--active' : 'sc-hero__banner--first-active') : '',
+              ].filter(Boolean).join(' ')}
+              aria-hidden={!isActive}
+              draggable={false}
+              style={{ objectFit: 'cover' }}
+            />
+          );
+        })}
         <div className="sc-hero__overlay" />
         <div className="sc-grain" />
 

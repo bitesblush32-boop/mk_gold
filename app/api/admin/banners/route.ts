@@ -59,8 +59,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
     const { src, alt, src_mobile } = body;
-    if (!src || !alt) {
-      return NextResponse.json({ error: 'src and alt are required' }, { status: 400 });
+    if (!alt) {
+      return NextResponse.json({ error: 'alt is required' }, { status: 400 });
+    }
+    // src and src_mobile: at least one must be non-empty
+    if (!src && !src_mobile) {
+      return NextResponse.json({ error: 'At least one of src or src_mobile is required' }, { status: 400 });
     }
     try {
       const banner = await createBanner({ src, alt, src_mobile: src_mobile || null, order: 99 });
