@@ -12,7 +12,7 @@ export function MkLeadPopup() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [form, setForm] = useState({
-    name: '', phone: '', city: '', goldType: '', weight: '', purity: '', message: '',
+    name: '', phone: '', city: '', pincode: '', goldType: '', weight: '', purity: '', message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [phoneError, setPhoneError] = useState('');
@@ -70,6 +70,7 @@ export function MkLeadPopup() {
           name:         form.name,
           phone:        cleanPhone,
           city:         form.city || undefined,
+          area:         form.pincode || undefined,
           gold_type:    form.goldType || undefined,
           weight_grams: weightGrams != null ? String(weightGrams) : undefined,
           purity_karat: puritiyKarat,
@@ -214,7 +215,7 @@ export function MkLeadPopup() {
                 <div>
                   <label className="lp-form-label">City</label>
                   <select className="mk-select" required
-                    value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}>
+                    value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value, pincode: '' }))}>
                     <option value="" disabled>Select your city</option>
                     <option value="Bangalore">Bangalore</option>
                     <option value="Mysore">Mysore</option>
@@ -222,6 +223,25 @@ export function MkLeadPopup() {
                     <option value="Davangere">Davangere</option>
                   </select>
                 </div>
+                {form.city === 'Bangalore' && (
+                  <div>
+                    <label className="lp-form-label">Nearest Area / Pincode</label>
+                    <select className="mk-select"
+                      value={form.pincode} onChange={e => setForm(f => ({ ...f, pincode: e.target.value }))}>
+                      <option value="">Select your area (optional)</option>
+                      <option value="Rajajinagar – 560010">Rajajinagar – 560010</option>
+                      <option value="Malleshwaram – 560003">Malleshwaram – 560003</option>
+                      <option value="Vijayanagar – 560040">Vijayanagar – 560040</option>
+                      <option value="Basaveshwaranagar – 560079">Basaveshwaranagar – 560079</option>
+                      <option value="Yeshwanthpur – 560022">Yeshwanthpur – 560022</option>
+                      <option value="Jayanagar – 560041">Jayanagar – 560041</option>
+                      <option value="Indiranagar – 560038">Indiranagar – 560038</option>
+                      <option value="Koramangala – 560034">Koramangala – 560034</option>
+                      <option value="Whitefield – 560066">Whitefield – 560066</option>
+                      <option value="JP Nagar – 560078">JP Nagar – 560078</option>
+                    </select>
+                  </div>
+                )}
                 <div>
                   <label className="lp-form-label">Gold Type</label>
                   <select className="mk-select" required

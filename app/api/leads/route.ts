@@ -38,10 +38,12 @@ async function syncLeadToSheets(lead: Lead): Promise<void> {
     name:         lead.name,
     phone:        lead.phone,
     city:         lead.city ?? '',
+    area:         lead.area ?? '',
     gold_type:    lead.gold_type ?? '',
     weight:       lead.weight_grams ?? '',
     purity:       lead.purity_karat ? `${lead.purity_karat}K` : '',
     email:        lead.email ?? '',
+    notes:        lead.notes ?? '',
     channel:      sourceLabel(lead.source, lead.utm_medium, lead.utm_source),
   });
 
@@ -192,6 +194,7 @@ export async function POST(req: NextRequest) {
     weight_grams,
     purity_karat,
     estimated_value,
+    notes,
     source     = 'website',
     source_page,
     utm_source,
@@ -226,6 +229,7 @@ export async function POST(req: NextRequest) {
       weight_grams:    weight_grams != null ? String(weight_grams) : undefined,
       purity_karat:    purity_karat != null ? Number(purity_karat) : undefined,
       estimated_value: estimated_value != null ? String(estimated_value) : undefined,
+      notes:           notes ? String(notes) : undefined,
       source:          String(source),
       source_page:     source_page ? String(source_page) : undefined,
       utm_source:      utm_source ? String(utm_source) : undefined,
