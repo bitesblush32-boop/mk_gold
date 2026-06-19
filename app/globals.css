@@ -1,7 +1,6 @@
 /*
  * app/globals.css
  * Entry point for all CSS.
- *
  * Import order (lightningcss rule: @import before all other rules):
  *   1. Google Fonts — external @import url() first
  *   2. Design system — all tokens, reset, patterns, reveal, layout
