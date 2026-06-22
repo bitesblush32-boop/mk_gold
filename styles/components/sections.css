@@ -3704,8 +3704,9 @@ body {
 /* ── Hero ──────────────────────────────────────────────────────── */
 .sc-hero {
   position: relative;
-  height: 100svh !important;
-  min-height: 560px !important;
+  aspect-ratio: 16 / 9;
+  min-height: 320px;
+  width: 100%;
   margin-top: calc(-1 * var(--chrome-h)) !important;
   display: flex;
   flex-direction: column;

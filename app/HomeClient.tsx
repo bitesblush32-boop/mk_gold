@@ -109,20 +109,43 @@ const CITY_MAPS: Record<City, CityMapDef> = {
 /* ─── Callback form ────────────────────────────────────────────── */
 
 function CallbackForm({ onSuccess }: { onSuccess?: () => void }) {
-  const [form, setForm] = useState({ name: '', phone: '', goldType: '', weight: '', purity: '', city: '' });
+  const [form, setForm] = useState({ name: '', phone: '', city: '', pincode: '', goldType: '', weight: '', purity: '', notes: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
-  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setForm(prev => ({ ...prev, [k]: e.target.value }));
+  const [phoneError, setPhoneError] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setPhoneError('');
+
+    const cleanPhone = form.phone.replace(/\s/g, '');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setPhoneError('Enter a valid 10-digit Indian mobile number');
+      return;
+    }
+
+    const purityKarat = form.purity === '24k' ? 24 : form.purity === '22k' ? 22 : undefined;
+    const weightGrams = form.weight === 'under30' ? 20
+      : form.weight === 'under50' ? 40
+      : form.weight === 'over100' ? 100
+      : undefined;
+
     setStatus('loading');
     try {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, source: 'sample-c-callback', ...getUtmParams() }),
+        body: JSON.stringify({
+          name:         form.name,
+          phone:        cleanPhone,
+          city:         form.city || undefined,
+          area:         form.pincode || undefined,
+          gold_type:    form.goldType || undefined,
+          weight_grams: weightGrams != null ? String(weightGrams) : undefined,
+          purity_karat: purityKarat,
+          notes:        form.notes || undefined,
+          source:       'sample-c-callback',
+          ...getUtmParams(),
+        }),
       });
       if (res.ok) { setStatus('success'); if (onSuccess) onSuccess(); }
       else setStatus('error');
@@ -155,47 +178,89 @@ function CallbackForm({ onSuccess }: { onSuccess?: () => void }) {
       <div>
         <label className="mk-calc__label">Your Name</label>
         <input type="text" required className="mk-input" placeholder="Full name"
-          value={form.name} onChange={set('name')} />
+          value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
       </div>
       <div>
         <label className="mk-calc__label">Phone Number</label>
-        <input type="tel" required pattern="[6-9][0-9]{9}" className="mk-input"
-          placeholder="10-digit mobile" value={form.phone} onChange={set('phone')} />
+        <input
+          type="tel" required className={`mk-input${phoneError ? ' mk-input--error' : ''}`}
+          placeholder="10-digit mobile" inputMode="numeric" autoComplete="tel" maxLength={10}
+          value={form.phone}
+          onChange={e => { const d = e.target.value.replace(/\D/g, '').slice(0, 10); setForm(f => ({ ...f, phone: d })); setPhoneError(''); }}
+        />
+        {phoneError && (
+          <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: '0.72rem', color: '#f87171', margin: '0.25rem 0 0' }}>
+            {phoneError}
+          </p>
+        )}
       </div>
       <div>
+        <label className="mk-calc__label">City</label>
+        <select required className="mk-select" value={form.city}
+          onChange={e => setForm(f => ({ ...f, city: e.target.value, pincode: '' }))}>
+          <option value="" disabled>Select your city</option>
+          <option value="Bangalore">Bangalore</option>
+          <option value="Mysore">Mysore</option>
+          <option value="Mangalore">Mangalore</option>
+          <option value="Davangere">Davangere</option>
+        </select>
+      </div>
+      {form.city === 'Bangalore' && (
+        <div>
+          <label className="mk-calc__label">Nearest Area / Pincode</label>
+          <select className="mk-select" value={form.pincode}
+            onChange={e => setForm(f => ({ ...f, pincode: e.target.value }))}>
+            <option value="">Select your area (optional)</option>
+            <option value="Rajajinagar – 560010">Rajajinagar – 560010</option>
+            <option value="Malleshwaram – 560003">Malleshwaram – 560003</option>
+            <option value="Vijayanagar – 560040">Vijayanagar – 560040</option>
+            <option value="Basaveshwaranagar – 560079">Basaveshwaranagar – 560079</option>
+            <option value="Yeshwanthpur – 560022">Yeshwanthpur – 560022</option>
+            <option value="Jayanagar – 560041">Jayanagar – 560041</option>
+            <option value="Indiranagar – 560038">Indiranagar – 560038</option>
+            <option value="Koramangala – 560034">Koramangala – 560034</option>
+            <option value="Whitefield – 560066">Whitefield – 560066</option>
+            <option value="JP Nagar – 560078">JP Nagar – 560078</option>
+          </select>
+        </div>
+      )}
+      <div>
         <label className="mk-calc__label">Gold Type</label>
-        <select className="mk-select" value={form.goldType} onChange={set('goldType')}>
-          <option value="">Select type</option>
-          <option value="jewellery">Jewellery</option>
+        <select className="mk-select" required value={form.goldType}
+          onChange={e => setForm(f => ({ ...f, goldType: e.target.value }))}>
+          <option value="" disabled>Select type</option>
+          <option value="jewellery">Gold Jewellery</option>
           <option value="coins">Gold Coins</option>
           <option value="bars">Gold Bars</option>
-          <option value="broken">Broken / Scrap</option>
-          <option value="pledged">Pledged Gold</option>
+          <option value="broken">Broken / Damaged Gold</option>
+          <option value="pledged">Pledged Gold (bank/NBFC)</option>
+        </select>
+      </div>
+      <div>
+        <label className="mk-calc__label">Approx. Weight</label>
+        <select className="mk-select" value={form.weight}
+          onChange={e => setForm(f => ({ ...f, weight: e.target.value }))}>
+          <option value="" disabled>Select weight range</option>
+          <option value="under30">Under 30 gms</option>
+          <option value="under50">Under 50 gms</option>
+          <option value="over100">More than 100 gms</option>
         </select>
       </div>
       <div>
         <label className="mk-calc__label">Gold Purity</label>
-        <select className="mk-select" value={form.purity} onChange={set('purity')}>
-          <option value="">Select purity</option>
+        <select className="mk-select" value={form.purity}
+          onChange={e => setForm(f => ({ ...f, purity: e.target.value }))}>
+          <option value="" disabled>Select purity</option>
           <option value="24k">24K (Pure / Coins)</option>
           <option value="22k">22K (Most common)</option>
           <option value="unknown">Not sure (we test free)</option>
         </select>
       </div>
       <div>
-        <label className="mk-calc__label">Approx. Weight (g)</label>
-        <input type="number" min="0.1" step="0.1" className="mk-input"
-          placeholder="e.g. 10" value={form.weight} onChange={set('weight')} />
-      </div>
-      <div>
-        <label className="mk-calc__label">Nearest City</label>
-        <select className="mk-select" value={form.city} onChange={set('city')}>
-          <option value="">Select city</option>
-          <option value="bangalore">Bangalore</option>
-          <option value="mysore">Mysore</option>
-          <option value="mangalore">Mangalore</option>
-          <option value="davangere">Davangere</option>
-        </select>
+        <label className="mk-calc__label">Message / Notes</label>
+        <textarea className="mk-textarea" rows={3} placeholder="Any details about your gold (optional)"
+          value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
+          style={{ resize: 'none' }} />
       </div>
       <MkButton type="submit" variant="gold" size="lg"
         style={{ width: '100%', marginTop: '0.25rem' }}
