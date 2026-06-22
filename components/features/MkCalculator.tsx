@@ -39,16 +39,16 @@ export function MkCalculator({
   showBookingCTA = false,
   defaultUnlocked = false,
 }: MkCalculatorProps) {
-  const uid    = useId();
+  const uid = useId();
   const isDark = variant === 'dark';
 
-  const [unlocked,  setUnlocked]  = useState(defaultUnlocked);
-  const [gateForm,  setGateForm]  = useState({ name: '', phone: '', city: '', pincode: '', goldType: '', weight: '', purity: '', notes: '' });
+  const [unlocked, setUnlocked] = useState(defaultUnlocked);
+  const [gateForm, setGateForm] = useState({ name: '', phone: '', city: '', pincode: '', goldType: '', weight: '', purity: '', notes: '' });
   const [gateStatus, setGateStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [phoneError, setPhoneError] = useState('');
 
-  const [purity,    setPurity]    = useState<22 | 24>(22);
-  const [weight,    setWeight]    = useState('');
+  const [purity, setPurity] = useState<22 | 24>(22);
+  const [weight, setWeight] = useState('');
 
   const { baseRate24K, baseRate22K, isLoading } = useGoldRate();
 
@@ -72,11 +72,11 @@ export function MkCalculator({
 
     // Map form field names to API field names
     const puritiyKarat = gateForm.purity === '24k' ? 24 : gateForm.purity === '22k' ? 22 : undefined;
-    const weightGrams  = gateForm.weight === 'under30' ? 20
+    const weightGrams = gateForm.weight === 'under30' ? 20
       : gateForm.weight === 'under50' ? 40
-      : gateForm.weight === 'over100' ? 100
-      : undefined;
-    const estRate      = puritiyKarat === 24 ? baseRate24K : puritiyKarat === 22 ? baseRate22K : undefined;
+        : gateForm.weight === 'over100' ? 100
+          : undefined;
+    const estRate = puritiyKarat === 24 ? baseRate24K : puritiyKarat === 22 ? baseRate22K : undefined;
     const estimatedValue = estRate && weightGrams ? Math.round(estRate * weightGrams * 0.975) : undefined;
 
     try {
@@ -84,16 +84,16 @@ export function MkCalculator({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name:            gateForm.name,
-          phone:           cleanPhone,
-          city:            gateForm.city || undefined,
-          area:            gateForm.pincode || undefined,
-          gold_type:       gateForm.goldType || undefined,
-          weight_grams:    weightGrams != null ? String(weightGrams) : undefined,
-          purity_karat:    puritiyKarat,
+          name: gateForm.name,
+          phone: cleanPhone,
+          city: gateForm.city || undefined,
+          area: gateForm.pincode || undefined,
+          gold_type: gateForm.goldType || undefined,
+          weight_grams: weightGrams != null ? String(weightGrams) : undefined,
+          purity_karat: puritiyKarat,
           estimated_value: estimatedValue != null ? String(estimatedValue) : undefined,
-          notes:           gateForm.notes || undefined,
-          source:          'calculator-gate',
+          notes: gateForm.notes || undefined,
+          source: 'calculator-gate',
           ...getUtmParams(),
         }),
       });
@@ -112,16 +112,16 @@ export function MkCalculator({
     setGateStatus('idle');
   }
 
-  const weightNum     = parseFloat(weight) || 0;
-  const baseRate      = rateMap[purity];
+  const weightNum = parseFloat(weight) || 0;
+  const baseRate = rateMap[purity];
   // MK pays 97.5% of MCX-linked rate; ±2% range covers branch variation
-  const mid           = weightNum > 0
+  const mid = weightNum > 0
     ? Math.round(baseRate * weightNum * 0.975)
     : null;
-  const estimateLow   = mid !== null ? Math.round(mid * 0.98) : null;
-  const estimateHigh  = mid !== null ? Math.round(mid * 1.02) : null;
+  const estimateLow = mid !== null ? Math.round(mid * 0.98) : null;
+  const estimateHigh = mid !== null ? Math.round(mid * 1.02) : null;
 
-  const inputClass  = `mk-input${isDark  ? ' mk-input--dark'  : ''}`;
+  const inputClass = `mk-input${isDark ? ' mk-input--dark' : ''}`;
   const selectClass = `mk-select${isDark ? ' mk-select--dark' : ''}`;
 
   if (!unlocked) {
@@ -186,7 +186,7 @@ export function MkCalculator({
           <select className="mk-select" value={gateForm.weight} onChange={e => setGateForm(f => ({ ...f, weight: e.target.value }))}>
             <option value="" disabled>Approx. Weight</option>
             <option value="under30">Under 30 gms</option>
-            <option value="under50">Under 50 gms</option>
+            <option value="under50">More than 50 gms</option>
             <option value="over100">More than 100 gms</option>
           </select>
           <select className="mk-select" value={gateForm.purity} onChange={e => setGateForm(f => ({ ...f, purity: e.target.value }))}>

@@ -126,8 +126,8 @@ function CallbackForm({ onSuccess }: { onSuccess?: () => void }) {
     const purityKarat = form.purity === '24k' ? 24 : form.purity === '22k' ? 22 : undefined;
     const weightGrams = form.weight === 'under30' ? 20
       : form.weight === 'under50' ? 40
-      : form.weight === 'over100' ? 100
-      : undefined;
+        : form.weight === 'over100' ? 100
+          : undefined;
 
     setStatus('loading');
     try {
@@ -135,15 +135,15 @@ function CallbackForm({ onSuccess }: { onSuccess?: () => void }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name:         form.name,
-          phone:        cleanPhone,
-          city:         form.city || undefined,
-          area:         form.pincode || undefined,
-          gold_type:    form.goldType || undefined,
+          name: form.name,
+          phone: cleanPhone,
+          city: form.city || undefined,
+          area: form.pincode || undefined,
+          gold_type: form.goldType || undefined,
           weight_grams: weightGrams != null ? String(weightGrams) : undefined,
           purity_karat: purityKarat,
-          notes:        form.notes || undefined,
-          source:       'sample-c-callback',
+          notes: form.notes || undefined,
+          source: 'sample-c-callback',
           ...getUtmParams(),
         }),
       });
@@ -242,7 +242,7 @@ function CallbackForm({ onSuccess }: { onSuccess?: () => void }) {
           onChange={e => setForm(f => ({ ...f, weight: e.target.value }))}>
           <option value="" disabled>Select weight range</option>
           <option value="under30">Under 30 gms</option>
-          <option value="under50">Under 50 gms</option>
+          <option value="under50">More than 50 gms</option>
           <option value="over100">More than 100 gms</option>
         </select>
       </div>
@@ -731,10 +731,10 @@ function LocalTrustSection() {
 /* ─── Steps data + local section ───────────────────────────────── */
 
 const SC_STEPS = [
-  { n: '01', title: 'Weight Check',        body: 'Accurate weight checking systems — your gold weighed on certified precision scales in front of you.',          icon: '/weight.png',    alt: 'Weight check scale' },
-  { n: '02', title: 'Purity Verification', body: 'Using advanced XRF Machine — German spectrometer reads exact gold content in under 2 minutes. No acid test.', icon: '/purity.png',    alt: 'XRF purity verification' },
-  { n: '03', title: 'Rate Calculation',    body: 'Based on live markets — your offer is calculated against live MCX rates. We show our margin openly.',          icon: '/rate_calc.png', alt: 'Rate calculation chart' },
-  { n: '04', title: 'Payment Transfer',    body: 'Instant payment to your bank account — receive cash, NEFT, or UPI within 30 minutes of evaluation.',          icon: '/payment.png',   alt: 'Instant payment transfer' },
+  { n: '01', title: 'Weight Check', body: 'Accurate weight checking systems — your gold weighed on certified precision scales in front of you.', icon: '/weight.png', alt: 'Weight check scale' },
+  { n: '02', title: 'Purity Verification', body: 'Using advanced XRF Machine — German spectrometer reads exact gold content in under 2 minutes. No acid test.', icon: '/purity.png', alt: 'XRF purity verification' },
+  { n: '03', title: 'Rate Calculation', body: 'Based on live markets — your offer is calculated against live MCX rates. We show our margin openly.', icon: '/rate_calc.png', alt: 'Rate calculation chart' },
+  { n: '04', title: 'Payment Transfer', body: 'Instant payment to your bank account — receive cash, NEFT, or UPI within 30 minutes of evaluation.', icon: '/payment.png', alt: 'Instant payment transfer' },
 ] as const;
 
 function LocalStepsSection() {
@@ -765,9 +765,9 @@ function LocalStepsSection() {
         {/* ── Quick-nav CTA bar ──────────────────────────────────── */}
         <nav className="sc-cta-bar" aria-label="Quick navigation">
           <a href="#find-branch" className="sc-cta-bar__link">Find Nearest Branch</a>
-          <a href="#gold-rate"   className="sc-cta-bar__link">Live Gold Rate</a>
-          <a href="/contact"     className="sc-cta-bar__link">Contact Us</a>
-          <a href="/sell-gold"   className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</a>
+          <a href="#gold-rate" className="sc-cta-bar__link">Live Gold Rate</a>
+          <a href="/contact" className="sc-cta-bar__link">Contact Us</a>
+          <a href="/sell-gold" className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</a>
         </nav>
       </div>
     </section>
@@ -945,7 +945,7 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
 
   // Split into two independent image pools — no shared slide state between them
   const desktopBanners = banners.filter(b => !!b.src);
-  const mobileBanners  = banners.filter(b => !!b.src_mobile);
+  const mobileBanners = banners.filter(b => !!b.src_mobile);
   // Cycle count = whichever pool is larger (the smaller wraps around)
   const slideCount = Math.max(desktopBanners.length, mobileBanners.length, 1);
 
@@ -1064,19 +1064,19 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
 
       </section>
 
-      {/* ── Tagline bridge card — pentagon between hero and how-it-works ── */}
-      <div className="sc-tagline-bridge" aria-hidden="true">
-        <div className="sc-tagline-card">
-          {/* Trapezoid with 7px bezier curves at both top corners — no sharp points */}
-          <svg className="sc-tagline-card__bg" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M 115 0 L 885 0 Q 900 0 910.6 10.6 L 1000 100 L 0 100 L 89.4 10.6 Q 100 0 115 0 Z" fill="#fff" />
-          </svg>
-          <span className="sc-tagline-card__text">Instant Money. Lasting Trust.</span>
+      {/* ── Tagline + how-it-works — single white block, no gap possible ── */}
+      <div style={{ position: 'relative', zIndex: 4, backgroundColor: '#fff' }}>
+        <div className="sc-tagline-bridge" aria-hidden="true">
+          <div className="sc-tagline-card">
+            {/* Trapezoid with 7px bezier curves at both top corners — no sharp points */}
+            <svg className="sc-tagline-card__bg" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M 115 0 L 885 0 Q 900 0 910.6 10.6 L 1000 100 L 0 100 L 89.4 10.6 Q 100 0 115 0 Z" fill="#fff" />
+            </svg>
+            <span className="sc-tagline-card__text">Instant Money. Lasting Trust.</span>
+          </div>
         </div>
+        <LocalStepsSection />
       </div>
-
-      {/* ── How it works — directly below hero ─────────────────── */}
-      <LocalStepsSection />
 
       {/* ── Step divider: gallery cap left 35%, slant 35→37%, rounded corner ── */}
       <svg
@@ -1136,9 +1136,9 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
             {/* ── Quick-nav CTA bar (repeated at bottom of rate section) ── */}
             <nav className="sc-cta-bar sc-cta-bar--dark" aria-label="Quick navigation">
               <a href="#find-branch" className="sc-cta-bar__link">Find Nearest Branch</a>
-              <a href="#gold-rate"   className="sc-cta-bar__link">Live Gold Rate</a>
-              <a href="/contact"     className="sc-cta-bar__link">Contact Us</a>
-              <a href="/sell-gold"   className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</a>
+              <a href="#gold-rate" className="sc-cta-bar__link">Live Gold Rate</a>
+              <a href="/contact" className="sc-cta-bar__link">Contact Us</a>
+              <a href="/sell-gold" className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</a>
             </nav>
           </div>
         </section>

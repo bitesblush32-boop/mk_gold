@@ -3744,7 +3744,6 @@ body {
 /* ── Tagline bridge card — trapezoid sits at hero/how-it-works boundary */
 .sc-tagline-bridge {
   position: relative;
-  z-index: 4;
   margin-top: -2.5rem;
   display: flex;
   justify-content: center;

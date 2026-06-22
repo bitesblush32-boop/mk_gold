@@ -37,7 +37,7 @@ function fmt(v: number) {
 function getTimeAgo(iso: string | null): string {
   if (!iso) return 'a while ago';
   const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60_000);
-  if (mins < 1)  return 'just now';
+  if (mins < 1) return 'just now';
   if (mins === 1) return '1 min ago';
   return `${mins} min ago`;
 }
@@ -57,7 +57,7 @@ function WidgetSkeleton() {
         {[0, 1].map((i) => (
           <div key={i} className="mk-rw-skeleton__cell">
             <div className="mk-rw-skeleton__bar" style={{ width: '2.5rem', height: '0.6rem' }} />
-            <div className="mk-rw-skeleton__bar" style={{ width: '5rem',   height: '1.3rem' }} />
+            <div className="mk-rw-skeleton__bar" style={{ width: '5rem', height: '1.3rem' }} />
             <div className="mk-rw-skeleton__bar" style={{ width: '3.5rem', height: '0.5rem' }} />
           </div>
         ))}
@@ -136,8 +136,8 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
   const [tilt, setTilt] = useState({ x: 0, y: 0, active: false });
 
   const selectedRate = rates.find((r) => r.karat === Number(purity))?.value ?? 0;
-  const weightNum    = parseFloat(weight) || 0;
-  const estimate     = weightNum > 0 ? Math.round(selectedRate * weightNum * 0.975) : null;
+  const weightNum = parseFloat(weight) || 0;
+  const estimate = weightNum > 0 ? Math.round(selectedRate * weightNum * 0.975) : null;
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) return;
@@ -146,8 +146,8 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
     if (!card) return;
     const { left, top, width, height } = card.getBoundingClientRect();
     setTilt({
-      x:      ((e.clientY - top  - height / 2) / (height / 2)) * 8,
-      y:     -((e.clientX - left - width  / 2) / (width  / 2)) * 8,
+      x: ((e.clientY - top - height / 2) / (height / 2)) * 8,
+      y: -((e.clientX - left - width / 2) / (width / 2)) * 8,
       active: true,
     });
   }, []);
@@ -169,11 +169,11 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
     setGateStatus('loading');
 
     const puritiyKarat = gateForm.purity === '24k' ? 24 : gateForm.purity === '22k' ? 22 : undefined;
-    const weightGrams  = gateForm.weight === 'under30' ? 20
+    const weightGrams = gateForm.weight === 'under30' ? 20
       : gateForm.weight === 'under50' ? 40
-      : gateForm.weight === 'over100' ? 100
-      : undefined;
-    const estRate      = puritiyKarat ? rates.find(r => r.karat === puritiyKarat)?.value : undefined;
+        : gateForm.weight === 'over100' ? 100
+          : undefined;
+    const estRate = puritiyKarat ? rates.find(r => r.karat === puritiyKarat)?.value : undefined;
     const estimatedValue = estRate && weightGrams ? Math.round(estRate * weightGrams * 0.975) : undefined;
 
     try {
@@ -181,16 +181,16 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name:            gateForm.name,
-          phone:           cleanPhone,
-          city:            gateForm.city || undefined,
-          area:            gateForm.pincode || undefined,
-          gold_type:       gateForm.goldType || undefined,
-          weight_grams:    weightGrams != null ? String(weightGrams) : undefined,
-          purity_karat:    puritiyKarat,
+          name: gateForm.name,
+          phone: cleanPhone,
+          city: gateForm.city || undefined,
+          area: gateForm.pincode || undefined,
+          gold_type: gateForm.goldType || undefined,
+          weight_grams: weightGrams != null ? String(weightGrams) : undefined,
+          purity_karat: puritiyKarat,
           estimated_value: estimatedValue != null ? String(estimatedValue) : undefined,
-          notes:           gateForm.notes || undefined,
-          source:          'calculator-gate',
+          notes: gateForm.notes || undefined,
+          source: 'calculator-gate',
           ...getUtmParams(),
         }),
       });
@@ -357,7 +357,7 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
                 <select className="mk-select mk-select--dark" value={gateForm.weight} onChange={e => setGateForm(f => ({ ...f, weight: e.target.value }))}>
                   <option value="" disabled>Approx. Weight</option>
                   <option value="under30">Under 30 gms</option>
-                  <option value="under50">Under 50 gms</option>
+                  <option value="under50">More than 50 gms</option>
                   <option value="over100">More than 100 gms</option>
                 </select>
                 <select className="mk-select mk-select--dark" value={gateForm.purity} onChange={e => setGateForm(f => ({ ...f, purity: e.target.value }))}>

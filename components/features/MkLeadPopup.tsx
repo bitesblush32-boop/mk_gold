@@ -53,10 +53,10 @@ export function MkLeadPopup() {
     setStatus('loading');
 
     const puritiyKarat = form.purity === '24k' ? 24 : form.purity === '22k' ? 22 : undefined;
-    const weightGrams  = form.weight === 'under30' ? 20
+    const weightGrams = form.weight === 'under30' ? 20
       : form.weight === 'under50' ? 40
-      : form.weight === 'over100' ? 100
-      : undefined;
+        : form.weight === 'over100' ? 100
+          : undefined;
 
     try {
       const controller = new AbortController();
@@ -67,15 +67,15 @@ export function MkLeadPopup() {
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
         body: JSON.stringify({
-          name:         form.name,
-          phone:        cleanPhone,
-          city:         form.city || undefined,
-          area:         form.pincode || undefined,
-          gold_type:    form.goldType || undefined,
+          name: form.name,
+          phone: cleanPhone,
+          city: form.city || undefined,
+          area: form.pincode || undefined,
+          gold_type: form.goldType || undefined,
           weight_grams: weightGrams != null ? String(weightGrams) : undefined,
           purity_karat: puritiyKarat,
-          notes:        form.message || undefined,
-          source:       'popup-lead-form',
+          notes: form.message || undefined,
+          source: 'popup-lead-form',
           ...getUtmParams(),
         }),
       });
@@ -260,7 +260,7 @@ export function MkLeadPopup() {
                     value={form.weight} onChange={e => setForm(f => ({ ...f, weight: e.target.value }))}>
                     <option value="" disabled>Select weight range</option>
                     <option value="under30">Under 30 gms</option>
-                    <option value="under50">Under 50 gms</option>
+                    <option value="under50">More than 50 gms</option>
                     <option value="over100">More than 100 gms</option>
                   </select>
                 </div>
