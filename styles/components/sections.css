@@ -5063,6 +5063,18 @@ body {
   box-shadow: 0 4px 16px rgba(37, 211, 102, 0.50);
 }
 
+.sc-bn-btn--call {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.90);
+}
+
+.sc-bn-btn--call:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.40);
+  color: #fff;
+}
+
 .sc-bn-live-dot {
   display: inline-block;
   width: 7px;
@@ -5081,31 +5093,6 @@ body {
   background: rgba(255, 255, 255, 0.12);
   margin: 0 0.375rem 0 auto;
   flex-shrink: 0;
-}
-
-.sc-bn-phone {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.625rem;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.05);
-  text-decoration: none;
-  transition: background 150ms ease;
-  flex-shrink: 0;
-}
-
-.sc-bn-phone:hover {
-  background: rgba(255, 255, 255, 0.10);
-}
-
-.sc-bn-phone-text {
-  font-family: 'Poppins', sans-serif;
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--white);
-  white-space: nowrap;
 }
 
 @media (max-width: 900px) {
@@ -5178,21 +5165,25 @@ body {
     display: none !important;
   }
 
-  .sc-bn-phone {
+  .sc-bn-sep {
     display: none !important;
+  }
+
+  .sc-bn-btn--primary,
+  .sc-bn-btn--call,
+  .sc-bn-btn--whatsapp {
+    flex: 1;
+    justify-content: center;
   }
 }
 
 @media (max-width: 360px) {
-  .sc-bn-hide-360 {
-    display: none !important;
-  }
-
   .sc-bottom-nav-wrap {
     width: calc(100vw - 1.5rem);
   }
 
   .sc-bn-btn--primary,
+  .sc-bn-btn--call,
   .sc-bn-btn--whatsapp {
     flex: 1;
     justify-content: center;
