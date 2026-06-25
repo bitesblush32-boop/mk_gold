@@ -90,7 +90,7 @@ interface Banner {
   created_at: string;
 }
 
-const MAX_BANNERS = 8;
+const MAX_BANNERS = 12;
 
 export default function BannersPage() {
   const [banners, setBanners]       = useState<Banner[]>([]);
