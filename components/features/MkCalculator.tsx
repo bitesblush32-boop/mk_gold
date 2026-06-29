@@ -186,7 +186,7 @@ export function MkCalculator({
           <select className="mk-select" value={gateForm.weight} onChange={e => setGateForm(f => ({ ...f, weight: e.target.value }))}>
             <option value="" disabled>Approx. Weight</option>
             <option value="under30">Under 30 gms</option>
-            <option value="under50">More than 50 gms</option>
+            <option value="under50">30 – 100 gms</option>
             <option value="over100">More than 100 gms</option>
           </select>
           <select className="mk-select" value={gateForm.purity} onChange={e => setGateForm(f => ({ ...f, purity: e.target.value }))}>

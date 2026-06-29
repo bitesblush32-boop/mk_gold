@@ -260,7 +260,7 @@ export function MkLeadPopup() {
                     value={form.weight} onChange={e => setForm(f => ({ ...f, weight: e.target.value }))}>
                     <option value="" disabled>Select weight range</option>
                     <option value="under30">Under 30 gms</option>
-                    <option value="under50">More than 50 gms</option>
+                    <option value="under50">30 – 100 gms</option>
                     <option value="over100">More than 100 gms</option>
                   </select>
                 </div>
