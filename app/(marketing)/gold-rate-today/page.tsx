@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { getEffectiveGoldRate } from '@/lib/gold-rate';
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkFooter } from '@/components/layout/MkFooter';
@@ -134,9 +135,9 @@ export default async function GoldRateTodayPage() {
               alignItems: 'center',
             }}
           >
-            <a href="/" style={{ color: 'rgba(255,255,255,0.40)', textDecoration: 'none' }}>
+            <Link href="/" style={{ color: 'rgba(255,255,255,0.40)', textDecoration: 'none' }}>
               Home
-            </a>
+            </Link>
             <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.20)' }}>›</span>
             <span style={{ color: 'var(--gold)' }}>Gold Rate Today</span>
           </nav>

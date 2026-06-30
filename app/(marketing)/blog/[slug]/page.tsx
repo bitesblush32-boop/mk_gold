@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound }        from 'next/navigation';
 import { MkNavbar }        from '@/components/layout/MkNavbar';
 import { MkFooter }        from '@/components/layout/MkFooter';
@@ -248,9 +249,9 @@ export default async function BlogPostPage({ params }: Props) {
         <div style={{ position: 'relative', zIndex: 2 }}>
           <div className="mk-container" style={{ maxWidth: '860px', margin: '0 auto' }}>
             <nav aria-label="Breadcrumb" className="mk-breadcrumb reveal">
-              <a href="/" className="mk-breadcrumb__link">Home</a>
+              <Link href="/" className="mk-breadcrumb__link">Home</Link>
               <span className="mk-breadcrumb__sep" aria-hidden="true">›</span>
-              <a href="/blog" className="mk-breadcrumb__link">Blog</a>
+              <Link href="/blog" className="mk-breadcrumb__link">Blog</Link>
               <span className="mk-breadcrumb__sep" aria-hidden="true">›</span>
               <span className="mk-breadcrumb__current">{post.category}</span>
             </nav>

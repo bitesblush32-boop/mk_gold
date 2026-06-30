@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const revalidate = false; // Static at build — content from local data only
 
@@ -92,7 +93,7 @@ export default function AboutPage() {
               alignItems: 'center',
             }}
           >
-            <a href="/" style={{ color: 'rgba(255,255,255,0.40)', textDecoration: 'none' }}>Home</a>
+            <Link href="/" style={{ color: 'rgba(255,255,255,0.40)', textDecoration: 'none' }}>Home</Link>
             <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.20)' }}>›</span>
             <span style={{ color: 'var(--gold)' }}>About Us</span>
           </nav>

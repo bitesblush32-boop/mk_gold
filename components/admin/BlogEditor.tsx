@@ -54,12 +54,6 @@ const BTN: React.CSSProperties = {
   transition: 'background 120ms, color 120ms',
 };
 
-const BTN_ACTIVE: React.CSSProperties = {
-  ...BTN,
-  background: 'var(--plum)',
-  color: 'var(--white)',
-  borderColor: 'var(--plum)',
-};
 
 const DIVIDER: React.CSSProperties = {
   width: 1,
@@ -130,7 +124,7 @@ export default function BlogEditor({ initialValues, mode }: Props) {
   }
 
   function handleLink() {
-    const existing = (document as any).queryCommandValue('createLink');
+    const existing = (document as Document & { queryCommandValue: (cmd: string) => string }).queryCommandValue('createLink');
     const url = window.prompt('Enter URL (include https://):', existing || 'https://');
     if (url === null) return; // cancelled
     if (url.trim() === '') {

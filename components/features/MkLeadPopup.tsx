@@ -18,6 +18,7 @@ export function MkLeadPopup() {
   const [phoneError, setPhoneError] = useState('');
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     const t = setTimeout(() => setOpen(true), 2000);
     const onOpen = () => setOpen(true);
@@ -33,7 +34,6 @@ export function MkLeadPopup() {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') dismiss(); };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   function dismiss() {

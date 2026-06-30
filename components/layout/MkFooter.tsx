@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { MkFooterCoin } from '@/components/features/MkFooterCoin';
 
 const FOOTER_LINKS = {
@@ -40,7 +41,7 @@ export function MkFooter() {
 
           {/* Brand column */}
           <div className="mk-footer__brand">
-            <a href="/" aria-label="MK Gold — Home">
+            <Link href="/" aria-label="MK Gold — Home">
               <Image
                 src="/brand/logo_light_eng.png"
                 alt="MK Gold"
@@ -49,7 +50,7 @@ export function MkFooter() {
                 className="mk-footer__logo-img"
                 style={{ height: '44px', width: 'auto' }}
               />
-            </a>
+            </Link>
 
             <p className="mk-footer__tagline-kn" lang="kn">
               ತಕ್ಷಣ ಹಣ ನಿರಂತರ ನಂಬಿಕೆ
@@ -155,9 +156,9 @@ export function MkFooter() {
           </p>
 
           <nav className="mk-footer__bottom-links" aria-label="Legal links">
-            <a href="/privacy-policy" className="mk-footer__bottom-link">Privacy Policy</a>
+            <Link href="/privacy-policy" className="mk-footer__bottom-link">Privacy Policy</Link>
             <span aria-hidden="true">·</span>
-            <a href="/terms" className="mk-footer__bottom-link">Terms</a>
+            <Link href="/terms" className="mk-footer__bottom-link">Terms</Link>
             <span aria-hidden="true">·</span>
             <a href="mailto:grievance@mkgold.in" className="mk-footer__bottom-link">
               grievance@mkgold.in

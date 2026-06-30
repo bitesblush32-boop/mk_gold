@@ -2,108 +2,22 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkTicker } from '@/components/layout/MkTicker';
 import { MkFooter } from '@/components/layout/MkFooter';
 import { MkFaq } from '@/components/sections/MkFaq';
 import { MkCtaBand } from '@/components/sections/MkCtaBand';
-import { MkRateWidget } from '@/components/features/MkRateWidget';
-import { MkCalculator } from '@/components/features/MkCalculator';
 import { GoldCalculatorUnlocked } from '@/components/sections/GoldCalculatorSection';
 import { MkSeal } from '@/components/ui/MkSeal';
 import { MkButton } from '@/components/ui/MkButton';
 import { MkLeadPopup } from '@/components/features/MkLeadPopup';
-import { MkEmergency } from '@/components/features/MkEmergency';
 import { BRANCHES, type Branch } from '@/lib/branch-router';
 import { getUtmParams } from '@/lib/utm';
 import type { FaqItem } from '@/lib/db/faqs';
 
 const CITIES = ['Bangalore', 'Mysore', 'Mangalore', 'Davangere'] as const;
 type City = typeof CITIES[number];
-
-/* ─── City SVG map definitions ─────────────────────────────────── */
-
-interface CityMapDef {
-  bbox: { minLat: number; maxLat: number; minLng: number; maxLng: number };
-  vw: number; vh: number;
-  roads: { d: string; type: 'highway' | 'major' | 'minor' }[];
-  landmarks: { x: number; y: number; label: string }[];
-}
-
-const CITY_MAPS: Record<City, CityMapDef> = {
-  Bangalore: {
-    bbox: { minLat: 12.88, maxLat: 13.05, minLng: 77.49, maxLng: 77.78 },
-    vw: 500, vh: 320,
-    roads: [
-      { d: 'M 140,20 C 250,6 420,58 448,148 C 468,228 408,304 278,318 C 178,328 55,298 25,228 C 0,168 20,72 82,42 C 106,28 124,20 140,20 Z', type: 'highway' },
-      { d: 'M 100,130 L 40,18', type: 'major' },
-      { d: 'M 138,128 L 128,0', type: 'major' },
-      { d: 'M 0,148 L 500,148', type: 'major' },
-      { d: 'M 220,148 L 248,320', type: 'major' },
-      { d: 'M 178,215 L 178,320', type: 'major' },
-      { d: 'M 200,130 L 500,55', type: 'major' },
-      { d: 'M 138,148 L 0,268', type: 'major' },
-      { d: 'M 100,80 L 100,230', type: 'minor' },
-      { d: 'M 265,220 L 390,310', type: 'minor' },
-      { d: 'M 262,95 L 262,220', type: 'minor' },
-      { d: 'M 390,135 L 500,135', type: 'minor' },
-    ],
-    landmarks: [
-      { x: 145, y: 154, label: 'Majestic' },
-      { x: 265, y: 142, label: 'Indiranagar' },
-      { x: 463, y: 160, label: 'Whitefield' },
-    ],
-  },
-  Mysore: {
-    bbox: { minLat: 12.27, maxLat: 12.37, minLng: 76.59, maxLng: 76.67 },
-    vw: 400, vh: 340,
-    roads: [
-      { d: 'M 152,58 C 248,28 358,80 374,178 C 388,260 322,322 224,334 C 138,342 46,298 26,220 C 8,152 38,76 92,52 C 116,44 136,54 152,58 Z', type: 'highway' },
-      { d: 'M 248,28 L 248,340', type: 'major' },
-      { d: 'M 20,228 L 395,228', type: 'major' },
-      { d: 'M 248,228 L 26,154', type: 'major' },
-      { d: 'M 248,228 L 400,175', type: 'major' },
-      { d: 'M 166,165 L 248,228', type: 'minor' },
-      { d: 'M 108,102 L 248,228', type: 'minor' },
-    ],
-    landmarks: [
-      { x: 258, y: 245, label: 'Palace' },
-      { x: 175, y: 178, label: 'Gokulam' },
-    ],
-  },
-  Mangalore: {
-    bbox: { minLat: 12.84, maxLat: 12.91, minLng: 74.81, maxLng: 74.88 },
-    vw: 400, vh: 340,
-    roads: [
-      { d: 'M 194,20 L 194,320', type: 'highway' },
-      { d: 'M 20,200 L 380,200', type: 'major' },
-      { d: 'M 20,220 L 380,220', type: 'major' },
-      { d: 'M 194,130 L 320,60', type: 'major' },
-      { d: 'M 210,100 L 395,38', type: 'minor' },
-      { d: 'M 60,182 L 380,182', type: 'minor' },
-      { d: 'M 100,140 L 300,140', type: 'minor' },
-    ],
-    landmarks: [
-      { x: 200, y: 210, label: 'Hampankatta' },
-      { x: 208, y: 128, label: 'Kadri' },
-    ],
-  },
-  Davangere: {
-    bbox: { minLat: 14.44, maxLat: 14.50, minLng: 75.89, maxLng: 75.96 },
-    vw: 400, vh: 300,
-    roads: [
-      { d: 'M 0,182 L 400,182', type: 'highway' },
-      { d: 'M 182,20 L 182,300', type: 'major' },
-      { d: 'M 0,142 L 400,142', type: 'major' },
-      { d: 'M 182,150 L 390,58', type: 'minor' },
-      { d: 'M 182,195 L 95,300', type: 'minor' },
-      { d: 'M 95,160 L 295,160', type: 'minor' },
-    ],
-    landmarks: [
-      { x: 195, y: 175, label: 'PJ Extension' },
-    ],
-  },
-};
 
 
 /* ─── Callback form ────────────────────────────────────────────── */
@@ -382,6 +296,7 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
     markersRef.current.forEach(({ marker }) => { marker.map = null; });
     markersRef.current = [];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let map: any;
     try {
       map = new g.Map(mapDivRef.current, {
@@ -395,6 +310,7 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
         clickableIcons: false,
       });
     } catch {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMapError(true);
       return;
     }
@@ -421,6 +337,7 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
       markersRef.current.forEach(({ marker }) => { marker.map = null; });
       markersRef.current = [];
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [city, mapsReady]);
 
   // Update marker pin colours when activeBranch changes (no map re-init)
@@ -653,7 +570,7 @@ const TRUST_BADGES = ['GST Registered', 'ISO 9001:2015', 'XRF Certified' /* , '1
 /* ─── Auto-spinning trust coin ──────────────────────────────────── */
 
 function TrustCoin() {
-  const faceStyle: React.CSSProperties = { position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' };
+  const faceStyle: React.CSSProperties = { position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as const, display: 'flex', alignItems: 'center', justifyContent: 'center' };
   return (
     <div className="mk-trust__seals reveal">
       <div style={{ width: '130px', height: '130px', perspective: '600px', position: 'relative' }}>
@@ -766,8 +683,8 @@ function LocalStepsSection() {
         <nav className="sc-cta-bar" aria-label="Quick navigation">
           <a href="#find-branch" className="sc-cta-bar__link">Find Nearest Branch</a>
           <a href="#gold-rate" className="sc-cta-bar__link">Live Gold Rate</a>
-          <a href="/contact" className="sc-cta-bar__link">Contact Us</a>
-          <a href="/sell-gold" className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</a>
+          <Link href="/contact" className="sc-cta-bar__link">Contact Us</Link>
+          <Link href="/sell-gold" className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</Link>
         </nav>
       </div>
     </section>
@@ -854,9 +771,9 @@ function BottomNav() {
             <span className="sc-bn-live-dot" aria-hidden="true" />
             Live Gold Rate
           </a>
-          <a href="/sell-gold" className="sc-bn-btn sc-bn-btn--primary">
+          <Link href="/sell-gold" className="sc-bn-btn sc-bn-btn--primary">
             Sell Gold
-          </a>
+          </Link>
           <span className="sc-bn-sep" aria-hidden="true" />
           <a href={`tel:${process.env.NEXT_PUBLIC_PHONE_DEFAULT ?? '+917019500600'}`} className="sc-bn-btn sc-bn-btn--call">
             Call Us
@@ -932,7 +849,7 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
         }
       })
       .catch(() => { /* keep current banners */ });
-  }, []);
+  }, [initialBanners.length]);
 
   useEffect(() => {
     const el = progressBarRef.current;
@@ -959,9 +876,6 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
     return () => clearInterval(id);
   }, [slideCount]);
 
-  function goToSlide(i: number) {
-    setSlide(i);
-  }
 
   return (
     <>
@@ -1054,10 +968,10 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
                 position: 'relative',
                 transformStyle: 'preserve-3d',
               }}>
-                <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as const, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <MkSeal variant="en" size="lg" />
                 </div>
-                <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', transform: 'rotateY(180deg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as const, transform: 'rotateY(180deg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <MkSeal variant="kn" size="lg" />
                 </div>
               </div>
@@ -1140,8 +1054,8 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
             <nav className="sc-cta-bar sc-cta-bar--dark" aria-label="Quick navigation">
               <a href="#find-branch" className="sc-cta-bar__link">Find Nearest Branch</a>
               <a href="#gold-rate" className="sc-cta-bar__link">Live Gold Rate</a>
-              <a href="/contact" className="sc-cta-bar__link">Contact Us</a>
-              <a href="/sell-gold" className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</a>
+              <Link href="/contact" className="sc-cta-bar__link">Contact Us</Link>
+              <Link href="/sell-gold" className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</Link>
             </nav>
           </div>
         </section>

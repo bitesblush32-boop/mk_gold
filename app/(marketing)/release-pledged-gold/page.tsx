@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const revalidate = 3600; // ISR: content changes infrequently
 
@@ -84,9 +85,9 @@ export default async function PledgedGoldPage() {
               alignItems: 'center',
             }}
           >
-            <a href="/" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none' }}>
+            <Link href="/" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none' }}>
               Home
-            </a>
+            </Link>
             <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.2)' }}>›</span>
             <span style={{ color: 'var(--gold)' }}>Release Pledged Gold</span>
           </nav>

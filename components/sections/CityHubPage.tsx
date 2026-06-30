@@ -1,6 +1,7 @@
 // Shared server component for all four city hub pages (N14)
 // Used by: sell-gold-bangalore · sell-gold-mysore · sell-gold-mangalore · sell-gold-davangere
 
+import Link from 'next/link';
 import { BRANCHES } from '@/lib/branch-router';
 import type { Branch } from '@/lib/branch-router';
 import { MkNavbar }        from '@/components/layout/MkNavbar';
@@ -348,7 +349,7 @@ export function CityHubPage({ city }: CityHubPageProps) {
         <div className="mk-container mk-hub-rate-banner__inner">
           <span className="mk-hub-rate-banner__label">Live rate — updated every 5 min</span>
           <MkRateWidget variant="compact" />
-          <a
+          <Link
             href="/gold-rate-today"
             style={{
               fontFamily: 'Poppins, sans-serif',
@@ -360,7 +361,7 @@ export function CityHubPage({ city }: CityHubPageProps) {
             }}
           >
             Full rate page
-          </a>
+          </Link>
         </div>
       </div>
 

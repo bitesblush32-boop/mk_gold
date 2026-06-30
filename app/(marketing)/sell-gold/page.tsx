@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const revalidate = 3600; // ISR: FAQ content changes infrequently
 
@@ -104,9 +105,9 @@ export default async function SellGoldPage() {
               alignItems: 'center',
             }}
           >
-            <a href="/" style={{ color: 'rgba(255,255,255,0.45)', textDecoration: 'none' }}>
+            <Link href="/" style={{ color: 'rgba(255,255,255,0.45)', textDecoration: 'none' }}>
               Home
-            </a>
+            </Link>
             <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.25)' }}>›</span>
             <span style={{ color: 'var(--gold)' }}>Sell Gold</span>
           </nav>

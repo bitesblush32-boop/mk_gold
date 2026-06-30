@@ -5,7 +5,6 @@ import {
   getPostByIdAdmin,
   createPost,
   updatePost,
-  publishPost,
   deletePost,
   getPostBySlug,
 } from '@/lib/db/blog';

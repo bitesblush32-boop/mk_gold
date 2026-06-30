@@ -25,7 +25,7 @@ export function MkFooterCoin() {
         <div style={{
           position: 'absolute', inset: 0,
           backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden' as 'hidden',
+          WebkitBackfaceVisibility: 'hidden' as const,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <MkSeal variant="en" size="md" />
@@ -35,7 +35,7 @@ export function MkFooterCoin() {
         <div style={{
           position: 'absolute', inset: 0,
           backfaceVisibility: 'hidden',
-          WebkitBackfaceVisibility: 'hidden' as 'hidden',
+          WebkitBackfaceVisibility: 'hidden' as const,
           transform: 'rotateY(180deg)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
