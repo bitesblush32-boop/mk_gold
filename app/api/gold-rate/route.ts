@@ -18,9 +18,14 @@ interface VariationState {
 
 let variationState: VariationState | null = null;
 
-/** True random offset in the range -200 … +200 */
-function randomOffset(): number {
-  return Math.round(Math.random() * 400 - 200);
+/** Random offset ±100 for 24K */
+function randomOffset24k(): number {
+  return Math.round(Math.random() * 200 - 100);
+}
+
+/** Random offset ±50 for 22K */
+function randomOffset22k(): number {
+  return Math.round(Math.random() * 100 - 50);
 }
 
 /** Random interval between 2 and 3 seconds (in ms) */
@@ -30,8 +35,8 @@ function randomInterval(): number {
 
 /** Build a fresh variation snapshot from the admin base rates */
 function refreshVariation(base24k: number, base22k: number): VariationState {
-  const off24 = randomOffset();
-  const off22 = randomOffset();
+  const off24 = randomOffset24k();
+  const off22 = randomOffset22k();
   return {
     rate24k:      Math.round(base24k + off24),
     rate22k:      Math.round(base22k + off22),
