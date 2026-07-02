@@ -78,11 +78,15 @@ function BranchCard({
 
 /* ─── Main component ─────────────────────────────────────────── */
 
-export function MkBranchFinder() {
+export function MkBranchFinder({ allowedSlugs }: { allowedSlugs?: string[] } = {}) {
   const [city, setCity] = useState<City>('Bangalore');
   const [search, setSearch] = useState('');
   const [geoState, setGeoState] = useState<GeoState>('idle');
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
+
+  const SOURCE = allowedSlugs
+    ? BRANCHES.filter((b) => allowedSlugs.includes(b.slug))
+    : BRANCHES;
 
   function handleGeoLocate() {
     if (!navigator.geolocation) {
@@ -110,7 +114,7 @@ export function MkBranchFinder() {
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
-    return BRANCHES.filter((b) => {
+    return SOURCE.filter((b) => {
       const cityMatch = city === 'All' || b.city === city;
       const searchMatch =
         !term ||

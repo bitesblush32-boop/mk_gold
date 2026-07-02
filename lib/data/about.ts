@@ -18,8 +18,8 @@ export const VALUES = [
 ] as const;
 
 export const CITIES = [
-  { name: 'Bangalore', branches: 10, href: '/sell-gold-bangalore' },
-  { name: 'Mysore',    branches: 3,  href: '/sell-gold-mysore' },
-  { name: 'Mangalore', branches: 2,  href: '/sell-gold-mangalore' },
-  { name: 'Davangere', branches: 1,  href: '/sell-gold-davangere' },
+  { name: 'Bangalore', branches: 2,  href: '/sell-gold-bangalore', comingSoon: false },
+  { name: 'Mysore',    branches: 0,  href: '/sell-gold-mysore',    comingSoon: true  },
+  { name: 'Mangalore', branches: 0,  href: '/sell-gold-mangalore', comingSoon: true  },
+  { name: 'Davangere', branches: 0,  href: '/sell-gold-davangere', comingSoon: true  },
 ] as const;

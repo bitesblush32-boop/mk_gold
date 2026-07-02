@@ -18,14 +18,14 @@ interface VariationState {
 
 let variationState: VariationState | null = null;
 
-/** Random offset ±100 for 24K */
+/** Random offset ±50 for 24K */
 function randomOffset24k(): number {
-  return Math.round(Math.random() * 200 - 100);
+  return Math.round(Math.random() * 100 - 50);
 }
 
-/** Random offset ±50 for 22K */
+/** Random offset ±100 for 22K */
 function randomOffset22k(): number {
-  return Math.round(Math.random() * 100 - 50);
+  return Math.round(Math.random() * 200 - 100);
 }
 
 /** Random interval between 2 and 3 seconds (in ms) */

@@ -588,17 +588,29 @@ export default function AboutPage() {
           {/* City cards */}
           <div className="mk-city-grid">
             {CITIES.map((city, i) => (
-              <a
-                key={city.name}
-                href={city.href}
-                className={`mk-city-card reveal delay-${i + 1}`}
-              >
-                <span className="mk-city-card__count">{city.branches}</span>
-                <span className="mk-city-card__unit">
-                  {city.branches === 1 ? 'branch' : 'branches'}
-                </span>
-                <span className="mk-city-card__name">{city.name}</span>
-              </a>
+              city.comingSoon ? (
+                <div
+                  key={city.name}
+                  className={`mk-city-card mk-city-card--coming-soon reveal delay-${i + 1}`}
+                  aria-label={`${city.name} — Coming Soon`}
+                >
+                  <span className="mk-city-card__count" style={{ color: 'var(--mist)', fontSize: 'var(--t-h3)' }}>Soon</span>
+                  <span className="mk-city-card__unit" style={{ color: 'var(--mist)', fontStyle: 'italic' }}>coming soon</span>
+                  <span className="mk-city-card__name">{city.name}</span>
+                </div>
+              ) : (
+                <a
+                  key={city.name}
+                  href={city.href}
+                  className={`mk-city-card reveal delay-${i + 1}`}
+                >
+                  <span className="mk-city-card__count">{city.branches}</span>
+                  <span className="mk-city-card__unit">
+                    {city.branches === 1 ? 'branch' : 'branches'}
+                  </span>
+                  <span className="mk-city-card__name">{city.name}</span>
+                </a>
+              )
             ))}
           </div>
 

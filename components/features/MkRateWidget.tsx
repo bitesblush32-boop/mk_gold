@@ -84,26 +84,36 @@ function RateGrid({ rates }: { rates: KaratRate[] }) {
   );
 }
 
-function MarginRow({ mcxRate }: { mcxRate: number }) {
-  const mkBuying = Math.round(mcxRate * 0.975);
+// Fixed per-gram deductions below MCX: 24K = ₹50/g, 22K = ₹100/g
+const KARAT_DEDUCTION: Record<number, number> = { 24: 50, 22: 100 };
+
+function MarginRow({ rates }: { rates: KaratRate[] }) {
   return (
     <div className="mk-rate-widget__margin-row" aria-label="Transparent pricing">
-      <div className="mk-rate-widget__margin-item">
-        <span className="mk-rate-widget__margin-label">MCX Rate</span>
-        <span className="mk-rate-widget__margin-val">
-          {fmt(mcxRate)}<span className="mk-rate-widget__per">/10g</span>
-        </span>
-      </div>
-      <div className="mk-rate-widget__margin-sep" aria-hidden="true" />
-      <div className="mk-rate-widget__margin-item">
-        <span className="mk-rate-widget__margin-label">MK Gold Buying</span>
-        <span className="mk-rate-widget__margin-val">
-          {fmt(mkBuying)}<span className="mk-rate-widget__per">/10g</span>
-        </span>
-      </div>
-      <div className="mk-rate-widget__margin-pill" aria-label="We pay 97.5% of MCX">
-        97.5%
-      </div>
+      {rates.map((r, i) => {
+        const deduction = KARAT_DEDUCTION[r.karat] ?? 50;
+        const mkBuying = r.value - deduction;
+        return (
+          <div key={r.karat} style={{ display: 'contents' }}>
+            {i > 0 && <div className="mk-rate-widget__margin-sep" aria-hidden="true" />}
+            <div className="mk-rate-widget__margin-item">
+              <span className="mk-rate-widget__margin-label">MCX {r.karat}K</span>
+              <span className="mk-rate-widget__margin-val">
+                {fmt(r.value)}<span className="mk-rate-widget__per">/g</span>
+              </span>
+            </div>
+            <div className="mk-rate-widget__margin-item">
+              <span className="mk-rate-widget__margin-label">MK Buying {r.karat}K</span>
+              <span className="mk-rate-widget__margin-val">
+                {fmt(mkBuying)}<span className="mk-rate-widget__per">/g</span>
+              </span>
+            </div>
+            <div className="mk-rate-widget__margin-pill" aria-label={`₹${deduction} below MCX`}>
+              ₹{deduction} below
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -137,7 +147,8 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
 
   const selectedRate = rates.find((r) => r.karat === Number(purity))?.value ?? 0;
   const weightNum = parseFloat(weight) || 0;
-  const estimate = weightNum > 0 ? Math.round(selectedRate * weightNum * 0.975) : null;
+  const calcDeduction = KARAT_DEDUCTION[Number(purity)] ?? 50;
+  const estimate = weightNum > 0 ? Math.round((selectedRate - calcDeduction) * weightNum) : null;
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) return;
@@ -174,7 +185,8 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
         : gateForm.weight === 'over100' ? 100
           : undefined;
     const estRate = puritiyKarat ? rates.find(r => r.karat === puritiyKarat)?.value : undefined;
-    const estimatedValue = estRate && weightGrams ? Math.round(estRate * weightGrams * 0.975) : undefined;
+    const gateDeduction = puritiyKarat ? (KARAT_DEDUCTION[puritiyKarat] ?? 50) : 50;
+    const estimatedValue = estRate && weightGrams ? Math.round((estRate - gateDeduction) * weightGrams) : undefined;
 
     try {
       const res = await fetch('/api/leads', {
@@ -255,7 +267,7 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
           <>
             {isError && <StaleNotice lastUpdated={lastUpdated} />}
             <RateGrid rates={rates} />
-            {mcxRate > 0 && <MarginRow mcxRate={mcxRate} />}
+            {rates.length > 0 && <MarginRow rates={rates} />}
           </>
         )}
       </div>
@@ -293,7 +305,7 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
           {isError && <StaleNotice lastUpdated={lastUpdated} />}
 
           <RateGrid rates={rates} />
-          {mcxRate > 0 && <MarginRow mcxRate={mcxRate} />}
+          {rates.length > 0 && <MarginRow rates={rates} />}
 
           {/* Calculator — gated behind lead form */}
           {!calcUnlocked ? (

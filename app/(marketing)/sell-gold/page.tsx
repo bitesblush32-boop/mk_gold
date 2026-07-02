@@ -547,7 +547,7 @@ export default async function SellGoldPage() {
       <MkTrust />
 
       {/* ── 8. BRANCH FINDER ────────────────────────────────────── */}
-      <MkBranchFinder />
+      <MkBranchFinder allowedSlugs={['sell-gold-jayanagar', 'sell-gold-basaveshwaranagar']} />
 
       {/* ── 9. FAQ ──────────────────────────────────────────────── */}
       <MkFaq variant="sell-gold" faqs={faqs} />

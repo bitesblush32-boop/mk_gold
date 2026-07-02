@@ -138,7 +138,7 @@ const CITY_FAQS: Record<City, FaqItem[]> = {
   Bangalore: [
     {
       q: 'Where can I sell gold in Bangalore?',
-      a: 'MK Gold has 10 branches across Bangalore: Rajajinagar, Malleshwaram, Vijayanagar, Basaveshwaranagar, Yeshwanthpur, Jayanagar, Indiranagar, Koramangala, Whitefield, and JP Nagar. All branches are open Monday to Saturday, 9:30 AM to 7:00 PM. Walk-ins are always welcome — no appointment needed.',
+      a: 'MK Gold has 2 branches across Bangalore: Rajajinagar, Malleshwaram, Vijayanagar, Basaveshwaranagar, Yeshwanthpur, Jayanagar, Indiranagar, Koramangala, Whitefield, and JP Nagar. All branches are open Monday to Saturday, 9:30 AM to 7:00 PM. Walk-ins are always welcome — no appointment needed.',
     },
     {
       q: 'What is the best gold rate in Bangalore today?',

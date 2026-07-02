@@ -2684,6 +2684,19 @@
   letter-spacing: 0.02em;
 }
 
+.mk-city-card--coming-soon {
+  cursor: default;
+  opacity: 0.55;
+  border-style: dashed;
+  pointer-events: none;
+}
+
+.mk-city-card--coming-soon:hover {
+  transform: none;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
 @media (max-width: 900px) {
   .mk-city-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -3596,7 +3609,7 @@ body {
 /* ── Navbar: glassmorphism panel ──────────────────────────────────── */
 .mk-navbar {
   height: 70px !important;
-  background: transparent !important;
+  /* background: transparent !important; */
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border-bottom: none !important;
