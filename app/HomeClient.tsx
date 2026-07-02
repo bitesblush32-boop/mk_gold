@@ -13,6 +13,9 @@ import { MkSeal } from '@/components/ui/MkSeal';
 import { MkButton } from '@/components/ui/MkButton';
 import { MkLeadPopup } from '@/components/features/MkLeadPopup';
 import { BRANCHES, type Branch } from '@/lib/branch-router';
+
+// Only these two Bangalore branches are live on the landing page
+const BANGALORE_SLUGS = ['sell-gold-jayanagar', 'sell-gold-basaveshwaranagar'];
 import { getUtmParams } from '@/lib/utm';
 import type { FaqItem } from '@/lib/db/faqs';
 
@@ -286,7 +289,9 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
   // Initialize / re-initialize map when city changes OR SDK becomes ready
   useEffect(() => {
     if (!mapsReady || !mapDivRef.current) return;
-    const cityBranches = BRANCHES.filter(b => b.city === city);
+    const cityBranches = city === 'Bangalore'
+      ? BRANCHES.filter(b => BANGALORE_SLUGS.includes(b.slug))
+      : BRANCHES.filter(b => b.city === city);
     const center = CITY_CENTERS[city];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -520,7 +525,9 @@ function BranchFinder() {
         <div className="sc-city-grid reveal delay-2">
           {CITIES.map((city) => {
             const isActive = city === 'Bangalore';
-            const count = BRANCHES.filter(b => b.city.toLowerCase() === city.toLowerCase()).length;
+            const count = city === 'Bangalore'
+              ? BANGALORE_SLUGS.length
+              : BRANCHES.filter(b => b.city.toLowerCase() === city.toLowerCase()).length;
             return (
               <button
                 key={city}
