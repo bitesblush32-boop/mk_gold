@@ -606,7 +606,7 @@ export default function AboutPage() {
                 >
                   <span className="mk-city-card__count">{city.branches}</span>
                   <span className="mk-city-card__unit">
-                    {city.branches === 1 ? 'branch' : 'branches'}
+                    {(city.branches as number) === 1 ? 'branch' : 'branches'}
                   </span>
                   <span className="mk-city-card__name">{city.name}</span>
                 </a>
