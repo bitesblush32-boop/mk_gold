@@ -85,7 +85,7 @@ export function MkFooter() {
                 info@mkgold.in
               </a>
               <address className="mk-footer__address">
-                3rd Block, 29, 2nd, 1st Main Rd, 3rd Stage,<br />
+                #29, 2nd floor, 1st Main Rd, 3rd Block, 3rd Stage,<br />
                 Basaveshwar Nagar, Bengaluru,<br />
                 Karnataka 560079
               </address>
