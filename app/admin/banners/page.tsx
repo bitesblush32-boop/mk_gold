@@ -61,9 +61,17 @@ async function uploadFileToBlob(file: File, prefix: string): Promise<string> {
     console.warn('[banners] blob upload failed, trying local fallback:', blobErr);
   }
 
-  // Path B: Local file-only fallback (localhost / no BLOB_READ_WRITE_TOKEN)
-  // Uses /api/admin/banners/upload-local which ONLY saves the file and returns the URL.
-  // It does NOT create a DB record — that happens separately after both files are uploaded.
+  // Path B: Local file-only fallback — only safe on localhost.
+  // On production (Vercel) the filesystem is read-only, so this will always 500.
+  // If we're not on localhost, surface a clear error instead of a misleading 500.
+  if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
+    throw new Error(
+      'Vercel Blob upload failed on production. ' +
+      'Go to Vercel Dashboard → Storage → [your Blob store] → Access tokens ' +
+      'and ensure BLOB_READ_WRITE_TOKEN is set correctly in the project environment variables, then redeploy.',
+    );
+  }
+
   let uploadFile: Blob;
   try {
     uploadFile = await compressImage(file, 3_500_000);

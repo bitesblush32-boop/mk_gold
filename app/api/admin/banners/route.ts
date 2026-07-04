@@ -36,6 +36,14 @@ export async function GET(req: NextRequest) {
 }
 
 /* ─── POST — save banner record ──────────────────────────────────── */
+// Warn loudly at startup if the Blob token is missing — uploads will 403 on Vercel.
+if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  console.error(
+    '[api/admin/banners] BLOB_READ_WRITE_TOKEN is not set. ' +
+    'Vercel Blob uploads will fail with 403. ' +
+    'Fix: Vercel Dashboard → Storage → [Blob store] → Access tokens → add token to env vars → redeploy.',
+  );
+}
 /*
  * Accepts two shapes:
  *   A) JSON  { src: string, alt: string }   — after a client-side Vercel Blob upload
