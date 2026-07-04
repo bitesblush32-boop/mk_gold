@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { upload } from '@vercel/blob/client';
 
 /**
  * Compress an image to fit within maxBytes using Canvas.
@@ -44,48 +43,26 @@ async function compressImage(file: File, maxBytes = 3_500_000): Promise<Blob> {
 }
 
 /**
- * Upload a single file to Vercel Blob, falling back to FormData on localhost.
- * Returns the CDN URL string, or throws on error.
+ * Compress the file client-side, then POST FormData to our server-side upload route.
+ * The server calls Vercel Blob put() directly using BLOB_READ_WRITE_TOKEN — no client token needed.
  */
 async function uploadFileToBlob(file: File, prefix: string): Promise<string> {
-  // Path A: Vercel Blob client upload (production)
-  try {
-    const safeFilename = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const blob = await upload(
-      `${prefix}${Date.now()}-${safeFilename}`,
-      file,
-      { access: 'public', handleUploadUrl: '/api/admin/banners/upload' },
-    );
-    return blob.url;
-  } catch (blobErr) {
-    console.warn('[banners] blob upload failed, trying local fallback:', blobErr);
-  }
-
-  // Path B: Local file-only fallback — only safe on localhost.
-  // On production (Vercel) the filesystem is read-only, so this will always 500.
-  // If we're not on localhost, surface a clear error instead of a misleading 500.
-  if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
-    throw new Error(
-      'Vercel Blob upload failed on production. ' +
-      'Go to Vercel Dashboard → Storage → [your Blob store] → Access tokens ' +
-      'and ensure BLOB_READ_WRITE_TOKEN is set correctly in the project environment variables, then redeploy.',
-    );
-  }
-
   let uploadFile: Blob;
   try {
     uploadFile = await compressImage(file, 3_500_000);
   } catch {
     uploadFile = file;
   }
+
   const compressedName = file.name.replace(/\.[^.]+$/, '.jpg');
   const fd = new FormData();
   fd.append('file',   new File([uploadFile], compressedName, { type: 'image/jpeg' }));
-  fd.append('prefix', prefix); // e.g. "banners/" or "banners/mobile/"
-  const res  = await fetch('/api/admin/banners/upload-local', { method: 'POST', body: fd });
+  fd.append('prefix', prefix);
+
+  const res  = await fetch('/api/admin/banners/upload-server', { method: 'POST', body: fd });
   const data = await res.json();
-  if (res.ok && data.url) return data.url;
-  throw new Error(data.error ?? 'Local upload failed');
+  if (res.ok && data.url) return data.url as string;
+  throw new Error(data.error ?? 'Upload failed');
 }
 
 interface Banner {
