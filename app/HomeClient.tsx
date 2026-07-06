@@ -688,10 +688,10 @@ function LocalStepsSection() {
 
         {/* ── Quick-nav CTA bar ──────────────────────────────────── */}
         <nav className="sc-cta-bar" aria-label="Quick navigation">
-          <a href="#find-branch" className="sc-cta-bar__link">Find Nearest Branch</a>
+          <a href="#branches" className="sc-cta-bar__link">Find Nearest Branch</a>
           <a href="#gold-rate" className="sc-cta-bar__link">Live Gold Rate</a>
           <Link href="/contact" className="sc-cta-bar__link">Contact Us</Link>
-          <Link href="/sell-gold" className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</Link>
+          <Link href="/sell-gold" className="sc-cta-bar__link">Sell Gold</Link>
         </nav>
       </div>
     </section>
@@ -1059,10 +1059,10 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
 
             {/* ── Quick-nav CTA bar (repeated at bottom of rate section) ── */}
             <nav className="sc-cta-bar sc-cta-bar--dark" aria-label="Quick navigation">
-              <a href="#find-branch" className="sc-cta-bar__link">Find Nearest Branch</a>
+              <a href="#branches" className="sc-cta-bar__link">Find Nearest Branch</a>
               <a href="#gold-rate" className="sc-cta-bar__link">Live Gold Rate</a>
               <Link href="/contact" className="sc-cta-bar__link">Contact Us</Link>
-              <Link href="/sell-gold" className="sc-cta-bar__btn">Sell Gold &nbsp;&#9660;</Link>
+              <Link href="/sell-gold" className="sc-cta-bar__link">Sell Gold</Link>
             </nav>
           </div>
         </section>

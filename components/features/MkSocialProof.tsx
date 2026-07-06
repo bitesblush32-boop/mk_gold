@@ -30,19 +30,17 @@ export function MkSocialProof() {
   const [idx,       setIdx]       = useState(0);
   const [entering,  setEntering]  = useState(true);
 
-  // Don't render on excluded paths
-  if (EXCLUDED_PATHS.includes(pathname)) return null;
+  const excluded = EXCLUDED_PATHS.includes(pathname);
 
   // Show after delay, auto-hide after 45s
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
+    if (excluded) return;
     const t1 = setTimeout(() => setShown(true), SHOW_DELAY_MS);
     const t2 = setTimeout(() => setShown(false), SHOW_DELAY_MS + AUTO_HIDE_MS);
     return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, []);
+  }, [excluded]);
 
   // Rotate messages while shown and not dismissed
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (!shown || dismissed) return;
     const interval = setInterval(() => {
@@ -57,7 +55,7 @@ export function MkSocialProof() {
 
   function dismiss() { setDismissed(true); }
 
-  if (!shown || dismissed) return null;
+  if (excluded || !shown || dismissed) return null;
 
   const msg = MESSAGES[idx];
 
