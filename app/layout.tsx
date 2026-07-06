@@ -127,6 +127,7 @@ export default async function RootLayout({
         <link rel="dns-prefetch" href="https://maps.googleapis.com" />
         <link rel="preconnect" href="https://maps.gstatic.com" crossOrigin="anonymous" />
         {/* Tanker display font — preload + async apply (non-blocking); Poppins + Anek via next/font */}
+        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Tanker&display=swap" />
         <Script id="tanker-font" strategy="afterInteractive">{`
           var l=document.createElement('link');

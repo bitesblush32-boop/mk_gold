@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { BRANCHES, getBranchBySlug, getBranchesByCity } from '@/lib/branch-router';
 import type { Branch } from '@/lib/branch-router';
@@ -178,7 +179,7 @@ export default async function BranchPage({ params }: Props) {
               flexWrap: 'wrap',
             }}
           >
-            <a href="/" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none' }}>Home</a>
+            <Link href="/" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none' }}>Home</Link>
             <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.2)' }}>›</span>
             <a href={`/${citySlug}`} style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none' }}>
               Sell Gold {branch.city}
@@ -607,9 +608,9 @@ export default async function BranchPage({ params }: Props) {
           ) : (
             <p style={{ textAlign: 'center', fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-sm)', color: 'var(--mist)', margin: 0 }}>
               This is our only branch in {branch.city}.{' '}
-              <a href="/contact" style={{ color: 'var(--plum)', fontWeight: 600, textDecoration: 'none' }}>
+              <Link href="/contact" style={{ color: 'var(--plum)', fontWeight: 600, textDecoration: 'none' }}>
                 View all branches across Karnataka &rsaquo;
-              </a>
+              </Link>
             </p>
           )}
         </div>

@@ -62,6 +62,7 @@ export function MkButton(props: MkButtonProps) {
   );
 
   if ("href" in props && props.href !== undefined) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { href, external, variant: _v, size: _s, className: _c, children: _ch, ...rest } = props;
 
     return (
@@ -78,6 +79,7 @@ export function MkButton(props: MkButtonProps) {
     );
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { variant: _v, size: _s, className: _c, children: _ch, ...rest } = props as AsButton;
 
   return (

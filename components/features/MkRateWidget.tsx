@@ -37,7 +37,7 @@ function fmt(v: number) {
 function getTimeAgo(iso: string | null): string {
   if (!iso) return 'a while ago';
   const mins = Math.floor((Date.now() - new Date(iso).getTime()) / 60_000);
-  if (mins < 1)  return 'just now';
+  if (mins < 1) return 'just now';
   if (mins === 1) return '1 min ago';
   return `${mins} min ago`;
 }
@@ -57,7 +57,7 @@ function WidgetSkeleton() {
         {[0, 1].map((i) => (
           <div key={i} className="mk-rw-skeleton__cell">
             <div className="mk-rw-skeleton__bar" style={{ width: '2.5rem', height: '0.6rem' }} />
-            <div className="mk-rw-skeleton__bar" style={{ width: '5rem',   height: '1.3rem' }} />
+            <div className="mk-rw-skeleton__bar" style={{ width: '5rem', height: '1.3rem' }} />
             <div className="mk-rw-skeleton__bar" style={{ width: '3.5rem', height: '0.5rem' }} />
           </div>
         ))}
@@ -84,26 +84,36 @@ function RateGrid({ rates }: { rates: KaratRate[] }) {
   );
 }
 
-function MarginRow({ mcxRate }: { mcxRate: number }) {
-  const mkBuying = Math.round(mcxRate * 0.975);
+// Fixed per-gram deductions below MCX: 24K = ₹50/g, 22K = ₹100/g
+const KARAT_DEDUCTION: Record<number, number> = { 24: 50, 22: 100 };
+
+function MarginRow({ rates }: { rates: KaratRate[] }) {
   return (
     <div className="mk-rate-widget__margin-row" aria-label="Transparent pricing">
-      <div className="mk-rate-widget__margin-item">
-        <span className="mk-rate-widget__margin-label">MCX Rate</span>
-        <span className="mk-rate-widget__margin-val">
-          {fmt(mcxRate)}<span className="mk-rate-widget__per">/10g</span>
-        </span>
-      </div>
-      <div className="mk-rate-widget__margin-sep" aria-hidden="true" />
-      <div className="mk-rate-widget__margin-item">
-        <span className="mk-rate-widget__margin-label">MK Gold Buying</span>
-        <span className="mk-rate-widget__margin-val">
-          {fmt(mkBuying)}<span className="mk-rate-widget__per">/10g</span>
-        </span>
-      </div>
-      <div className="mk-rate-widget__margin-pill" aria-label="We pay 97.5% of MCX">
-        97.5%
-      </div>
+      {rates.map((r, i) => {
+        const deduction = KARAT_DEDUCTION[r.karat] ?? 50;
+        const mkBuying = r.value - deduction;
+        return (
+          <div key={r.karat} style={{ display: 'contents' }}>
+            {i > 0 && <div className="mk-rate-widget__margin-sep" aria-hidden="true" />}
+            <div className="mk-rate-widget__margin-item">
+              <span className="mk-rate-widget__margin-label">MCX {r.karat}K</span>
+              <span className="mk-rate-widget__margin-val">
+                {fmt(r.value)}<span className="mk-rate-widget__per">/g</span>
+              </span>
+            </div>
+            <div className="mk-rate-widget__margin-item">
+              <span className="mk-rate-widget__margin-label">MK Buying {r.karat}K</span>
+              <span className="mk-rate-widget__margin-val">
+                {fmt(mkBuying)}<span className="mk-rate-widget__per">/g</span>
+              </span>
+            </div>
+            <div className="mk-rate-widget__margin-pill" aria-label={`₹${deduction} below MCX`}>
+              ₹{deduction} below
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -123,7 +133,7 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
 
   // Hero-only: calculator gate
   const [calcUnlocked, setCalcUnlocked] = useState(false);
-  const [gateForm, setGateForm] = useState({ name: '', phone: '', goldType: '', weight: '', purity: '' });
+  const [gateForm, setGateForm] = useState({ name: '', phone: '', city: '', pincode: '', goldType: '', weight: '', purity: '', notes: '' });
   const [gateStatus, setGateStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [phoneError, setPhoneError] = useState('');
 
@@ -136,8 +146,9 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
   const [tilt, setTilt] = useState({ x: 0, y: 0, active: false });
 
   const selectedRate = rates.find((r) => r.karat === Number(purity))?.value ?? 0;
-  const weightNum    = parseFloat(weight) || 0;
-  const estimate     = weightNum > 0 ? Math.round(selectedRate * weightNum * 0.975) : null;
+  const weightNum = parseFloat(weight) || 0;
+  const calcDeduction = KARAT_DEDUCTION[Number(purity)] ?? 50;
+  const estimate = weightNum > 0 ? Math.round((selectedRate - calcDeduction) * weightNum) : null;
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) return;
@@ -146,8 +157,8 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
     if (!card) return;
     const { left, top, width, height } = card.getBoundingClientRect();
     setTilt({
-      x:      ((e.clientY - top  - height / 2) / (height / 2)) * 8,
-      y:     -((e.clientX - left - width  / 2) / (width  / 2)) * 8,
+      x: ((e.clientY - top - height / 2) / (height / 2)) * 8,
+      y: -((e.clientX - left - width / 2) / (width / 2)) * 8,
       active: true,
     });
   }, []);
@@ -169,22 +180,29 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
     setGateStatus('loading');
 
     const puritiyKarat = gateForm.purity === '24k' ? 24 : gateForm.purity === '22k' ? 22 : undefined;
-    const weightGrams  = gateForm.weight ? parseFloat(gateForm.weight) : undefined;
-    const estRate      = puritiyKarat ? rates.find(r => r.karat === puritiyKarat)?.value : undefined;
-    const estimatedValue = estRate && weightGrams ? Math.round(estRate * weightGrams * 0.975) : undefined;
+    const weightGrams = gateForm.weight === 'under30' ? 20
+      : gateForm.weight === 'under50' ? 40
+        : gateForm.weight === 'over100' ? 100
+          : undefined;
+    const estRate = puritiyKarat ? rates.find(r => r.karat === puritiyKarat)?.value : undefined;
+    const gateDeduction = puritiyKarat ? (KARAT_DEDUCTION[puritiyKarat] ?? 50) : 50;
+    const estimatedValue = estRate && weightGrams ? Math.round((estRate - gateDeduction) * weightGrams) : undefined;
 
     try {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name:            gateForm.name,
-          phone:           cleanPhone,
-          gold_type:       gateForm.goldType || undefined,
-          weight_grams:    weightGrams != null ? String(weightGrams) : undefined,
-          purity_karat:    puritiyKarat,
+          name: gateForm.name,
+          phone: cleanPhone,
+          city: gateForm.city || undefined,
+          area: gateForm.pincode || undefined,
+          gold_type: gateForm.goldType || undefined,
+          weight_grams: weightGrams != null ? String(weightGrams) : undefined,
+          purity_karat: puritiyKarat,
           estimated_value: estimatedValue != null ? String(estimatedValue) : undefined,
-          source:          'calculator-gate',
+          notes: gateForm.notes || undefined,
+          source: 'calculator-gate',
           ...getUtmParams(),
         }),
       });
@@ -249,7 +267,7 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
           <>
             {isError && <StaleNotice lastUpdated={lastUpdated} />}
             <RateGrid rates={rates} />
-            {mcxRate > 0 && <MarginRow mcxRate={mcxRate} />}
+            {rates.length > 0 && <MarginRow rates={rates} />}
           </>
         )}
       </div>
@@ -287,18 +305,18 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
           {isError && <StaleNotice lastUpdated={lastUpdated} />}
 
           <RateGrid rates={rates} />
-          {mcxRate > 0 && <MarginRow mcxRate={mcxRate} />}
+          {rates.length > 0 && <MarginRow rates={rates} />}
 
           {/* Calculator — gated behind lead form */}
           {!calcUnlocked ? (
             <div className="mk-rate-widget__calc">
-              <p style={{ fontFamily: 'Poppins,sans-serif', fontWeight: 600, fontSize: 'var(--t-sm)', color: 'white', marginBottom: '0.25rem' }}>
+              <p style={{ fontFamily: 'Poppins,sans-serif', fontWeight: 600, fontSize: 'var(--t-sm)', color: 'white', marginBottom: '0.15rem' }}>
                 Request a Call Back
               </p>
-              <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-xs)', color: 'rgba(255,255,255,0.6)', marginBottom: '1rem' }}>
+              <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-xs)', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem' }}>
                 Fill in your details to unlock the calculator
               </p>
-              <form onSubmit={handleGateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+              <form onSubmit={handleGateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 <input type="text" className="mk-input mk-input--dark" placeholder="Full Name" required value={gateForm.name} onChange={e => setGateForm(f => ({ ...f, name: e.target.value }))} />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                   <input
@@ -307,9 +325,10 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
                     placeholder="10-digit mobile number"
                     required
                     inputMode="numeric"
+                    autoComplete="tel"
                     maxLength={10}
                     value={gateForm.phone}
-                    onChange={e => { setGateForm(f => ({ ...f, phone: e.target.value })); setPhoneError(''); }}
+                    onChange={e => { const d = e.target.value.replace(/\D/g, '').slice(0, 10); setGateForm(f => ({ ...f, phone: d })); setPhoneError(''); }}
                   />
                   {phoneError && (
                     <span style={{ fontFamily: 'Poppins,sans-serif', fontSize: '0.72rem', color: '#fca5a5' }}>
@@ -317,6 +336,28 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
                     </span>
                   )}
                 </div>
+                <select className="mk-select mk-select--dark" required value={gateForm.city} onChange={e => setGateForm(f => ({ ...f, city: e.target.value, pincode: '' }))}>
+                  <option value="" disabled>City</option>
+                  <option value="Bangalore">Bangalore</option>
+                  <option value="Mysore">Mysore</option>
+                  <option value="Mangalore">Mangalore</option>
+                  <option value="Davangere">Davangere</option>
+                </select>
+                {gateForm.city === 'Bangalore' && (
+                  <select className="mk-select mk-select--dark" value={gateForm.pincode} onChange={e => setGateForm(f => ({ ...f, pincode: e.target.value }))}>
+                    <option value="">Area / Pincode (optional)</option>
+                    <option value="Rajajinagar – 560010">Rajajinagar – 560010</option>
+                    <option value="Malleshwaram – 560003">Malleshwaram – 560003</option>
+                    <option value="Vijayanagar – 560040">Vijayanagar – 560040</option>
+                    <option value="Basaveshwaranagar – 560079">Basaveshwaranagar – 560079</option>
+                    <option value="Yeshwanthpur – 560022">Yeshwanthpur – 560022</option>
+                    <option value="Jayanagar – 560041">Jayanagar – 560041</option>
+                    <option value="Indiranagar – 560038">Indiranagar – 560038</option>
+                    <option value="Koramangala – 560034">Koramangala – 560034</option>
+                    <option value="Whitefield – 560066">Whitefield – 560066</option>
+                    <option value="JP Nagar – 560078">JP Nagar – 560078</option>
+                  </select>
+                )}
                 <select className="mk-select mk-select--dark" required value={gateForm.goldType} onChange={e => setGateForm(f => ({ ...f, goldType: e.target.value }))}>
                   <option value="" disabled>Gold Type</option>
                   <option value="jewellery">Gold Jewellery</option>
@@ -325,13 +366,19 @@ export function MkRateWidget({ variant = 'hero' }: MkRateWidgetProps) {
                   <option value="broken">Broken / Damaged Gold</option>
                   <option value="pledged">Pledged Gold (bank/NBFC)</option>
                 </select>
-                <input type="number" className="mk-input mk-input--dark" placeholder="Approx. Weight (grams)" min="0.1" step="0.1" value={gateForm.weight} onChange={e => setGateForm(f => ({ ...f, weight: e.target.value }))} />
+                <select className="mk-select mk-select--dark" value={gateForm.weight} onChange={e => setGateForm(f => ({ ...f, weight: e.target.value }))}>
+                  <option value="" disabled>Approx. Weight</option>
+                  <option value="under30">Under 30 gms</option>
+                  <option value="under50">30 – 100 gms</option>
+                  <option value="over100">More than 100 gms</option>
+                </select>
                 <select className="mk-select mk-select--dark" value={gateForm.purity} onChange={e => setGateForm(f => ({ ...f, purity: e.target.value }))}>
                   <option value="" disabled>Gold Purity</option>
                   <option value="24k">24K (Pure / Coins)</option>
                   <option value="22k">22K (Most common)</option>
                   <option value="unknown">Not sure (we test free)</option>
                 </select>
+                <textarea className="mk-textarea" rows={2} placeholder="Any details (optional)" value={gateForm.notes} onChange={e => setGateForm(f => ({ ...f, notes: e.target.value }))} style={{ resize: 'none' }} />
                 <button type="submit" className="mk-btn mk-btn--gold" disabled={gateStatus === 'loading'} style={{ width: '100%', padding: '0.75rem 1.25rem', fontSize: 'var(--t-sm)', opacity: gateStatus === 'loading' ? 0.7 : 1 }}>
                   {gateStatus === 'loading' ? 'Please wait…' : 'Submit & See Calculator'}
                 </button>

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const revalidate = 3600; // ISR: FAQ content changes infrequently
 
@@ -104,9 +105,9 @@ export default async function SellGoldPage() {
               alignItems: 'center',
             }}
           >
-            <a href="/" style={{ color: 'rgba(255,255,255,0.45)', textDecoration: 'none' }}>
+            <Link href="/" style={{ color: 'rgba(255,255,255,0.45)', textDecoration: 'none' }}>
               Home
-            </a>
+            </Link>
             <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.25)' }}>›</span>
             <span style={{ color: 'var(--gold)' }}>Sell Gold</span>
           </nav>
@@ -261,73 +262,131 @@ export default async function SellGoldPage() {
       </section>
 
       {/* ── 3. WHAT WE BUY ──────────────────────────────────────── */}
-      <section className="mk-bg-light section">
+      <style>{`
+        .mk-gt-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1.25rem;
+          margin-top: 3rem;
+        }
+        @media (min-width: 600px) {
+          .mk-gt-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .mk-gt-card {
+          position: relative;
+          overflow: hidden;
+          padding: 2rem 2rem 1.75rem;
+          background: linear-gradient(140deg, rgba(81,37,97,0.55) 0%, rgba(59,24,72,0.85) 100%);
+          border-radius: var(--r-xl);
+          border: 1px solid rgba(223,193,96,0.15);
+          border-top: 3px solid var(--gold);
+          transition: transform 260ms cubic-bezier(0.4,0,0.2,1),
+                      box-shadow 260ms cubic-bezier(0.4,0,0.2,1),
+                      border-color 260ms ease;
+        }
+        .mk-gt-card::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(ellipse at top left, rgba(223,193,96,0.07) 0%, transparent 65%);
+          pointer-events: none;
+        }
+        .mk-gt-card:hover {
+          transform: translateY(-6px);
+          box-shadow: 0 24px 64px rgba(0,0,0,0.45), 0 0 0 1px rgba(223,193,96,0.38);
+          border-color: rgba(223,193,96,0.5);
+        }
+        .mk-gt-card__num {
+          position: absolute;
+          bottom: -1.25rem;
+          right: 1rem;
+          font-family: 'Tanker', serif;
+          font-size: 8rem;
+          line-height: 1;
+          color: rgba(223,193,96,0.055);
+          user-select: none;
+          pointer-events: none;
+          letter-spacing: -0.03em;
+        }
+        .mk-gt-card__purities {
+          display: flex;
+          gap: 0.375rem;
+          flex-wrap: wrap;
+          margin-bottom: 1.375rem;
+        }
+        .mk-gt-card__purity {
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.625rem;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #3B1848;
+          background: var(--gold);
+          padding: 0.2rem 0.65rem;
+          border-radius: 9999px;
+          line-height: 1.5;
+        }
+        .mk-gt-card__title {
+          font-family: 'Tanker', serif;
+          font-size: clamp(1.6rem, 2.8vw, 2.25rem);
+          color: var(--gold);
+          margin: 0 0 0.875rem;
+          line-height: 1.05;
+          position: relative;
+        }
+        .mk-gt-card__desc {
+          font-family: 'Poppins', sans-serif;
+          font-size: var(--t-sm);
+          color: rgba(255,255,255,0.62);
+          line-height: 1.75;
+          margin: 0;
+          position: relative;
+        }
+        .mk-gt-divider {
+          width: 2.5rem;
+          height: 2px;
+          background: linear-gradient(90deg, var(--gold), transparent);
+          margin-bottom: 0.875rem;
+          border-radius: 1px;
+        }
+      `}</style>
+
+      <section className="mk-bg-dark section">
         <div className="mk-container">
           <MkSectionHeader
             tag="What We Buy"
             title="All Types of Gold"
             accentWord="Gold"
-            subtitle="22K and 24K — any type, any age, any condition."
+            dark
+            subtitle="22K and 24K — any type, any age, any condition. Condition does not affect your rate."
           />
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '1.5rem',
-              marginTop: '3rem',
-            }}
-          >
+          <div className="mk-gt-grid">
             {GOLD_TYPES.map((type, i) => (
-              <div
-                key={type.title}
-                className={`mk-card reveal delay-${i + 1}`}
-              >
-                <h3
-                  style={{
-                    fontFamily: 'Tanker, serif',
-                    fontSize: 'var(--t-h4)',
-                    color: 'var(--plum)',
-                    margin: '0 0 0.75rem',
-                  }}
-                >
-                  {type.title}
-                </h3>
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: '0.375rem',
-                    flexWrap: 'wrap',
-                    marginBottom: '0.875rem',
-                  }}
-                >
+              <article key={type.title} className={`mk-gt-card reveal delay-${i + 1}`}>
+                <span className="mk-gt-card__num" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div className="mk-gt-card__purities">
                   {type.purities.map((p) => (
-                    <MkBadge key={p} variant="gold">{p}</MkBadge>
+                    <span key={p} className="mk-gt-card__purity">{p}</span>
                   ))}
                 </div>
-                <p
-                  style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: 'var(--t-sm)',
-                    color: 'var(--ink-mid)',
-                    lineHeight: 1.6,
-                    margin: 0,
-                  }}
-                >
-                  {type.desc}
-                </p>
-              </div>
+                <h3 className="mk-gt-card__title">{type.title}</h3>
+                <div className="mk-gt-divider" aria-hidden="true" />
+                <p className="mk-gt-card__desc">{type.desc}</p>
+              </article>
             ))}
           </div>
 
           <p
             style={{
               fontFamily: 'Poppins, sans-serif',
-              fontSize: 'var(--t-sm)',
-              color: 'var(--mist)',
+              fontSize: 'var(--t-xs)',
+              color: 'rgba(255,255,255,0.28)',
               textAlign: 'center',
-              marginTop: '1.5rem',
-              margin: '1.5rem 0 0',
+              marginTop: '2rem',
+              letterSpacing: '0.02em',
             }}
           >
             We do not buy gold-plated or gold-filled jewellery.
@@ -480,63 +539,53 @@ export default async function SellGoldPage() {
       </section>
 
       {/* ── 6. PAYMENT METHODS ──────────────────────────────────── */}
-      <section className="mk-bg-light section">
+      <style>{`
+        .mk-pm-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1.25rem;
+          margin-top: 3rem;
+        }
+        @media (min-width: 600px) {
+          .mk-pm-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        .mk-gt-card__limit {
+          display: inline-block;
+          font-family: 'Poppins', sans-serif;
+          font-size: 0.625rem;
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--gold);
+          border: 1px solid rgba(223,193,96,0.35);
+          padding: 0.2rem 0.65rem;
+          border-radius: 9999px;
+          margin-bottom: 1.375rem;
+          line-height: 1.5;
+        }
+      `}</style>
+
+      <section className="mk-bg-dark section">
         <div className="mk-container">
           <MkSectionHeader
             tag="Payment"
             title="Get Paid Your Way"
             accentWord="Paid"
+            dark
             subtitle="Choose how you receive your money. All payments are made on the spot."
           />
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '1.5rem',
-              marginTop: '3rem',
-            }}
-          >
+          <div className="mk-pm-grid">
             {PAYMENT_METHODS.map((pm, i) => (
-              <div
-                key={pm.method}
-                className={`mk-card reveal delay-${i + 1}`}
-              >
-                <div
-                  style={{
-                    fontFamily: 'Tanker, serif',
-                    fontSize: 'var(--t-h3)',
-                    color: 'var(--plum)',
-                    marginBottom: '0.25rem',
-                  }}
-                >
-                  {pm.method}
-                </div>
-                <div
-                  style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: 'var(--t-xs)',
-                    fontWeight: 700,
-                    color: 'var(--gold-deep)',
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                    marginBottom: '0.75rem',
-                  }}
-                >
-                  {pm.limit}
-                </div>
-                <p
-                  style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: 'var(--t-sm)',
-                    color: 'var(--ink-mid)',
-                    lineHeight: 1.6,
-                    margin: 0,
-                  }}
-                >
-                  {pm.detail}
-                </p>
-              </div>
+              <article key={pm.method} className={`mk-gt-card reveal delay-${i + 1}`}>
+                <span className="mk-gt-card__num" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div className="mk-gt-card__limit">{pm.limit}</div>
+                <h3 className="mk-gt-card__title">{pm.method}</h3>
+                <div className="mk-gt-divider" aria-hidden="true" />
+                <p className="mk-gt-card__desc">{pm.detail}</p>
+              </article>
             ))}
           </div>
         </div>
@@ -546,7 +595,7 @@ export default async function SellGoldPage() {
       <MkTrust />
 
       {/* ── 8. BRANCH FINDER ────────────────────────────────────── */}
-      <MkBranchFinder />
+      <MkBranchFinder allowedSlugs={['sell-gold-jayanagar', 'sell-gold-basaveshwaranagar']} />
 
       {/* ── 9. FAQ ──────────────────────────────────────────────── */}
       <MkFaq variant="sell-gold" faqs={faqs} />

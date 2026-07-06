@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { MkButton } from '@/components/ui/MkButton';
@@ -54,6 +55,7 @@ export function MkNavbar() {
 
   // Close everything on route change
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMenuOpen(false);
     setServicesOpen(false);
     setMobileServicesOpen(false);
@@ -95,19 +97,21 @@ export function MkNavbar() {
         className={cn('mk-navbar', hidden && 'mk-navbar--hidden')}
         aria-label="Main navigation"
       >
-        <div className="mk-navbar__inner" style={{ maxWidth: '100%' }}>
-          <a href="/" className="mk-navbar__logo-link" aria-label="MK Gold — Home">
-            <Image
-              src="/brand/logo_light_eng.png"
-              alt="MK Gold — Instant Money, Lasting Trust"
-              height={56}
-              width={253}
-              priority
-              className="mk-navbar__logo-img"
-              style={{ height: '56px', width: 'auto' }}
-            />
-          </a>
+        {/* Logo — outside the inner pill */}
+        <Link href="/" className="mk-navbar__logo-link" aria-label="MK Gold — Home">
+          <Image
+            src="/brand/logo_light_eng.png"
+            alt="MK Gold — Instant Money, Lasting Trust"
+            height={56}
+            width={253}
+            priority
+            className="mk-navbar__logo-img"
+            style={{ height: '56px', width: 'auto' }}
+          />
+        </Link>
 
+        {/* Inner pill — nav links + actions only */}
+        <div className="mk-navbar__inner" style={{ maxWidth: '100%' }}>
           {/* Desktop nav */}
           <ul className="mk-navbar__nav" role="list">
 

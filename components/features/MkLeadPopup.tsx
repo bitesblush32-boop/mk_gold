@@ -12,12 +12,13 @@ export function MkLeadPopup() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [form, setForm] = useState({
-    name: '', phone: '', city: '', goldType: '', weight: '', purity: '', message: '',
+    name: '', phone: '', city: '', pincode: '', goldType: '', weight: '', purity: '', message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [phoneError, setPhoneError] = useState('');
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     const t = setTimeout(() => setOpen(true), 2000);
     const onOpen = () => setOpen(true);
@@ -33,7 +34,6 @@ export function MkLeadPopup() {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') dismiss(); };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   function dismiss() {
@@ -53,7 +53,10 @@ export function MkLeadPopup() {
     setStatus('loading');
 
     const puritiyKarat = form.purity === '24k' ? 24 : form.purity === '22k' ? 22 : undefined;
-    const weightGrams  = form.weight ? parseFloat(form.weight) : undefined;
+    const weightGrams = form.weight === 'under30' ? 20
+      : form.weight === 'under50' ? 40
+        : form.weight === 'over100' ? 100
+          : undefined;
 
     try {
       const controller = new AbortController();
@@ -64,14 +67,15 @@ export function MkLeadPopup() {
         headers: { 'Content-Type': 'application/json' },
         signal: controller.signal,
         body: JSON.stringify({
-          name:         form.name,
-          phone:        cleanPhone,
-          city:         form.city || undefined,
-          gold_type:    form.goldType || undefined,
+          name: form.name,
+          phone: cleanPhone,
+          city: form.city || undefined,
+          area: form.pincode || undefined,
+          gold_type: form.goldType || undefined,
           weight_grams: weightGrams != null ? String(weightGrams) : undefined,
           purity_karat: puritiyKarat,
-          notes:        form.message || undefined,
-          source:       'popup-lead-form',
+          notes: form.message || undefined,
+          source: 'popup-lead-form',
           ...getUtmParams(),
         }),
       });
@@ -192,9 +196,15 @@ export function MkLeadPopup() {
                     placeholder="10-digit mobile number"
                     required
                     inputMode="numeric"
+                    autoComplete="tel"
+                    pattern="[6-9][0-9]{9}"
                     maxLength={10}
                     value={form.phone}
-                    onChange={e => { setForm(f => ({ ...f, phone: e.target.value })); setPhoneError(''); }}
+                    onChange={e => {
+                      const digits = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      setForm(f => ({ ...f, phone: digits }));
+                      setPhoneError('');
+                    }}
                   />
                   {phoneError && (
                     <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: '0.72rem', color: '#dc2626', margin: '0.25rem 0 0' }}>
@@ -205,7 +215,7 @@ export function MkLeadPopup() {
                 <div>
                   <label className="lp-form-label">City</label>
                   <select className="mk-select" required
-                    value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))}>
+                    value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value, pincode: '' }))}>
                     <option value="" disabled>Select your city</option>
                     <option value="Bangalore">Bangalore</option>
                     <option value="Mysore">Mysore</option>
@@ -213,6 +223,25 @@ export function MkLeadPopup() {
                     <option value="Davangere">Davangere</option>
                   </select>
                 </div>
+                {form.city === 'Bangalore' && (
+                  <div>
+                    <label className="lp-form-label">Nearest Area / Pincode</label>
+                    <select className="mk-select"
+                      value={form.pincode} onChange={e => setForm(f => ({ ...f, pincode: e.target.value }))}>
+                      <option value="">Select your area (optional)</option>
+                      <option value="Rajajinagar – 560010">Rajajinagar – 560010</option>
+                      <option value="Malleshwaram – 560003">Malleshwaram – 560003</option>
+                      <option value="Vijayanagar – 560040">Vijayanagar – 560040</option>
+                      <option value="Basaveshwaranagar – 560079">Basaveshwaranagar – 560079</option>
+                      <option value="Yeshwanthpur – 560022">Yeshwanthpur – 560022</option>
+                      <option value="Jayanagar – 560041">Jayanagar – 560041</option>
+                      <option value="Indiranagar – 560038">Indiranagar – 560038</option>
+                      <option value="Koramangala – 560034">Koramangala – 560034</option>
+                      <option value="Whitefield – 560066">Whitefield – 560066</option>
+                      <option value="JP Nagar – 560078">JP Nagar – 560078</option>
+                    </select>
+                  </div>
+                )}
                 <div>
                   <label className="lp-form-label">Gold Type</label>
                   <select className="mk-select" required
@@ -226,9 +255,14 @@ export function MkLeadPopup() {
                   </select>
                 </div>
                 <div>
-                  <label className="lp-form-label">Approx. Weight (grams)</label>
-                  <input type="number" className="mk-input" placeholder="e.g. 20" min="1"
-                    value={form.weight} onChange={e => setForm(f => ({ ...f, weight: e.target.value }))} />
+                  <label className="lp-form-label">Approx. Weight</label>
+                  <select className="mk-select"
+                    value={form.weight} onChange={e => setForm(f => ({ ...f, weight: e.target.value }))}>
+                    <option value="" disabled>Select weight range</option>
+                    <option value="under30">Under 30 gms</option>
+                    <option value="under50">30 – 100 gms</option>
+                    <option value="over100">More than 100 gms</option>
+                  </select>
                 </div>
                 <div>
                   <label className="lp-form-label">Gold Purity</label>

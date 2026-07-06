@@ -39,16 +39,16 @@ export function MkCalculator({
   showBookingCTA = false,
   defaultUnlocked = false,
 }: MkCalculatorProps) {
-  const uid    = useId();
+  const uid = useId();
   const isDark = variant === 'dark';
 
-  const [unlocked,  setUnlocked]  = useState(defaultUnlocked);
-  const [gateForm,  setGateForm]  = useState({ name: '', phone: '', goldType: '', weight: '', purity: '' });
+  const [unlocked, setUnlocked] = useState(defaultUnlocked);
+  const [gateForm, setGateForm] = useState({ name: '', phone: '', city: '', pincode: '', goldType: '', weight: '', purity: '', notes: '' });
   const [gateStatus, setGateStatus] = useState<'idle' | 'loading' | 'error'>('idle');
   const [phoneError, setPhoneError] = useState('');
 
-  const [purity,    setPurity]    = useState<22 | 24>(22);
-  const [weight,    setWeight]    = useState('');
+  const [purity, setPurity] = useState<22 | 24>(22);
+  const [weight, setWeight] = useState('');
 
   const { baseRate24K, baseRate22K, isLoading } = useGoldRate();
 
@@ -72,8 +72,11 @@ export function MkCalculator({
 
     // Map form field names to API field names
     const puritiyKarat = gateForm.purity === '24k' ? 24 : gateForm.purity === '22k' ? 22 : undefined;
-    const weightGrams  = gateForm.weight ? parseFloat(gateForm.weight) : undefined;
-    const estRate      = puritiyKarat === 24 ? baseRate24K : puritiyKarat === 22 ? baseRate22K : undefined;
+    const weightGrams = gateForm.weight === 'under30' ? 20
+      : gateForm.weight === 'under50' ? 40
+        : gateForm.weight === 'over100' ? 100
+          : undefined;
+    const estRate = puritiyKarat === 24 ? baseRate24K : puritiyKarat === 22 ? baseRate22K : undefined;
     const estimatedValue = estRate && weightGrams ? Math.round(estRate * weightGrams * 0.975) : undefined;
 
     try {
@@ -81,13 +84,16 @@ export function MkCalculator({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name:            gateForm.name,
-          phone:           cleanPhone,
-          gold_type:       gateForm.goldType || undefined,
-          weight_grams:    weightGrams != null ? String(weightGrams) : undefined,
-          purity_karat:    puritiyKarat,
+          name: gateForm.name,
+          phone: cleanPhone,
+          city: gateForm.city || undefined,
+          area: gateForm.pincode || undefined,
+          gold_type: gateForm.goldType || undefined,
+          weight_grams: weightGrams != null ? String(weightGrams) : undefined,
+          purity_karat: puritiyKarat,
           estimated_value: estimatedValue != null ? String(estimatedValue) : undefined,
-          source:          'calculator-gate',
+          notes: gateForm.notes || undefined,
+          source: 'calculator-gate',
           ...getUtmParams(),
         }),
       });
@@ -106,16 +112,16 @@ export function MkCalculator({
     setGateStatus('idle');
   }
 
-  const weightNum     = parseFloat(weight) || 0;
-  const baseRate      = rateMap[purity];
+  const weightNum = parseFloat(weight) || 0;
+  const baseRate = rateMap[purity];
   // MK pays 97.5% of MCX-linked rate; ±2% range covers branch variation
-  const mid           = weightNum > 0
+  const mid = weightNum > 0
     ? Math.round(baseRate * weightNum * 0.975)
     : null;
-  const estimateLow   = mid !== null ? Math.round(mid * 0.98) : null;
-  const estimateHigh  = mid !== null ? Math.round(mid * 1.02) : null;
+  const estimateLow = mid !== null ? Math.round(mid * 0.98) : null;
+  const estimateHigh = mid !== null ? Math.round(mid * 1.02) : null;
 
-  const inputClass  = `mk-input${isDark  ? ' mk-input--dark'  : ''}`;
+  const inputClass = `mk-input${isDark ? ' mk-input--dark' : ''}`;
   const selectClass = `mk-select${isDark ? ' mk-select--dark' : ''}`;
 
   if (!unlocked) {
@@ -136,9 +142,10 @@ export function MkCalculator({
               placeholder="10-digit mobile number"
               required
               inputMode="numeric"
+              autoComplete="tel"
               maxLength={10}
               value={gateForm.phone}
-              onChange={e => { setGateForm(f => ({ ...f, phone: e.target.value })); setPhoneError(''); }}
+              onChange={e => { const d = e.target.value.replace(/\D/g, '').slice(0, 10); setGateForm(f => ({ ...f, phone: d })); setPhoneError(''); }}
             />
             {phoneError && (
               <span style={{ fontFamily: 'Poppins,sans-serif', fontSize: '0.72rem', color: '#ef4444' }}>
@@ -146,6 +153,28 @@ export function MkCalculator({
               </span>
             )}
           </div>
+          <select className="mk-select" required value={gateForm.city} onChange={e => setGateForm(f => ({ ...f, city: e.target.value, pincode: '' }))}>
+            <option value="" disabled>City</option>
+            <option value="Bangalore">Bangalore</option>
+            <option value="Mysore">Mysore</option>
+            <option value="Mangalore">Mangalore</option>
+            <option value="Davangere">Davangere</option>
+          </select>
+          {gateForm.city === 'Bangalore' && (
+            <select className="mk-select" value={gateForm.pincode} onChange={e => setGateForm(f => ({ ...f, pincode: e.target.value }))}>
+              <option value="">Area / Pincode (optional)</option>
+              <option value="Rajajinagar – 560010">Rajajinagar – 560010</option>
+              <option value="Malleshwaram – 560003">Malleshwaram – 560003</option>
+              <option value="Vijayanagar – 560040">Vijayanagar – 560040</option>
+              <option value="Basaveshwaranagar – 560079">Basaveshwaranagar – 560079</option>
+              <option value="Yeshwanthpur – 560022">Yeshwanthpur – 560022</option>
+              <option value="Jayanagar – 560041">Jayanagar – 560041</option>
+              <option value="Indiranagar – 560038">Indiranagar – 560038</option>
+              <option value="Koramangala – 560034">Koramangala – 560034</option>
+              <option value="Whitefield – 560066">Whitefield – 560066</option>
+              <option value="JP Nagar – 560078">JP Nagar – 560078</option>
+            </select>
+          )}
           <select className="mk-select" required value={gateForm.goldType} onChange={e => setGateForm(f => ({ ...f, goldType: e.target.value }))}>
             <option value="" disabled>Gold Type</option>
             <option value="jewellery">Gold Jewellery</option>
@@ -154,13 +183,19 @@ export function MkCalculator({
             <option value="broken">Broken / Damaged Gold</option>
             <option value="pledged">Pledged Gold (bank/NBFC)</option>
           </select>
-          <input type="number" className="mk-input" placeholder="Approx. Weight (grams)" min="0.1" step="0.1" value={gateForm.weight} onChange={e => setGateForm(f => ({ ...f, weight: e.target.value }))} />
+          <select className="mk-select" value={gateForm.weight} onChange={e => setGateForm(f => ({ ...f, weight: e.target.value }))}>
+            <option value="" disabled>Approx. Weight</option>
+            <option value="under30">Under 30 gms</option>
+            <option value="under50">30 – 100 gms</option>
+            <option value="over100">More than 100 gms</option>
+          </select>
           <select className="mk-select" value={gateForm.purity} onChange={e => setGateForm(f => ({ ...f, purity: e.target.value }))}>
             <option value="" disabled>Gold Purity</option>
             <option value="24k">24K (Pure / Coins)</option>
             <option value="22k">22K (Most common)</option>
             <option value="unknown">Not sure (we test free)</option>
           </select>
+          <textarea className="mk-textarea" rows={3} placeholder="Any details (optional)" value={gateForm.notes} onChange={e => setGateForm(f => ({ ...f, notes: e.target.value }))} style={{ resize: 'none' }} />
           <button type="submit" className="mk-btn mk-btn--gold" disabled={gateStatus === 'loading'} style={{ width: '100%', padding: '0.75rem 1.25rem', fontSize: 'var(--t-base)', opacity: gateStatus === 'loading' ? 0.7 : 1 }}>
             {gateStatus === 'loading' ? 'Please wait…' : 'Submit & See Calculator'}
           </button>

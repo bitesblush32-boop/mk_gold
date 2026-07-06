@@ -2,127 +2,67 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { MkNavbar } from '@/components/layout/MkNavbar';
 import { MkTicker } from '@/components/layout/MkTicker';
 import { MkFooter } from '@/components/layout/MkFooter';
 import { MkFaq } from '@/components/sections/MkFaq';
 import { MkCtaBand } from '@/components/sections/MkCtaBand';
-import { MkRateWidget } from '@/components/features/MkRateWidget';
-import { MkCalculator } from '@/components/features/MkCalculator';
 import { GoldCalculatorUnlocked } from '@/components/sections/GoldCalculatorSection';
 import { MkSeal } from '@/components/ui/MkSeal';
 import { MkButton } from '@/components/ui/MkButton';
 import { MkLeadPopup } from '@/components/features/MkLeadPopup';
-import { MkEmergency } from '@/components/features/MkEmergency';
 import { BRANCHES, type Branch } from '@/lib/branch-router';
+
+// Only these two Bangalore branches are live on the landing page
+const BANGALORE_SLUGS = ['sell-gold-jayanagar', 'sell-gold-basaveshwaranagar'];
 import { getUtmParams } from '@/lib/utm';
 import type { FaqItem } from '@/lib/db/faqs';
 
 const CITIES = ['Bangalore', 'Mysore', 'Mangalore', 'Davangere'] as const;
 type City = typeof CITIES[number];
 
-/* ─── City SVG map definitions ─────────────────────────────────── */
-
-interface CityMapDef {
-  bbox: { minLat: number; maxLat: number; minLng: number; maxLng: number };
-  vw: number; vh: number;
-  roads: { d: string; type: 'highway' | 'major' | 'minor' }[];
-  landmarks: { x: number; y: number; label: string }[];
-}
-
-const CITY_MAPS: Record<City, CityMapDef> = {
-  Bangalore: {
-    bbox: { minLat: 12.88, maxLat: 13.05, minLng: 77.49, maxLng: 77.78 },
-    vw: 500, vh: 320,
-    roads: [
-      { d: 'M 140,20 C 250,6 420,58 448,148 C 468,228 408,304 278,318 C 178,328 55,298 25,228 C 0,168 20,72 82,42 C 106,28 124,20 140,20 Z', type: 'highway' },
-      { d: 'M 100,130 L 40,18', type: 'major' },
-      { d: 'M 138,128 L 128,0', type: 'major' },
-      { d: 'M 0,148 L 500,148', type: 'major' },
-      { d: 'M 220,148 L 248,320', type: 'major' },
-      { d: 'M 178,215 L 178,320', type: 'major' },
-      { d: 'M 200,130 L 500,55', type: 'major' },
-      { d: 'M 138,148 L 0,268', type: 'major' },
-      { d: 'M 100,80 L 100,230', type: 'minor' },
-      { d: 'M 265,220 L 390,310', type: 'minor' },
-      { d: 'M 262,95 L 262,220', type: 'minor' },
-      { d: 'M 390,135 L 500,135', type: 'minor' },
-    ],
-    landmarks: [
-      { x: 145, y: 154, label: 'Majestic' },
-      { x: 265, y: 142, label: 'Indiranagar' },
-      { x: 463, y: 160, label: 'Whitefield' },
-    ],
-  },
-  Mysore: {
-    bbox: { minLat: 12.27, maxLat: 12.37, minLng: 76.59, maxLng: 76.67 },
-    vw: 400, vh: 340,
-    roads: [
-      { d: 'M 152,58 C 248,28 358,80 374,178 C 388,260 322,322 224,334 C 138,342 46,298 26,220 C 8,152 38,76 92,52 C 116,44 136,54 152,58 Z', type: 'highway' },
-      { d: 'M 248,28 L 248,340', type: 'major' },
-      { d: 'M 20,228 L 395,228', type: 'major' },
-      { d: 'M 248,228 L 26,154', type: 'major' },
-      { d: 'M 248,228 L 400,175', type: 'major' },
-      { d: 'M 166,165 L 248,228', type: 'minor' },
-      { d: 'M 108,102 L 248,228', type: 'minor' },
-    ],
-    landmarks: [
-      { x: 258, y: 245, label: 'Palace' },
-      { x: 175, y: 178, label: 'Gokulam' },
-    ],
-  },
-  Mangalore: {
-    bbox: { minLat: 12.84, maxLat: 12.91, minLng: 74.81, maxLng: 74.88 },
-    vw: 400, vh: 340,
-    roads: [
-      { d: 'M 194,20 L 194,320', type: 'highway' },
-      { d: 'M 20,200 L 380,200', type: 'major' },
-      { d: 'M 20,220 L 380,220', type: 'major' },
-      { d: 'M 194,130 L 320,60', type: 'major' },
-      { d: 'M 210,100 L 395,38', type: 'minor' },
-      { d: 'M 60,182 L 380,182', type: 'minor' },
-      { d: 'M 100,140 L 300,140', type: 'minor' },
-    ],
-    landmarks: [
-      { x: 200, y: 210, label: 'Hampankatta' },
-      { x: 208, y: 128, label: 'Kadri' },
-    ],
-  },
-  Davangere: {
-    bbox: { minLat: 14.44, maxLat: 14.50, minLng: 75.89, maxLng: 75.96 },
-    vw: 400, vh: 300,
-    roads: [
-      { d: 'M 0,182 L 400,182', type: 'highway' },
-      { d: 'M 182,20 L 182,300', type: 'major' },
-      { d: 'M 0,142 L 400,142', type: 'major' },
-      { d: 'M 182,150 L 390,58', type: 'minor' },
-      { d: 'M 182,195 L 95,300', type: 'minor' },
-      { d: 'M 95,160 L 295,160', type: 'minor' },
-    ],
-    landmarks: [
-      { x: 195, y: 175, label: 'PJ Extension' },
-    ],
-  },
-};
-
 
 /* ─── Callback form ────────────────────────────────────────────── */
 
 function CallbackForm({ onSuccess }: { onSuccess?: () => void }) {
-  const [form, setForm] = useState({ name: '', phone: '', goldType: '', weight: '', purity: '', city: '' });
+  const [form, setForm] = useState({ name: '', phone: '', city: '', pincode: '', goldType: '', weight: '', purity: '', notes: '' });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-
-  const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setForm(prev => ({ ...prev, [k]: e.target.value }));
+  const [phoneError, setPhoneError] = useState('');
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setPhoneError('');
+
+    const cleanPhone = form.phone.replace(/\s/g, '');
+    if (!/^[6-9]\d{9}$/.test(cleanPhone)) {
+      setPhoneError('Enter a valid 10-digit Indian mobile number');
+      return;
+    }
+
+    const purityKarat = form.purity === '24k' ? 24 : form.purity === '22k' ? 22 : undefined;
+    const weightGrams = form.weight === 'under30' ? 20
+      : form.weight === 'under50' ? 40
+        : form.weight === 'over100' ? 100
+          : undefined;
+
     setStatus('loading');
     try {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, source: 'sample-c-callback', ...getUtmParams() }),
+        body: JSON.stringify({
+          name: form.name,
+          phone: cleanPhone,
+          city: form.city || undefined,
+          area: form.pincode || undefined,
+          gold_type: form.goldType || undefined,
+          weight_grams: weightGrams != null ? String(weightGrams) : undefined,
+          purity_karat: purityKarat,
+          notes: form.notes || undefined,
+          source: 'sample-c-callback',
+          ...getUtmParams(),
+        }),
       });
       if (res.ok) { setStatus('success'); if (onSuccess) onSuccess(); }
       else setStatus('error');
@@ -155,47 +95,89 @@ function CallbackForm({ onSuccess }: { onSuccess?: () => void }) {
       <div>
         <label className="mk-calc__label">Your Name</label>
         <input type="text" required className="mk-input" placeholder="Full name"
-          value={form.name} onChange={set('name')} />
+          value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
       </div>
       <div>
         <label className="mk-calc__label">Phone Number</label>
-        <input type="tel" required pattern="[6-9][0-9]{9}" className="mk-input"
-          placeholder="10-digit mobile" value={form.phone} onChange={set('phone')} />
+        <input
+          type="tel" required className={`mk-input${phoneError ? ' mk-input--error' : ''}`}
+          placeholder="10-digit mobile" inputMode="numeric" autoComplete="tel" maxLength={10}
+          value={form.phone}
+          onChange={e => { const d = e.target.value.replace(/\D/g, '').slice(0, 10); setForm(f => ({ ...f, phone: d })); setPhoneError(''); }}
+        />
+        {phoneError && (
+          <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: '0.72rem', color: '#f87171', margin: '0.25rem 0 0' }}>
+            {phoneError}
+          </p>
+        )}
       </div>
       <div>
+        <label className="mk-calc__label">City</label>
+        <select required className="mk-select" value={form.city}
+          onChange={e => setForm(f => ({ ...f, city: e.target.value, pincode: '' }))}>
+          <option value="" disabled>Select your city</option>
+          <option value="Bangalore">Bangalore</option>
+          <option value="Mysore">Mysore</option>
+          <option value="Mangalore">Mangalore</option>
+          <option value="Davangere">Davangere</option>
+        </select>
+      </div>
+      {form.city === 'Bangalore' && (
+        <div>
+          <label className="mk-calc__label">Nearest Area / Pincode</label>
+          <select className="mk-select" value={form.pincode}
+            onChange={e => setForm(f => ({ ...f, pincode: e.target.value }))}>
+            <option value="">Select your area (optional)</option>
+            <option value="Rajajinagar – 560010">Rajajinagar – 560010</option>
+            <option value="Malleshwaram – 560003">Malleshwaram – 560003</option>
+            <option value="Vijayanagar – 560040">Vijayanagar – 560040</option>
+            <option value="Basaveshwaranagar – 560079">Basaveshwaranagar – 560079</option>
+            <option value="Yeshwanthpur – 560022">Yeshwanthpur – 560022</option>
+            <option value="Jayanagar – 560041">Jayanagar – 560041</option>
+            <option value="Indiranagar – 560038">Indiranagar – 560038</option>
+            <option value="Koramangala – 560034">Koramangala – 560034</option>
+            <option value="Whitefield – 560066">Whitefield – 560066</option>
+            <option value="JP Nagar – 560078">JP Nagar – 560078</option>
+          </select>
+        </div>
+      )}
+      <div>
         <label className="mk-calc__label">Gold Type</label>
-        <select className="mk-select" value={form.goldType} onChange={set('goldType')}>
-          <option value="">Select type</option>
-          <option value="jewellery">Jewellery</option>
+        <select className="mk-select" required value={form.goldType}
+          onChange={e => setForm(f => ({ ...f, goldType: e.target.value }))}>
+          <option value="" disabled>Select type</option>
+          <option value="jewellery">Gold Jewellery</option>
           <option value="coins">Gold Coins</option>
           <option value="bars">Gold Bars</option>
-          <option value="broken">Broken / Scrap</option>
-          <option value="pledged">Pledged Gold</option>
+          <option value="broken">Broken / Damaged Gold</option>
+          <option value="pledged">Pledged Gold (bank/NBFC)</option>
+        </select>
+      </div>
+      <div>
+        <label className="mk-calc__label">Approx. Weight</label>
+        <select className="mk-select" value={form.weight}
+          onChange={e => setForm(f => ({ ...f, weight: e.target.value }))}>
+          <option value="" disabled>Select weight range</option>
+          <option value="under30">Under 30 gms</option>
+          <option value="under50">More than 50 gms</option>
+          <option value="over100">More than 100 gms</option>
         </select>
       </div>
       <div>
         <label className="mk-calc__label">Gold Purity</label>
-        <select className="mk-select" value={form.purity} onChange={set('purity')}>
-          <option value="">Select purity</option>
+        <select className="mk-select" value={form.purity}
+          onChange={e => setForm(f => ({ ...f, purity: e.target.value }))}>
+          <option value="" disabled>Select purity</option>
           <option value="24k">24K (Pure / Coins)</option>
           <option value="22k">22K (Most common)</option>
           <option value="unknown">Not sure (we test free)</option>
         </select>
       </div>
       <div>
-        <label className="mk-calc__label">Approx. Weight (g)</label>
-        <input type="number" min="0.1" step="0.1" className="mk-input"
-          placeholder="e.g. 10" value={form.weight} onChange={set('weight')} />
-      </div>
-      <div>
-        <label className="mk-calc__label">Nearest City</label>
-        <select className="mk-select" value={form.city} onChange={set('city')}>
-          <option value="">Select city</option>
-          <option value="bangalore">Bangalore</option>
-          <option value="mysore">Mysore</option>
-          <option value="mangalore">Mangalore</option>
-          <option value="davangere">Davangere</option>
-        </select>
+        <label className="mk-calc__label">Message / Notes</label>
+        <textarea className="mk-textarea" rows={3} placeholder="Any details about your gold (optional)"
+          value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
+          style={{ resize: 'none' }} />
       </div>
       <MkButton type="submit" variant="gold" size="lg"
         style={{ width: '100%', marginTop: '0.25rem' }}
@@ -307,7 +289,9 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
   // Initialize / re-initialize map when city changes OR SDK becomes ready
   useEffect(() => {
     if (!mapsReady || !mapDivRef.current) return;
-    const cityBranches = BRANCHES.filter(b => b.city === city);
+    const cityBranches = city === 'Bangalore'
+      ? BRANCHES.filter(b => BANGALORE_SLUGS.includes(b.slug))
+      : BRANCHES.filter(b => b.city === city);
     const center = CITY_CENTERS[city];
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -317,6 +301,7 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
     markersRef.current.forEach(({ marker }) => { marker.map = null; });
     markersRef.current = [];
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let map: any;
     try {
       map = new g.Map(mapDivRef.current, {
@@ -330,6 +315,7 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
         clickableIcons: false,
       });
     } catch {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMapError(true);
       return;
     }
@@ -356,6 +342,7 @@ function GoogleCityMap({ city, activeBranch, setActiveBranch }: {
       markersRef.current.forEach(({ marker }) => { marker.map = null; });
       markersRef.current = [];
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [city, mapsReady]);
 
   // Update marker pin colours when activeBranch changes (no map re-init)
@@ -538,7 +525,9 @@ function BranchFinder() {
         <div className="sc-city-grid reveal delay-2">
           {CITIES.map((city) => {
             const isActive = city === 'Bangalore';
-            const count = BRANCHES.filter(b => b.city.toLowerCase() === city.toLowerCase()).length;
+            const count = city === 'Bangalore'
+              ? BANGALORE_SLUGS.length
+              : BRANCHES.filter(b => b.city.toLowerCase() === city.toLowerCase()).length;
             return (
               <button
                 key={city}
@@ -588,7 +577,7 @@ const TRUST_BADGES = ['GST Registered', 'ISO 9001:2015', 'XRF Certified' /* , '1
 /* ─── Auto-spinning trust coin ──────────────────────────────────── */
 
 function TrustCoin() {
-  const faceStyle: React.CSSProperties = { position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' };
+  const faceStyle: React.CSSProperties = { position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as const, display: 'flex', alignItems: 'center', justifyContent: 'center' };
   return (
     <div className="mk-trust__seals reveal">
       <div style={{ width: '130px', height: '130px', perspective: '600px', position: 'relative' }}>
@@ -666,22 +655,21 @@ function LocalTrustSection() {
 /* ─── Steps data + local section ───────────────────────────────── */
 
 const SC_STEPS = [
-  { n: '01', title: 'Weight Check',        body: 'Accurate weight checking systems — your gold weighed on certified precision scales in front of you.',          icon: '/weight.png',    alt: 'Weight check scale' },
-  { n: '02', title: 'Purity Verification', body: 'Using advanced XRF Machine — German spectrometer reads exact gold content in under 2 minutes. No acid test.', icon: '/purity.png',    alt: 'XRF purity verification' },
-  { n: '03', title: 'Rate Calculation',    body: 'Based on live markets — your offer is calculated against live MCX rates. We show our margin openly.',          icon: '/rate_calc.png', alt: 'Rate calculation chart' },
-  { n: '04', title: 'Payment Transfer',    body: 'Instant payment to your bank account — receive cash, NEFT, or UPI within 30 minutes of evaluation.',          icon: '/payment.png',   alt: 'Instant payment transfer' },
+  { n: '01', title: 'Weight Check', body: 'Accurate weight checking systems — your gold weighed on certified precision scales in front of you.', icon: '/weight.png', alt: 'Weight check scale' },
+  { n: '02', title: 'Purity Verification', body: 'Using advanced XRF Machine — German spectrometer reads exact gold content in under 2 minutes. No acid test.', icon: '/purity.png', alt: 'XRF purity verification' },
+  { n: '03', title: 'Rate Calculation', body: 'Based on live markets — your offer is calculated against live MCX rates. We show our margin openly.', icon: '/rate_calc.png', alt: 'Rate calculation chart' },
+  { n: '04', title: 'Payment Transfer', body: 'Instant payment to your bank account — receive cash, NEFT, or UPI within 30 minutes of evaluation.', icon: '/payment.png', alt: 'Instant payment transfer' },
 ] as const;
 
 function LocalStepsSection() {
   return (
-    <section className="mk-bg-light section" id="how-it-works">
+    <section className="section" style={{ backgroundColor: '#fff', paddingTop: 'calc(var(--section) - 25px)' }} id="how-it-works">
       <div className="mk-container">
         <div className="reveal" style={{ textAlign: 'center', maxWidth: '42rem', margin: '0 auto 3.5rem' }}>
-          <p className="mk-section-overline">How It Works</p>
-          <h2 className="t-h1" style={{ lineHeight: 1.05, marginBottom: '1rem' }}>
+          <h2 style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, fontSize: 'var(--t-h2)', lineHeight: 1.15, marginBottom: '1rem', color: '#512561' }}>
             Our Gold Evaluation Process
           </h2>
-          <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', lineHeight: 1.65 }}>
+          <p style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-base)', color: '#7B2C91', lineHeight: 1.65 }}>
             We follow a transparent process to ensure you get the best value
           </p>
         </div>
@@ -697,6 +685,14 @@ function LocalStepsSection() {
             </li>
           ))}
         </ol>
+
+        {/* ── Quick-nav CTA bar ──────────────────────────────────── */}
+        <nav className="sc-cta-bar" aria-label="Quick navigation">
+          <a href="#branches" className="sc-cta-bar__link">Find Nearest Branch</a>
+          <a href="#gold-rate" className="sc-cta-bar__link">Live Gold Rate</a>
+          <Link href="/contact" className="sc-cta-bar__link">Contact Us</Link>
+          <Link href="/sell-gold" className="sc-cta-bar__link">Sell Gold</Link>
+        </nav>
       </div>
     </section>
   );
@@ -782,12 +778,12 @@ function BottomNav() {
             <span className="sc-bn-live-dot" aria-hidden="true" />
             Live Gold Rate
           </a>
-          <a href="/sell-gold" className="sc-bn-btn sc-bn-btn--primary">
+          <Link href="/sell-gold" className="sc-bn-btn sc-bn-btn--primary">
             Sell Gold
-          </a>
+          </Link>
           <span className="sc-bn-sep" aria-hidden="true" />
-          <a href={`tel:${process.env.NEXT_PUBLIC_PHONE_DEFAULT ?? '+917019500600'}`} className="sc-bn-phone sc-bn-hide-360">
-            <span className="sc-bn-phone-text sc-bn-hide-900">+91 70195 00600</span>
+          <a href={`tel:${process.env.NEXT_PUBLIC_PHONE_DEFAULT ?? '+917019500600'}`} className="sc-bn-btn sc-bn-btn--call">
+            Call Us
           </a>
           <a
             href={whatsappHref}
@@ -795,6 +791,9 @@ function BottomNav() {
             rel="noopener noreferrer"
             className="sc-bn-btn sc-bn-btn--whatsapp"
           >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style={{ flexShrink: 0 }}>
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
             WhatsApp
           </a>
         </div>
@@ -807,14 +806,16 @@ function BottomNav() {
 
 export default function HomePage({ homeFaqs, initialBanners = [] }: {
   homeFaqs?: FaqItem[];
-  initialBanners?: { src: string; alt: string; src_mobile?: string | null }[];
+  initialBanners?: { src: string | null; alt: string; src_mobile?: string | null }[];
 }) {
   const progressBarRef = useRef<HTMLDivElement>(null);
 
   const [slide, setSlide] = useState(0);
   const [rateUnlocked, setRateUnlocked] = useState(false);
-  const [banners, setBanners] = useState<{ src: string; alt: string; src_mobile?: string | null }[]>(initialBanners);
+  const [banners, setBanners] = useState<{ src: string | null; alt: string; src_mobile?: string | null }[]>(initialBanners);
   const [googleReviews, setGoogleReviews] = useState<{ name: string; area: string; rating: number; text: string; initials: string }[]>([]);
+  // heroReady: false on first render so banner 0 skips its fade-in (no blank purple flash)
+  const [heroReady, setHeroReady] = useState(false);
 
   useEffect(() => {
     fetch('/api/reviews')
@@ -834,6 +835,14 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
   }, []);
 
   useEffect(() => {
+    // Enable hero slide transitions after the first image has had time to paint.
+    // Without this, banner-0 starts at opacity:0 and takes 0.9s to fade in,
+    // causing a visible blank-purple flash on page load.
+    const t = setTimeout(() => setHeroReady(true), 80);
+    return () => clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
     // Only fetch from the API if the server didn't provide banners.
     // When initialBanners is populated it comes from a direct DB read at SSR time
     // and is always fresher than the edge-cached /api/banners response (which can
@@ -843,11 +852,11 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
       .then(r => r.json())
       .then(data => {
         if (Array.isArray(data.banners) && data.banners.length > 0) {
-          setBanners(data.banners.map((b: { src: string; alt: string; src_mobile?: string | null }) => ({ src: b.src, alt: b.alt, src_mobile: b.src_mobile ?? null })));
+          setBanners(data.banners.map((b: { src: string | null; alt: string; src_mobile?: string | null }) => ({ src: b.src || null, alt: b.alt, src_mobile: b.src_mobile ?? null })));
         }
       })
       .catch(() => { /* keep current banners */ });
-  }, []);
+  }, [initialBanners.length]);
 
   useEffect(() => {
     const el = progressBarRef.current;
@@ -861,16 +870,19 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Split into two independent image pools — no shared slide state between them
+  const desktopBanners = banners.filter(b => !!b.src);
+  const mobileBanners = banners.filter(b => !!b.src_mobile);
+  // Cycle count = whichever pool is larger (the smaller wraps around)
+  const slideCount = Math.max(desktopBanners.length, mobileBanners.length, 1);
+
   // Auto-advance banner every 5 seconds
   useEffect(() => {
-    if (banners.length < 2) return;
-    const id = setInterval(() => setSlide(p => (p + 1) % banners.length), 5000);
+    if (slideCount < 2) return;
+    const id = setInterval(() => setSlide(p => (p + 1) % slideCount), 5000);
     return () => clearInterval(id);
-  }, [banners.length]);
+  }, [slideCount]);
 
-  function goToSlide(i: number) {
-    setSlide(i);
-  }
 
   return (
     <>
@@ -898,52 +910,55 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
 
       {/* ── Hero ────────────────────────────────────────────────── */}
       <section className="sc-hero mk-bg-dark" aria-label="Hero">
-        {banners.map((b, i) => (
-          b.src_mobile ? (
-            // Mobile + desktop versions exist — show the right one per screen size
-            <React.Fragment key={b.src}>
-              <Image
-                src={b.src}
-                alt={b.alt}
-                fill
-                sizes="100vw"
-                quality={85}
-                priority={i === 0}
-                className={`sc-hero__banner sc-hero__banner--desktop${i === slide ? ' sc-hero__banner--active' : ''}`}
-                aria-hidden={i !== slide}
-                draggable={false}
-                style={{ objectFit: 'cover' }}
-              />
-              <Image
-                src={b.src_mobile}
-                alt={b.alt}
-                fill
-                sizes="100vw"
-                quality={85}
-                priority={i === 0}
-                className={`sc-hero__banner sc-hero__banner--mobile${i === slide ? ' sc-hero__banner--active' : ''}`}
-                aria-hidden={i !== slide}
-                draggable={false}
-                style={{ objectFit: 'cover' }}
-              />
-            </React.Fragment>
-          ) : (
-            // Desktop-only banner — crops on mobile (existing behaviour)
+        {/* ── Desktop banners — tablet & desktop only, never shown on phones ── */}
+        {desktopBanners.map((b, i) => {
+          const dSlide = slide % Math.max(desktopBanners.length, 1);
+          const isActive = i === dSlide;
+          return (
             <Image
-              key={b.src}
-              src={b.src}
+              key={`desktop-${b.src}-${i}`}
+              src={b.src!}
               alt={b.alt}
               fill
               sizes="100vw"
               quality={85}
               priority={i === 0}
-              className={`sc-hero__banner${i === slide ? ' sc-hero__banner--active' : ''}`}
-              aria-hidden={i !== slide}
+              className={[
+                'sc-hero__banner',
+                'sc-hero__banner--desktop',
+                isActive ? (heroReady ? 'sc-hero__banner--active' : 'sc-hero__banner--first-active') : '',
+              ].filter(Boolean).join(' ')}
+              aria-hidden={!isActive}
               draggable={false}
               style={{ objectFit: 'cover' }}
             />
-          )
-        ))}
+          );
+        })}
+
+        {/* ── Mobile banners — phones only, never shown on tablet/desktop ── */}
+        {mobileBanners.map((b, i) => {
+          const mSlide = slide % Math.max(mobileBanners.length, 1);
+          const isActive = i === mSlide;
+          return (
+            <Image
+              key={`mobile-${b.src_mobile}-${i}`}
+              src={b.src_mobile!}
+              alt={b.alt}
+              fill
+              sizes="100vw"
+              quality={85}
+              priority={i === 0}
+              className={[
+                'sc-hero__banner',
+                'sc-hero__banner--mobile',
+                isActive ? (heroReady ? 'sc-hero__banner--active' : 'sc-hero__banner--first-active') : '',
+              ].filter(Boolean).join(' ')}
+              aria-hidden={!isActive}
+              draggable={false}
+              style={{ objectFit: 'cover' }}
+            />
+          );
+        })}
         <div className="sc-hero__overlay" />
         <div className="sc-grain" />
 
@@ -960,10 +975,10 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
                 position: 'relative',
                 transformStyle: 'preserve-3d',
               }}>
-                <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as const, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <MkSeal variant="en" size="lg" />
                 </div>
-                <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as 'hidden', transform: 'rotateY(180deg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' as const, transform: 'rotateY(180deg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <MkSeal variant="kn" size="lg" />
                 </div>
               </div>
@@ -971,20 +986,32 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
           </div>
         </div>
 
-        {/* Slide dots */}
-        <div className="sc-hero__dots" role="tablist" aria-label="Hero slides">
-          {banners.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goToSlide(i)}
-              className={`sc-hero__dot${slide === i ? ' sc-hero__dot--active' : ''}`}
-              role="tab"
-              aria-selected={slide === i}
-              aria-label={`Slide ${i + 1}`}
-            />
-          ))}
-        </div>
       </section>
+
+      {/* ── Tagline + how-it-works — single white block, no gap possible ── */}
+      <div style={{ position: 'relative', zIndex: 4, backgroundColor: '#fff' }}>
+        <div className="sc-tagline-bridge" aria-hidden="true">
+          <div className="sc-tagline-card">
+            {/* Trapezoid with 7px bezier curves at both top corners — no sharp points */}
+            <svg className="sc-tagline-card__bg" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M 115 0 L 885 0 Q 900 0 910.6 10.6 L 1000 100 L 0 100 L 89.4 10.6 Q 100 0 115 0 Z" fill="#fff" />
+            </svg>
+            <span className="sc-tagline-card__text">Instant Money. Lasting Trust.</span>
+          </div>
+        </div>
+        <LocalStepsSection />
+      </div>
+
+      {/* ── Step divider: gallery cap left 35%, slant 35→37%, rounded corner ── */}
+      <svg
+        aria-hidden="true"
+        style={{ display: 'block', width: '100%', height: '25px', marginBottom: '-25px', position: 'relative', zIndex: 2, pointerEvents: 'none' }}
+        viewBox="0 0 1000 25"
+        preserveAspectRatio="none"
+      >
+        {/* Shape: gallery colour covers 0→37%, slants to 35% bottom, rounded corner, back to 0 */}
+        <path d="M 0 0 L 370 0 L 354.4 19.5 Q 350 25 343 25 L 0 25 Z" fill="#FFFFFF" />
+      </svg>
 
       {/* ── Rate section — continuous dark bg ──────────────────── */}
       <div className="mk-bg-dark sc-no-gap">
@@ -1029,15 +1056,17 @@ export default function HomePage({ homeFaqs, initialBanners = [] }: {
             {rateUnlocked && (
               <GoldCalculatorUnlocked />
             )}
+
+            {/* ── Quick-nav CTA bar (repeated at bottom of rate section) ── */}
+            <nav className="sc-cta-bar sc-cta-bar--dark" aria-label="Quick navigation">
+              <a href="#branches" className="sc-cta-bar__link">Find Nearest Branch</a>
+              <a href="#gold-rate" className="sc-cta-bar__link">Live Gold Rate</a>
+              <Link href="/contact" className="sc-cta-bar__link">Contact Us</Link>
+              <Link href="/sell-gold" className="sc-cta-bar__link">Sell Gold</Link>
+            </nav>
           </div>
         </section>
       </div>{/* end continuous dark: StatBand + Rate */}
-
-      {/* ── How it works ────────────────────────────────────────── */}
-      <LocalStepsSection />
-
-      {/* ── Emergency callout ───────────────────────────────────── */}
-      <MkEmergency />
 
       {/* ── Trust architecture ──────────────────────────────────── */}
       <LocalTrustSection />

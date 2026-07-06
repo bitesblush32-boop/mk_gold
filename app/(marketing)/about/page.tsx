@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const revalidate = false; // Static at build — content from local data only
 
@@ -92,7 +93,7 @@ export default function AboutPage() {
               alignItems: 'center',
             }}
           >
-            <a href="/" style={{ color: 'rgba(255,255,255,0.40)', textDecoration: 'none' }}>Home</a>
+            <Link href="/" style={{ color: 'rgba(255,255,255,0.40)', textDecoration: 'none' }}>Home</Link>
             <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.20)' }}>›</span>
             <span style={{ color: 'var(--gold)' }}>About Us</span>
           </nav>
@@ -587,17 +588,29 @@ export default function AboutPage() {
           {/* City cards */}
           <div className="mk-city-grid">
             {CITIES.map((city, i) => (
-              <a
-                key={city.name}
-                href={city.href}
-                className={`mk-city-card reveal delay-${i + 1}`}
-              >
-                <span className="mk-city-card__count">{city.branches}</span>
-                <span className="mk-city-card__unit">
-                  {city.branches === 1 ? 'branch' : 'branches'}
-                </span>
-                <span className="mk-city-card__name">{city.name}</span>
-              </a>
+              city.comingSoon ? (
+                <div
+                  key={city.name}
+                  className={`mk-city-card mk-city-card--coming-soon reveal delay-${i + 1}`}
+                  aria-label={`${city.name} — Coming Soon`}
+                >
+                  <span className="mk-city-card__count" style={{ color: 'var(--mist)', fontSize: 'var(--t-h3)' }}>Soon</span>
+                  <span className="mk-city-card__unit" style={{ color: 'var(--mist)', fontStyle: 'italic' }}>coming soon</span>
+                  <span className="mk-city-card__name">{city.name}</span>
+                </div>
+              ) : (
+                <a
+                  key={city.name}
+                  href={city.href}
+                  className={`mk-city-card reveal delay-${i + 1}`}
+                >
+                  <span className="mk-city-card__count">{city.branches}</span>
+                  <span className="mk-city-card__unit">
+                    {(city.branches as number) === 1 ? 'branch' : 'branches'}
+                  </span>
+                  <span className="mk-city-card__name">{city.name}</span>
+                </a>
+              )
             ))}
           </div>
 

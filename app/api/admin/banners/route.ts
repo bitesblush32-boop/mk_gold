@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
       await seedDefaultBanners();
       banners = await getAllBanners();
     }
-    return NextResponse.json({ banners });
+    return NextResponse.json({ banners, blob_configured: !!process.env.BLOB_READ_WRITE_TOKEN });
   } catch (err) {
     console.error('[api/admin/banners] GET error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -36,6 +36,14 @@ export async function GET(req: NextRequest) {
 }
 
 /* ─── POST — save banner record ──────────────────────────────────── */
+// Warn loudly at startup if the Blob token is missing — uploads will 403 on Vercel.
+if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  console.error(
+    '[api/admin/banners] BLOB_READ_WRITE_TOKEN is not set. ' +
+    'Vercel Blob uploads will fail with 403. ' +
+    'Fix: Vercel Dashboard → Storage → [Blob store] → Access tokens → add token to env vars → redeploy.',
+  );
+}
 /*
  * Accepts two shapes:
  *   A) JSON  { src: string, alt: string }   — after a client-side Vercel Blob upload
@@ -59,8 +67,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
     }
     const { src, alt, src_mobile } = body;
-    if (!src || !alt) {
-      return NextResponse.json({ error: 'src and alt are required' }, { status: 400 });
+    if (!alt) {
+      return NextResponse.json({ error: 'alt is required' }, { status: 400 });
+    }
+    // src and src_mobile: at least one must be non-empty
+    if (!src && !src_mobile) {
+      return NextResponse.json({ error: 'At least one of src or src_mobile is required' }, { status: 400 });
     }
     try {
       const banner = await createBanner({ src, alt, src_mobile: src_mobile || null, order: 99 });
@@ -89,6 +101,9 @@ export async function POST(req: NextRequest) {
   }
   if (!file.type.startsWith('image/')) {
     return NextResponse.json({ error: 'File must be an image' }, { status: 400 });
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    return NextResponse.json({ error: 'File size exceeds 5 MB limit' }, { status: 400 });
   }
 
   try {

@@ -1,6 +1,7 @@
 // Shared server component for all four city hub pages (N14)
 // Used by: sell-gold-bangalore · sell-gold-mysore · sell-gold-mangalore · sell-gold-davangere
 
+import Link from 'next/link';
 import { BRANCHES } from '@/lib/branch-router';
 import type { Branch } from '@/lib/branch-router';
 import { MkNavbar }        from '@/components/layout/MkNavbar';
@@ -137,7 +138,7 @@ const CITY_FAQS: Record<City, FaqItem[]> = {
   Bangalore: [
     {
       q: 'Where can I sell gold in Bangalore?',
-      a: 'MK Gold has 10 branches across Bangalore: Rajajinagar, Malleshwaram, Vijayanagar, Basaveshwaranagar, Yeshwanthpur, Jayanagar, Indiranagar, Koramangala, Whitefield, and JP Nagar. All branches are open Monday to Saturday, 9:30 AM to 7:00 PM. Walk-ins are always welcome — no appointment needed.',
+      a: 'MK Gold has 2 branches across Bangalore: Rajajinagar, Malleshwaram, Vijayanagar, Basaveshwaranagar, Yeshwanthpur, Jayanagar, Indiranagar, Koramangala, Whitefield, and JP Nagar. All branches are open Monday to Saturday, 9:30 AM to 7:00 PM. Walk-ins are always welcome — no appointment needed.',
     },
     {
       q: 'What is the best gold rate in Bangalore today?',
@@ -348,7 +349,7 @@ export function CityHubPage({ city }: CityHubPageProps) {
         <div className="mk-container mk-hub-rate-banner__inner">
           <span className="mk-hub-rate-banner__label">Live rate — updated every 5 min</span>
           <MkRateWidget variant="compact" />
-          <a
+          <Link
             href="/gold-rate-today"
             style={{
               fontFamily: 'Poppins, sans-serif',
@@ -360,7 +361,7 @@ export function CityHubPage({ city }: CityHubPageProps) {
             }}
           >
             Full rate page
-          </a>
+          </Link>
         </div>
       </div>
 

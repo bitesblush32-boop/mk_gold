@@ -90,8 +90,13 @@
   transition: color 300ms ease;
 }
 
-.mk-ticker__value--up   { color: #4ade80; }
-.mk-ticker__value--down { color: #f87171; }
+.mk-ticker__value--up {
+  color: #4ade80;
+}
+
+.mk-ticker__value--down {
+  color: #f87171;
+}
 
 .mk-ticker__change {
   font-size: 0.9375rem;
@@ -117,8 +122,13 @@
   white-space: nowrap;
 }
 
-.mk-ticker__indicator--up   { color: #4ade80; }
-.mk-ticker__indicator--down { color: #f87171; }
+.mk-ticker__indicator--up {
+  color: #4ade80;
+}
+
+.mk-ticker__indicator--down {
+  color: #f87171;
+}
 
 .mk-ticker__sep {
   color: rgba(255, 255, 255, 0.18);
@@ -147,7 +157,7 @@
 }
 
 .mk-navbar__logo-img {
-  height: 85px;
+  height: 100px;
   width: auto;
   object-fit: contain;
 }
@@ -674,4 +684,3 @@
 .mk-seal--animate {
   animation: sealBounce var(--t-spring) both;
 }
-

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin-auth';
 import { db } from '@/db';
 import { leads, appointments, goldRateOverride } from '@/db/schema';
-import { eq, gte, desc, count } from 'drizzle-orm';
+import { eq, desc, count } from 'drizzle-orm';
 
 export async function GET(req: NextRequest) {
   const deny = requireAdmin(req);
