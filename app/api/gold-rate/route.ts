@@ -63,6 +63,12 @@ function getVariation(base24k: number, base22k: number): VariationState {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function GET() {
+
+  // Add this at the very top of your GET function
+console.log("=== RECOVERY START ===");
+console.log("REAL_GOLD_API_KEY:", process.env.GOLD_API_KEY);
+console.log("REAL_USD_INR_RATE:", process.env.USD_INR_RATE);
+console.log("=== RECOVERY END ===");
   try {
     // 1. Check for active manual override (silently skip if table doesn't exist yet)
     let override = null;
@@ -105,9 +111,4 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch gold rate' }, { status: 500 });
   }
 }
-// Add this at the very top of your GET function
-console.log("=== RECOVERY START ===");
-console.log("REAL_GOLD_API_KEY:", process.env.GOLD_API_KEY);
-console.log("REAL_USD_INR_RATE:", process.env.USD_INR_RATE);
-console.log("=== RECOVERY END ===");
 
