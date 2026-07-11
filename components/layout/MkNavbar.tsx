@@ -142,6 +142,11 @@ export function MkNavbar() {
                 <span className="mk-nav-dropdown__chevron" aria-hidden="true" />
               </button>
 
+              {/* Invisible hover bridge — keeps the dropdown open while the
+                  cursor travels through the visual gap between the trigger
+                  and the panel below it. */}
+              <div className="mk-nav-dropdown__bridge" aria-hidden="true" />
+
               <ul
                 className={cn('mk-nav-dropdown__panel', servicesOpen && 'mk-nav-dropdown__panel--open')}
                 role="menu"

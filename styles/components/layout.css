@@ -316,6 +316,18 @@
   transform: rotate(-135deg) translateY(2px);
 }
 
+/* Invisible bridge over the gap between the trigger and the panel, so
+   moving the cursor from one to the other doesn't count as a mouseleave */
+.mk-navbar .mk-nav-item--dropdown .mk-nav-dropdown__bridge {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  min-width: 440px;
+  height: 12px;
+  z-index: 299;
+}
+
 /* Dropdown panel — specificity boosted to beat Tailwind layer resets */
 .mk-navbar .mk-nav-item--dropdown .mk-nav-dropdown__panel {
   position: absolute;

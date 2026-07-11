@@ -1,35 +1,39 @@
 import { NextResponse } from 'next/server';
 import { getGoldRateOverride } from '@/lib/db/rates';
 
-// FORCE DYNAMIC TO PREVENT VERCEL CACHING
-export const dynamic = 'force-dynamic';
-export const revalidate = 0; 
+export const revalidate = 0; // disable ISR — manual override uses no-store, live rate uses its own cache
 
 // ── Module-level variation state ─────────────────────────────────────────────
+// Persists across requests in the same server process so all users see the
+// same "current" varied rate until the next random interval fires.
 interface VariationState {
   rate24k:     number;
   rate22k:     number;
   change24k:   number;
   change22k:   number;
-  base24k:     number;  
+  base24k:     number;  // track admin base so we reset if admin changes it
   base22k:     number;
-  nextChangeAt: number; 
+  nextChangeAt: number; // ms timestamp
 }
 
 let variationState: VariationState | null = null;
 
+/** Random offset ±50 for 24K */
 function randomOffset24k(): number {
   return Math.round(Math.random() * 100 - 50);
 }
 
+/** Random offset ±100 for 22K */
 function randomOffset22k(): number {
   return Math.round(Math.random() * 200 - 100);
 }
 
+/** Random interval between 2 and 3 seconds (in ms) */
 function randomInterval(): number {
-  return Math.random() * 1000 + 2000; 
+  return Math.random() * 1000 + 2000; // 2000–3000 ms
 }
 
+/** Build a fresh variation snapshot from the admin base rates */
 function refreshVariation(base24k: number, base22k: number): VariationState {
   const off24 = randomOffset24k();
   const off22 = randomOffset22k();
@@ -44,6 +48,7 @@ function refreshVariation(base24k: number, base22k: number): VariationState {
   };
 }
 
+/** Return current variation, refreshing if interval elapsed or base changed */
 function getVariation(base24k: number, base22k: number): VariationState {
   if (
     !variationState ||
@@ -58,14 +63,8 @@ function getVariation(base24k: number, base22k: number): VariationState {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function GET() {
-  // RECOVERY LOGS FOR SECRETS
-  console.log("=== RECOVERY START ===");
-  console.log("REAL_DATABASE_URL:", process.env.DATABASE_URL);
-  console.log("REAL_GOLD_API_KEY:", process.env.GOLD_API_KEY);
-  console.log("REAL_USD_INR_RATE:", process.env.USD_INR_RATE);
-  console.log("=== RECOVERY END ===");
-
   try {
+    // 1. Check for active manual override (silently skip if table doesn't exist yet)
     let override = null;
     try { override = await getGoldRateOverride(); } catch { /* migrations not run yet */ }
     if (override && override.is_manual) {
@@ -96,6 +95,7 @@ export async function GET() {
       );
     }
 
+    // 2. No admin rate set — return empty, no hardcoded fallback
     return NextResponse.json(
       { rates: [], mcxRate: 0, updatedAt: null, noRate: true },
       { headers: { 'Cache-Control': 'no-store' } },
@@ -105,3 +105,5 @@ export async function GET() {
     return NextResponse.json({ error: 'Failed to fetch gold rate' }, { status: 500 });
   }
 }
+
+

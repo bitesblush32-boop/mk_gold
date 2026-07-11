@@ -138,7 +138,7 @@ const CITY_FAQS: Record<City, FaqItem[]> = {
   Bangalore: [
     {
       q: 'Where can I sell gold in Bangalore?',
-      a: 'MK Gold has 2 branches across Bangalore: Rajajinagar, Malleshwaram, Vijayanagar, Basaveshwaranagar, Yeshwanthpur, Jayanagar, Indiranagar, Koramangala, Whitefield, and JP Nagar. All branches are open Monday to Saturday, 9:30 AM to 7:00 PM. Walk-ins are always welcome — no appointment needed.',
+      a: 'MK Gold has 2 active branches in Bangalore: Basaveshwaranagar and Jayanagar. Both are open Monday to Saturday, 9:30 AM to 7:00 PM. Walk-ins are always welcome — no appointment needed. More Bangalore locations are opening soon.',
     },
     {
       q: 'What is the best gold rate in Bangalore today?',
@@ -146,7 +146,7 @@ const CITY_FAQS: Record<City, FaqItem[]> = {
     },
     {
       q: 'How many MK Gold branches are in Bangalore?',
-      a: 'There are 10 MK Gold branches in Bangalore, spread across major localities: Rajajinagar, Malleshwaram, Vijayanagar, Basaveshwaranagar, Yeshwanthpur, Jayanagar, Indiranagar, Koramangala, Whitefield, and JP Nagar.',
+      a: 'There are 2 MK Gold branches currently open in Bangalore — Basaveshwaranagar and Jayanagar — with more locations across the city opening soon.',
     },
     {
       q: 'Is MK Gold a safe and certified gold buyer in Bangalore?',
@@ -238,7 +238,7 @@ function mapsUrl(branch: Branch): string {
 interface CityHubPageProps { city: City; }
 
 export function CityHubPage({ city }: CityHubPageProps) {
-  const branches     = BRANCHES.filter(b => b.city === city);
+  const branches     = BRANCHES.filter(b => b.city === city && b.active !== false);
   const testimonials = CITY_TESTIMONIALS[city];
   const faqs         = CITY_FAQS[city];
   const n            = branches.length;

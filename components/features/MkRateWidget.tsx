@@ -96,20 +96,22 @@ function MarginRow({ rates }: { rates: KaratRate[] }) {
         return (
           <div key={r.karat} style={{ display: 'contents' }}>
             {i > 0 && <div className="mk-rate-widget__margin-sep" aria-hidden="true" />}
-            <div className="mk-rate-widget__margin-item">
-              <span className="mk-rate-widget__margin-label">MCX {r.karat}K</span>
-              <span className="mk-rate-widget__margin-val">
-                {fmt(r.value)}<span className="mk-rate-widget__per">/g</span>
-              </span>
-            </div>
-            <div className="mk-rate-widget__margin-item">
-              <span className="mk-rate-widget__margin-label">MK Buying {r.karat}K</span>
-              <span className="mk-rate-widget__margin-val">
-                {fmt(mkBuying)}<span className="mk-rate-widget__per">/g</span>
-              </span>
-            </div>
-            <div className="mk-rate-widget__margin-pill" aria-label={`₹${deduction} below MCX`}>
-              ₹{deduction} below
+            <div className="mk-rate-widget__margin-group">
+              <div className="mk-rate-widget__margin-labels">
+                <span className="mk-rate-widget__margin-label">MCX {r.karat}K</span>
+                <span className="mk-rate-widget__margin-label">MK Buying {r.karat}K</span>
+              </div>
+                <div className="mk-rate-widget__margin-pill" aria-label={`₹${deduction} below MCX`}>
+                  ₹{deduction} below
+                </div>
+              <div className="mk-rate-widget__margin-values">
+                <span className="mk-rate-widget__margin-val">
+                  {fmt(r.value)}<span className="mk-rate-widget__per">/g</span>
+                </span>
+                <span className="mk-rate-widget__margin-val">
+                  {fmt(mkBuying)}<span className="mk-rate-widget__per">/g</span>
+                </span>
+              </div>
             </div>
           </div>
         );

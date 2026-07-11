@@ -84,9 +84,10 @@ export function MkBranchFinder({ allowedSlugs }: { allowedSlugs?: string[] } = {
   const [geoState, setGeoState] = useState<GeoState>('idle');
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
 
-  const SOURCE = allowedSlugs
+  const SOURCE = (allowedSlugs
     ? BRANCHES.filter((b) => allowedSlugs.includes(b.slug))
-    : BRANCHES;
+    : BRANCHES
+  ).filter((b) => b.active !== false);
 
   function handleGeoLocate() {
     if (!navigator.geolocation) {
@@ -256,6 +257,20 @@ export function MkBranchFinder({ allowedSlugs }: { allowedSlugs?: string[] } = {
                 </div>
               ))}
             </div>
+          ) : city !== 'All' && city !== 'Bangalore' ? (
+            <p className="mk-branch-finder__empty">
+              MK Gold {city} is <strong>coming soon</strong>. We&apos;re currently active in Bangalore only —{' '}
+              <button
+                className="mk-branch-finder__reset"
+                onClick={() => {
+                  setSearch('');
+                  setCity('Bangalore');
+                  setHighlightedSlug(null);
+                }}
+              >
+                view Bangalore branches
+              </button>
+            </p>
           ) : (
             <p className="mk-branch-finder__empty">
               No branches found for &ldquo;{search}&rdquo;.{' '}

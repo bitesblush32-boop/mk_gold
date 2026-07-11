@@ -7,7 +7,7 @@ import { CityHubPage } from '@/components/sections/CityHubPage';
 export const metadata: Metadata = {
   title: 'Sell Gold in Bangalore | Best Rate | MK Gold — 2 branches',
   description:
-    'Sell gold in Bangalore at live MCX rates. MK Gold has 2 branches across Rajajinagar, Malleshwaram, Indiranagar, Koramangala, Whitefield and more. XRF purity test. Payment in 30 minutes.',
+    'Sell gold in Bangalore at live MCX rates. MK Gold has 2 branches — Basaveshwaranagar and Jayanagar. XRF purity test. Payment in 30 minutes.',
   alternates: { canonical: 'https://mkgold.in/sell-gold-bangalore' },
   openGraph: {
     title: 'Sell Gold in Bangalore | Best Rate | MK Gold — 2 branches',
