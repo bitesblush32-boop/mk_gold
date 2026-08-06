@@ -7,25 +7,25 @@ export async function sendWhatsApp(to: string, body: string): Promise<void> {
   if (!token) return; // not configured
 
   // Normalise number — strip leading + and spaces
-  const normalised = to.replace(/^\+/, '').replace(/\s/g, '');
+  const normalised = to.replace(/^\+/, "").replace(/\s/g, "");
 
   try {
-    await fetch('https://waba.360dialog.io/v1/messages', {
-      method:  'POST',
+    await fetch("https://waba.360dialog.io/v1/messages", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'D360-API-KEY': token,
+        "Content-Type": "application/json",
+        "D360-API-KEY": token,
       },
       body: JSON.stringify({
-        messaging_product: 'whatsapp',
-        to:   normalised,
-        type: 'text',
+        messaging_product: "whatsapp",
+        to: normalised,
+        type: "text",
         text: { body },
       }),
     });
   } catch {
     // Non-critical — log only in dev
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== "production") {
       console.warn(`[whatsapp] failed to send to ${to}`);
     }
   }

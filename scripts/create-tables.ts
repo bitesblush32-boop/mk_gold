@@ -4,18 +4,18 @@
  * Run: npx tsx scripts/create-tables.ts
  */
 
-import postgres from 'postgres';
+import postgres from "postgres";
 
 const DATABASE_URL = process.env.DATABASE_URL;
 if (!DATABASE_URL) {
-  console.error('DATABASE_URL not set in environment');
+  console.error("DATABASE_URL not set in environment");
   process.exit(1);
 }
 
-const sql = postgres(DATABASE_URL, { ssl: 'require', connect_timeout: 20 });
+const sql = postgres(DATABASE_URL, { ssl: "require", connect_timeout: 20 });
 
 async function main() {
-  console.log('Creating tables...');
+  console.log("Creating tables...");
 
   await sql`
     CREATE TABLE IF NOT EXISTS leads (
@@ -42,7 +42,7 @@ async function main() {
       updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `;
-  console.log('  ✓ leads');
+  console.log("  ✓ leads");
 
   await sql`
     CREATE TABLE IF NOT EXISTS appointments (
@@ -62,7 +62,7 @@ async function main() {
       updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `;
-  console.log('  ✓ appointments');
+  console.log("  ✓ appointments");
 
   await sql`
     CREATE TABLE IF NOT EXISTS gold_rate_override (
@@ -74,7 +74,7 @@ async function main() {
       updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `;
-  console.log('  ✓ gold_rate_override');
+  console.log("  ✓ gold_rate_override");
 
   await sql`
     CREATE TABLE IF NOT EXISTS hero_banners (
@@ -86,7 +86,7 @@ async function main() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `;
-  console.log('  ✓ hero_banners');
+  console.log("  ✓ hero_banners");
 
   await sql`
     CREATE TABLE IF NOT EXISTS blog_posts (
@@ -103,7 +103,7 @@ async function main() {
       updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )
   `;
-  console.log('  ✓ blog_posts');
+  console.log("  ✓ blog_posts");
 
   // Verify
   const tables = await sql`
@@ -111,11 +111,14 @@ async function main() {
     WHERE schemaname = 'public'
     ORDER BY tablename
   `;
-  console.log('\nTables in Railway DB:');
-  tables.forEach(t => console.log('  -', t.tablename));
+  console.log("\nTables in Railway DB:");
+  tables.forEach((t) => console.log("  -", t.tablename));
 
   await sql.end();
-  console.log('\nDone.');
+  console.log("\nDone.");
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

@@ -114,7 +114,8 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+917019500600",
     coordinates: { lat: 12.9299, lng: 77.5832 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
-    landmarksNear: "Near Jayanagar 4th Block Shopping Complex and South End Circle",
+    landmarksNear:
+      "Near Jayanagar 4th Block Shopping Complex and South End Circle",
     mapEmbed:
       "https://maps.google.com/maps?q=12.9299,77.5832&z=15&output=embed",
     googleMapsUrl:
@@ -162,7 +163,7 @@ export const BRANCHES: Branch[] = [
     address: "Whitefield, Bangalore, Karnataka 560066",
     phone: "+91 80 0000 0009",
     whatsapp: "+918000000009",
-    coordinates: { lat: 12.9698, lng: 77.7500 },
+    coordinates: { lat: 12.9698, lng: 77.75 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
     landmarksNear: "Near Phoenix Marketcity and Whitefield Railway Station",
     mapEmbed:
@@ -248,7 +249,8 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918240000001",
     coordinates: { lat: 12.8698, lng: 74.8431 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
-    landmarksNear: "Near Hampankatta Circle and Mangalore Central Railway Station",
+    landmarksNear:
+      "Near Hampankatta Circle and Mangalore Central Railway Station",
     mapEmbed:
       "https://maps.google.com/maps?q=12.8698,74.8431&z=15&output=embed",
     googleMapsUrl:

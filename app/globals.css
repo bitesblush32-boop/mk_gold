@@ -28,21 +28,21 @@
 /* ── 5. Tailwind @theme — maps to Tailwind utility classes ────── */
 @theme inline {
   --color-plum: #512561;
-  --color-plum-deep: #3B1848;
-  --color-purple: #7B2C91;
-  --color-gold: #DFC160;
-  --color-gold-deep: #C9A940;
-  --color-gold-light: #EDD47A;
-  --color-gallery: #F0EFEF;
-  --color-gallery-dk: #DDDCDC;
-  --color-ink: #1C0A24;
-  --color-ink-mid: #3D2250;
-  --color-mist: #8A7898;
-  --color-white: #FFFFFF;
+  --color-plum-deep: #3b1848;
+  --color-purple: #7b2c91;
+  --color-gold: #dfc160;
+  --color-gold-deep: #c9a940;
+  --color-gold-light: #edd47a;
+  --color-gallery: #f0efef;
+  --color-gallery-dk: #dddcdc;
+  --color-ink: #1c0a24;
+  --color-ink-mid: #3d2250;
+  --color-mist: #8a7898;
+  --color-white: #ffffff;
 
-  --font-display: 'Tanker', serif;
-  --font-body: 'Poppins', sans-serif;
-  --font-kannada: 'Anek Kannada', sans-serif;
+  --font-display: "Tanker", serif;
+  --font-body: "Poppins", sans-serif;
+  --font-kannada: "Anek Kannada", sans-serif;
 
   --spacing-18: 4.5rem;
   --spacing-22: 5.5rem;
@@ -53,7 +53,7 @@
   --radius-pill: 9999px;
   --radius-card: 1rem;
 
-  --shadow-card: 0 4px 24px rgba(81, 37, 97, 0.10);
+  --shadow-card: 0 4px 24px rgba(81, 37, 97, 0.1);
   --shadow-float: 0 8px 40px rgba(81, 37, 97, 0.18);
   --shadow-gold: 0 4px 20px rgba(223, 193, 96, 0.28);
   --shadow-purple: 0 4px 24px rgba(123, 44, 145, 0.25);

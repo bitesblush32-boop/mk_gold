@@ -1,119 +1,127 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { BRANCHES, findNearestBranch, getBranchesByCity } from '@/lib/branch-router';
-import type { Branch } from '@/lib/branch-router';
+import { NextRequest, NextResponse } from "next/server";
+import {
+  BRANCHES,
+  findNearestBranch,
+  getBranchesByCity,
+} from "@/lib/branch-router";
+import type { Branch } from "@/lib/branch-router";
 
 export const revalidate = 86400; // Data is static — recheck once per day
 
-const CACHE = { headers: { 'Cache-Control': 'public, s-maxage=86400, stale-while-revalidate=604800' } };
+const CACHE = {
+  headers: {
+    "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=604800",
+  },
+};
 
 /* ─── Karnataka pincode → lat/lng lookup ────────────────────────── */
 // Covers pincodes for areas where MK Gold branches are located.
 const PINCODE_COORDS: Record<string, { lat: number; lng: number }> = {
   // Bangalore
-  '560010': { lat: 12.9916, lng: 77.5518 }, // Rajajinagar
-  '560003': { lat: 13.0035, lng: 77.5668 }, // Malleshwaram
-  '560040': { lat: 12.9719, lng: 77.5218 }, // Vijayanagar
-  '560079': { lat: 12.9803, lng: 77.5324 }, // Basaveshwaranagar
-  '560022': { lat: 13.0215, lng: 77.5485 }, // Yeshwanthpur
-  '560041': { lat: 12.9299, lng: 77.5832 }, // Jayanagar
-  '560038': { lat: 12.9719, lng: 77.6412 }, // Indiranagar
-  '560034': { lat: 12.9352, lng: 77.6245 }, // Koramangala
-  '560066': { lat: 12.9698, lng: 77.7500 }, // Whitefield
-  '560078': { lat: 12.9063, lng: 77.5857 }, // JP Nagar
+  "560010": { lat: 12.9916, lng: 77.5518 }, // Rajajinagar
+  "560003": { lat: 13.0035, lng: 77.5668 }, // Malleshwaram
+  "560040": { lat: 12.9719, lng: 77.5218 }, // Vijayanagar
+  "560079": { lat: 12.9803, lng: 77.5324 }, // Basaveshwaranagar
+  "560022": { lat: 13.0215, lng: 77.5485 }, // Yeshwanthpur
+  "560041": { lat: 12.9299, lng: 77.5832 }, // Jayanagar
+  "560038": { lat: 12.9719, lng: 77.6412 }, // Indiranagar
+  "560034": { lat: 12.9352, lng: 77.6245 }, // Koramangala
+  "560066": { lat: 12.9698, lng: 77.75 }, // Whitefield
+  "560078": { lat: 12.9063, lng: 77.5857 }, // JP Nagar
   // Common Bangalore pincodes
-  '560001': { lat: 12.9716, lng: 77.5946 }, // MG Road / Central
-  '560002': { lat: 12.9659, lng: 77.5938 },
-  '560004': { lat: 12.9800, lng: 77.5900 },
-  '560011': { lat: 12.9600, lng: 77.5300 },
-  '560018': { lat: 12.9550, lng: 77.5540 },
-  '560019': { lat: 12.9460, lng: 77.5710 },
-  '560020': { lat: 12.9400, lng: 77.5500 },
-  '560023': { lat: 12.9750, lng: 77.6800 },
-  '560024': { lat: 12.9800, lng: 77.6600 },
-  '560025': { lat: 12.9650, lng: 77.7100 },
-  '560026': { lat: 12.9800, lng: 77.7200 },
-  '560027': { lat: 12.9550, lng: 77.6500 },
-  '560029': { lat: 12.9900, lng: 77.5000 },
-  '560032': { lat: 13.0100, lng: 77.5300 },
-  '560033': { lat: 13.0200, lng: 77.5200 },
-  '560035': { lat: 12.9600, lng: 77.5000 },
-  '560036': { lat: 13.0300, lng: 77.5400 },
-  '560037': { lat: 12.9300, lng: 77.6100 },
-  '560039': { lat: 12.9000, lng: 77.6200 },
-  '560043': { lat: 12.9050, lng: 77.5700 },
-  '560045': { lat: 12.9150, lng: 77.6000 },
-  '560047': { lat: 12.9800, lng: 77.7400 },
-  '560048': { lat: 12.9600, lng: 77.7600 },
-  '560050': { lat: 13.0450, lng: 77.5900 },
-  '560055': { lat: 13.0100, lng: 77.6100 },
-  '560056': { lat: 13.0300, lng: 77.6200 },
-  '560058': { lat: 13.0200, lng: 77.4900 },
-  '560060': { lat: 12.9100, lng: 77.5500 },
-  '560061': { lat: 12.8900, lng: 77.5600 },
-  '560062': { lat: 12.8800, lng: 77.5300 },
-  '560064': { lat: 12.8750, lng: 77.5700 },
-  '560068': { lat: 12.9200, lng: 77.5000 },
-  '560069': { lat: 12.9000, lng: 77.5100 },
-  '560070': { lat: 13.0500, lng: 77.6500 },
-  '560072': { lat: 13.0600, lng: 77.7000 },
-  '560076': { lat: 13.0000, lng: 77.4800 },
-  '560085': { lat: 13.0700, lng: 77.6800 },
-  '560086': { lat: 13.0600, lng: 77.6300 },
-  '560091': { lat: 12.9350, lng: 77.6900 },
-  '560094': { lat: 12.9800, lng: 77.7000 },
-  '560095': { lat: 13.0800, lng: 77.6000 },
-  '560096': { lat: 13.0900, lng: 77.6100 },
-  '560097': { lat: 12.8600, lng: 77.6600 },
-  '560100': { lat: 12.8400, lng: 77.6700 },
+  "560001": { lat: 12.9716, lng: 77.5946 }, // MG Road / Central
+  "560002": { lat: 12.9659, lng: 77.5938 },
+  "560004": { lat: 12.98, lng: 77.59 },
+  "560011": { lat: 12.96, lng: 77.53 },
+  "560018": { lat: 12.955, lng: 77.554 },
+  "560019": { lat: 12.946, lng: 77.571 },
+  "560020": { lat: 12.94, lng: 77.55 },
+  "560023": { lat: 12.975, lng: 77.68 },
+  "560024": { lat: 12.98, lng: 77.66 },
+  "560025": { lat: 12.965, lng: 77.71 },
+  "560026": { lat: 12.98, lng: 77.72 },
+  "560027": { lat: 12.955, lng: 77.65 },
+  "560029": { lat: 12.99, lng: 77.5 },
+  "560032": { lat: 13.01, lng: 77.53 },
+  "560033": { lat: 13.02, lng: 77.52 },
+  "560035": { lat: 12.96, lng: 77.5 },
+  "560036": { lat: 13.03, lng: 77.54 },
+  "560037": { lat: 12.93, lng: 77.61 },
+  "560039": { lat: 12.9, lng: 77.62 },
+  "560043": { lat: 12.905, lng: 77.57 },
+  "560045": { lat: 12.915, lng: 77.6 },
+  "560047": { lat: 12.98, lng: 77.74 },
+  "560048": { lat: 12.96, lng: 77.76 },
+  "560050": { lat: 13.045, lng: 77.59 },
+  "560055": { lat: 13.01, lng: 77.61 },
+  "560056": { lat: 13.03, lng: 77.62 },
+  "560058": { lat: 13.02, lng: 77.49 },
+  "560060": { lat: 12.91, lng: 77.55 },
+  "560061": { lat: 12.89, lng: 77.56 },
+  "560062": { lat: 12.88, lng: 77.53 },
+  "560064": { lat: 12.875, lng: 77.57 },
+  "560068": { lat: 12.92, lng: 77.5 },
+  "560069": { lat: 12.9, lng: 77.51 },
+  "560070": { lat: 13.05, lng: 77.65 },
+  "560072": { lat: 13.06, lng: 77.7 },
+  "560076": { lat: 13.0, lng: 77.48 },
+  "560085": { lat: 13.07, lng: 77.68 },
+  "560086": { lat: 13.06, lng: 77.63 },
+  "560091": { lat: 12.935, lng: 77.69 },
+  "560094": { lat: 12.98, lng: 77.7 },
+  "560095": { lat: 13.08, lng: 77.6 },
+  "560096": { lat: 13.09, lng: 77.61 },
+  "560097": { lat: 12.86, lng: 77.66 },
+  "560100": { lat: 12.84, lng: 77.67 },
   // Mysore
-  '570001': { lat: 12.2958, lng: 76.6394 },
-  '570002': { lat: 12.3215, lng: 76.6221 },
-  '570004': { lat: 12.3100, lng: 76.6300 },
-  '570008': { lat: 12.2850, lng: 76.6500 },
-  '570009': { lat: 12.2700, lng: 76.6400 },
-  '570010': { lat: 12.3000, lng: 76.6100 },
-  '570011': { lat: 12.2600, lng: 76.6200 },
-  '570012': { lat: 12.3400, lng: 76.6100 },
-  '570017': { lat: 12.3401, lng: 76.6105 },
-  '570019': { lat: 12.3200, lng: 76.6500 },
-  '570020': { lat: 12.2500, lng: 76.6300 },
-  '570023': { lat: 12.3000, lng: 76.6600 },
+  "570001": { lat: 12.2958, lng: 76.6394 },
+  "570002": { lat: 12.3215, lng: 76.6221 },
+  "570004": { lat: 12.31, lng: 76.63 },
+  "570008": { lat: 12.285, lng: 76.65 },
+  "570009": { lat: 12.27, lng: 76.64 },
+  "570010": { lat: 12.3, lng: 76.61 },
+  "570011": { lat: 12.26, lng: 76.62 },
+  "570012": { lat: 12.34, lng: 76.61 },
+  "570017": { lat: 12.3401, lng: 76.6105 },
+  "570019": { lat: 12.32, lng: 76.65 },
+  "570020": { lat: 12.25, lng: 76.63 },
+  "570023": { lat: 12.3, lng: 76.66 },
   // Mangalore
-  '575001': { lat: 12.8698, lng: 74.8431 },
-  '575002': { lat: 12.8832, lng: 74.8457 },
-  '575003': { lat: 12.8550, lng: 74.8350 },
-  '575004': { lat: 12.8750, lng: 74.8600 },
-  '575006': { lat: 12.8900, lng: 74.8300 },
-  '575007': { lat: 12.8450, lng: 74.8200 },
-  '575008': { lat: 12.8300, lng: 74.8500 },
+  "575001": { lat: 12.8698, lng: 74.8431 },
+  "575002": { lat: 12.8832, lng: 74.8457 },
+  "575003": { lat: 12.855, lng: 74.835 },
+  "575004": { lat: 12.875, lng: 74.86 },
+  "575006": { lat: 12.89, lng: 74.83 },
+  "575007": { lat: 12.845, lng: 74.82 },
+  "575008": { lat: 12.83, lng: 74.85 },
   // Davangere
-  '577001': { lat: 14.4644, lng: 75.9218 },
-  '577002': { lat: 14.4700, lng: 75.9100 },
-  '577003': { lat: 14.4800, lng: 75.9300 },
-  '577004': { lat: 14.4550, lng: 75.9400 },
-  '577005': { lat: 14.4400, lng: 75.9100 },
-  '577006': { lat: 14.4900, lng: 75.9000 },
+  "577001": { lat: 14.4644, lng: 75.9218 },
+  "577002": { lat: 14.47, lng: 75.91 },
+  "577003": { lat: 14.48, lng: 75.93 },
+  "577004": { lat: 14.455, lng: 75.94 },
+  "577005": { lat: 14.44, lng: 75.91 },
+  "577006": { lat: 14.49, lng: 75.9 },
 };
 
-const CITY_MAP: Record<string, Branch['city']> = {
-  bangalore: 'Bangalore',
-  bengaluru: 'Bangalore',
-  mysore:    'Mysore',
-  mysuru:    'Mysore',
-  mangalore: 'Mangalore',
-  mangaluru: 'Mangalore',
-  davangere: 'Davangere',
-  davanagere: 'Davangere',
+const CITY_MAP: Record<string, Branch["city"]> = {
+  bangalore: "Bangalore",
+  bengaluru: "Bangalore",
+  mysore: "Mysore",
+  mysuru: "Mysore",
+  mangalore: "Mangalore",
+  mangaluru: "Mangalore",
+  davangere: "Davangere",
+  davanagere: "Davangere",
 };
 
 /* ─── GET /api/branch-finder ─────────────────────────────────────── */
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const pincode = searchParams.get('pincode');
-  const latStr  = searchParams.get('lat');
-  const lngStr  = searchParams.get('lng');
-  const city    = searchParams.get('city');
+  const pincode = searchParams.get("pincode");
+  const latStr = searchParams.get("lat");
+  const lngStr = searchParams.get("lng");
+  const city = searchParams.get("city");
 
   // ?city=bangalore
   if (city) {
@@ -121,7 +129,10 @@ export async function GET(req: NextRequest) {
     const cityKey = CITY_MAP[normalised];
     if (!cityKey) {
       return NextResponse.json(
-        { error: 'Unknown city. Valid values: bangalore, mysore, mangalore, davangere' },
+        {
+          error:
+            "Unknown city. Valid values: bangalore, mysore, mangalore, davangere",
+        },
         { status: 400 },
       );
     }
@@ -134,7 +145,10 @@ export async function GET(req: NextRequest) {
     const lat = parseFloat(latStr);
     const lng = parseFloat(lngStr);
     if (isNaN(lat) || isNaN(lng)) {
-      return NextResponse.json({ error: 'lat and lng must be numbers' }, { status: 400 });
+      return NextResponse.json(
+        { error: "lat and lng must be numbers" },
+        { status: 400 },
+      );
     }
     const branch = findNearestBranch(lat, lng);
     return NextResponse.json({ branch }, CACHE);
@@ -145,14 +159,20 @@ export async function GET(req: NextRequest) {
     const coords = PINCODE_COORDS[pincode.trim()];
     if (!coords) {
       // Unknown pincode — return all branches as fallback
-      return NextResponse.json({ branches: BRANCHES, note: 'Pincode not found — showing all branches' }, CACHE);
+      return NextResponse.json(
+        {
+          branches: BRANCHES,
+          note: "Pincode not found — showing all branches",
+        },
+        CACHE,
+      );
     }
     const branch = findNearestBranch(coords.lat, coords.lng);
     return NextResponse.json({ branch }, CACHE);
   }
 
   return NextResponse.json(
-    { error: 'Provide one of: pincode, lat+lng, or city' },
+    { error: "Provide one of: pincode, lat+lng, or city" },
     { status: 400 },
   );
 }

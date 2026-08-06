@@ -1,8 +1,8 @@
-import { unstable_cache } from 'next/cache';
-import { db, goldRateOverride } from '@/db';
-import { desc } from 'drizzle-orm';
+import { unstable_cache } from "next/cache";
+import { db, goldRateOverride } from "@/db";
+import { desc } from "drizzle-orm";
 
-export type { GoldRateOverride } from '@/db/schema';
+export type { GoldRateOverride } from "@/db/schema";
 
 /* ─── Read ───────────────────────────────────────────────────────── */
 
@@ -22,8 +22,8 @@ export const getGoldRateOverride = unstable_cache(
     if (!row || !row.is_manual) return null;
     return row;
   },
-  ['gold-rate-override'],
-  { tags: ['gold-rate'] },
+  ["gold-rate-override"],
+  { tags: ["gold-rate"] },
 );
 
 /* ─── Set ────────────────────────────────────────────────────────── */
@@ -33,21 +33,21 @@ export async function setGoldRateOverride(data: {
   rate_22k: string;
 }) {
   const r24 = Number(data.rate_24k);
-  const rate_20k = String(Math.round(r24 * 20 / 24));
-  const rate_18k = String(Math.round(r24 * 18 / 24));
+  const rate_20k = String(Math.round((r24 * 20) / 24));
+  const rate_18k = String(Math.round((r24 * 18) / 24));
 
   // Always insert a new row — the GET query reads the latest
   // override_until is null = permanent until next admin change
   const [row] = await db
     .insert(goldRateOverride)
     .values({
-      rate_24k:       data.rate_24k,
-      rate_22k:       data.rate_22k,
+      rate_24k: data.rate_24k,
+      rate_22k: data.rate_22k,
       rate_20k,
       rate_18k,
-      is_manual:      true,
+      is_manual: true,
       override_until: null,
-      updated_at:     new Date(),
+      updated_at: new Date(),
     })
     .returning();
   return row;
@@ -71,15 +71,13 @@ export async function clearGoldRateOverride() {
   // Expire it immediately by setting override_until to now
   const now = new Date();
   const r24 = Number(latest.rate_24k);
-  await db
-    .insert(goldRateOverride)
-    .values({
-      rate_24k:       latest.rate_24k,
-      rate_22k:       latest.rate_22k,
-      rate_20k:       latest.rate_20k ?? String(Math.round(r24 * 20 / 24)),
-      rate_18k:       latest.rate_18k ?? String(Math.round(r24 * 18 / 24)),
-      is_manual:      false,
-      override_until: now,
-      updated_at:     now,
-    });
+  await db.insert(goldRateOverride).values({
+    rate_24k: latest.rate_24k,
+    rate_22k: latest.rate_22k,
+    rate_20k: latest.rate_20k ?? String(Math.round((r24 * 20) / 24)),
+    rate_18k: latest.rate_18k ?? String(Math.round((r24 * 18) / 24)),
+    is_manual: false,
+    override_until: now,
+    updated_at: now,
+  });
 }

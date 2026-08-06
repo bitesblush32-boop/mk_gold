@@ -12,11 +12,11 @@ import { localBusinessSchema } from "@/lib/schema/local-business";
 import { organizationSchema } from "@/lib/schema/organization";
 import "./globals.css";
 
-const GTM_ID      = process.env.NEXT_PUBLIC_GTM_ID      ?? '';
-const GA_ID       = process.env.NEXT_PUBLIC_GA_ID       ?? '';
-const ADS_ID      = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? '';
-const ADS_CALL    = process.env.NEXT_PUBLIC_GOOGLE_ADS_CALL_LABEL ?? '';
-const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID ?? '';
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID ?? "";
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? "";
+const ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "";
+const ADS_CALL = process.env.NEXT_PUBLIC_GOOGLE_ADS_CALL_LABEL ?? "";
+const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID ?? "";
 
 const poppins = Poppins({
   variable: "--font-body",
@@ -42,7 +42,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://mkgold.in"),
   title: {
-    default: "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
+    default:
+      "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
     template: "%s | MK Gold",
   },
   description:
@@ -58,11 +59,9 @@ export const metadata: Metadata = {
   authors: [{ name: "MK Gold", url: "https://mkgold.in" }],
   creator: "MK Gold",
   icons: {
-    icon: [
-      { url: '/favicon.png', type: 'image/png' },
-    ],
-    apple: { url: '/favicon.png', type: 'image/png' },
-    shortcut: '/favicon.png',
+    icon: [{ url: "/favicon.png", type: "image/png" }],
+    apple: { url: "/favicon.png", type: "image/png" },
+    shortcut: "/favicon.png",
   },
   verification: {
     google: "kngp9_6DxVztBM7nc2H8GtkFv6G2lvZEZc2EGZVW4xg",
@@ -75,7 +74,14 @@ export const metadata: Metadata = {
     title: "MK Gold — Sell Gold in Karnataka | Instant Cash | 15 Years Trusted",
     description:
       "Karnataka's trusted gold buyer since 2014. Live MCX rates, XRF purity test, payment in 30 minutes. Branches across Karnataka.", // was: 16 branches
-    images: [{ url: "https://mkgold.in/mkgoldlogo.png", width: 400, height: 400, alt: "MK Gold" }],
+    images: [
+      {
+        url: "https://mkgold.in/mkgoldlogo.png",
+        width: 400,
+        height: 400,
+        alt: "MK Gold",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -112,23 +118,40 @@ export default async function RootLayout({
           { karat: 24, value: adminRate.rate24k },
           { karat: 22, value: adminRate.rate22k },
         ],
-        mcxRate:   adminRate.mcxRate,
+        mcxRate: adminRate.mcxRate,
         updatedAt: adminRate.timestamp,
       }
     : null;
 
   return (
-    <html lang="en" className={`${poppins.variable} ${anekKannada.variable}`} data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${poppins.variable} ${anekKannada.variable}`}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         {/* Google Maps — preconnect so SDK download starts before JS injects the script */}
         <link rel="preconnect" href="https://maps.googleapis.com" />
         <link rel="dns-prefetch" href="https://maps.googleapis.com" />
-        <link rel="preconnect" href="https://maps.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://maps.gstatic.com"
+          crossOrigin="anonymous"
+        />
         {/* Tanker display font — preload + async apply (non-blocking); Poppins + Anek via next/font */}
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Tanker&display=swap" />
+        <link
+          rel="preload"
+          as="style"
+          href="https://fonts.googleapis.com/css2?family=Tanker&display=swap"
+        />
         <Script id="tanker-font" strategy="afterInteractive">{`
           var l=document.createElement('link');
           l.rel='stylesheet';
@@ -151,7 +174,10 @@ export default async function RootLayout({
         {/* ── Google Analytics 4 ── */}
         {GA_ID && (
           <>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`} strategy="afterInteractive" />
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+              strategy="afterInteractive"
+            />
             <Script id="ga4-init" strategy="afterInteractive">{`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
@@ -164,13 +190,16 @@ export default async function RootLayout({
         {/* ── Google Ads + call conversion ── */}
         {ADS_ID && (
           <>
-            <Script src={`https://www.googletagmanager.com/gtag/js?id=${ADS_ID}`} strategy="afterInteractive" />
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${ADS_ID}`}
+              strategy="afterInteractive"
+            />
             <Script id="google-ads-init" strategy="afterInteractive">{`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', '${ADS_ID}');
-              ${ADS_CALL ? `gtag('config', '${ADS_ID}', { phone_conversion_number: '07019500600' });` : ''}
+              ${ADS_CALL ? `gtag('config', '${ADS_ID}', { phone_conversion_number: '07019500600' });` : ""}
             `}</Script>
           </>
         )}
@@ -192,9 +221,22 @@ export default async function RootLayout({
         )}
 
         {/* ── Site-wide JSON-LD (every page) ── */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema()) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema()) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_SCHEMA) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(localBusinessSchema()),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema()),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_SCHEMA) }}
+        />
       </head>
       <body className="min-h-screen flex flex-col antialiased">
         {/* Google Tag Manager (noscript) */}
@@ -204,7 +246,7 @@ export default async function RootLayout({
               src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
               height="0"
               width="0"
-              style={{ display: 'none', visibility: 'hidden' }}
+              style={{ display: "none", visibility: "hidden" }}
             />
           </noscript>
         )}
@@ -216,7 +258,7 @@ export default async function RootLayout({
             <img
               height="1"
               width="1"
-              style={{ display: 'none' }}
+              style={{ display: "none" }}
               src={`https://www.facebook.com/tr?id=${FB_PIXEL_ID}&ev=PageView&noscript=1`}
               alt=""
             />

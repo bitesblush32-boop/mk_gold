@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN ?? "mkgold_webhook_token";
+const VERIFY_TOKEN =
+  process.env.WHATSAPP_VERIFY_TOKEN ?? "mkgold_webhook_token";
 
 // GET — webhook verification (Meta/360dialog challenge)
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const mode      = searchParams.get("hub.mode");
-  const token     = searchParams.get("hub.verify_token");
+  const mode = searchParams.get("hub.mode");
+  const token = searchParams.get("hub.verify_token");
   const challenge = searchParams.get("hub.challenge");
 
   if (mode === "subscribe" && token === VERIFY_TOKEN) {
@@ -39,6 +40,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ status: "received" });
   } catch (err) {
     console.error("[whatsapp-webhook] error:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

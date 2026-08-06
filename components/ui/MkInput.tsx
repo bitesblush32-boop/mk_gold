@@ -33,7 +33,12 @@ function FieldWrapper({
       )}
       {children}
       {hint && !error && (
-        <p className={cn("mk-field-hint", surface === "dark" && "mk-field-hint--dark")}>
+        <p
+          className={cn(
+            "mk-field-hint",
+            surface === "dark" && "mk-field-hint--dark",
+          )}
+        >
           {hint}
         </p>
       )}
@@ -50,8 +55,10 @@ function FieldWrapper({
    MkInput
    ═══════════════════════════════════════════════════════════════ */
 
-export interface MkInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "id"> {
+export interface MkInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "id"
+> {
   label?: string;
   hint?: string;
   error?: string;
@@ -83,7 +90,9 @@ export function MkInput({
     >
       <input
         id={fieldId}
-        aria-describedby={error ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined}
+        aria-describedby={
+          error ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined
+        }
         aria-invalid={error ? true : undefined}
         className={cn(
           "mk-input",
@@ -107,8 +116,10 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface MkSelectProps
-  extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "id"> {
+export interface MkSelectProps extends Omit<
+  React.SelectHTMLAttributes<HTMLSelectElement>,
+  "id"
+> {
   options: SelectOption[];
   label?: string;
   hint?: string;
@@ -144,7 +155,9 @@ export function MkSelect({
     >
       <select
         id={fieldId}
-        aria-describedby={error ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined}
+        aria-describedby={
+          error ? `${fieldId}-error` : hint ? `${fieldId}-hint` : undefined
+        }
         aria-invalid={error ? true : undefined}
         className={cn(
           "mk-select",
@@ -173,8 +186,10 @@ export function MkSelect({
    MkTextarea
    ═══════════════════════════════════════════════════════════════ */
 
-export interface MkTextareaProps
-  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "id"> {
+export interface MkTextareaProps extends Omit<
+  React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+  "id"
+> {
   label?: string;
   hint?: string;
   error?: string;

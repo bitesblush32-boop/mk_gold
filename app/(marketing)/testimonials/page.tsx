@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { MkNavbar } from "@/components/layout/MkNavbar";
+import { MkFooter } from "@/components/layout/MkFooter";
 
 export const revalidate = 3600; // ISR: testimonials change infrequently
 
@@ -11,10 +13,14 @@ export const metadata: Metadata = {
 
 export default function TestimonialsPage() {
   return (
-    <main>
-      <p style={{ fontFamily: "Poppins, sans-serif", padding: "2rem" }}>
-        MK Gold — Testimonials page (scaffold)
-      </p>
-    </main>
+    <>
+      <MkNavbar />
+      <main>
+        <p style={{ fontFamily: "Poppins, sans-serif", padding: "2rem" }}>
+          MK Gold — Testimonials page (scaffold)
+        </p>
+      </main>
+      <MkFooter />
+    </>
   );
 }

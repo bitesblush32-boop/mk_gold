@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useGoldRateContext } from '@/context/GoldRateContext';
-import type { GoldKarat, UseGoldRateReturn } from '@/types/gold-rate';
+import { useGoldRateContext } from "@/context/GoldRateContext";
+import type { GoldKarat, UseGoldRateReturn } from "@/types/gold-rate";
 
 /**
  * Convenience hook that consumes GoldRateContext and derives
@@ -17,15 +17,15 @@ export function useGoldRate(): UseGoldRateReturn {
     return src.find((r) => r.karat === karat)?.value ?? 0;
   }
 
-  const rate22K     = getRate(22, rates);
+  const rate22K = getRate(22, rates);
   const baseRate22K = getRate(22, baseRates);
 
   return {
-    rate24K:      getRate(24, rates),
+    rate24K: getRate(24, rates),
     rate22K,
-    baseRate24K:  getRate(24, baseRates),
+    baseRate24K: getRate(24, baseRates),
     baseRate22K,
-    mkRate22K:    Math.round(baseRate22K * 0.975),
+    mkRate22K: Math.round(baseRate22K * 0.975),
     mcxRate,
     lastUpdated,
     isLoading,

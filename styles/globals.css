@@ -19,33 +19,32 @@
    ═══════════════════════════════════════════════════════════════ */
 
 :root {
-
   /* ── Brand Colours — Exact Pantone Matches ─────────────────── */
   --plum: #512561;
   /* Pantone Plum    · R81  G37  B97  */
-  --purple: #7B2C91;
+  --purple: #7b2c91;
   /* Royal Purple    · R123 G44  B145 */
-  --gold: #DFC160;
+  --gold: #dfc160;
   /* Cream Gold      · R223 G193 B96  */
-  --gallery: #F0EFEF;
+  --gallery: #f0efef;
   /* Pantone Gallery · R240 G239 B239 */
 
   /* ── Derived Colours ──────────────────────────────────────── */
-  --plum-deep: #3B1848;
+  --plum-deep: #3b1848;
   /* Darker plum — hero backgrounds, navbar */
-  --gold-deep: #C9A940;
+  --gold-deep: #c9a940;
   /* Pressed / active gold */
-  --gold-light: #EDD47A;
+  --gold-light: #edd47a;
   /* Hover gold */
-  --ink: #1C0A24;
+  --ink: #1c0a24;
   /* Near-black body text — plum-tinted */
-  --ink-mid: #3D2250;
+  --ink-mid: #3d2250;
   /* Secondary body text */
-  --mist: #8A7898;
+  --mist: #8a7898;
   /* Muted / caption text */
-  --gallery-dk: #DDDCDC;
+  --gallery-dk: #dddcdc;
   /* Borders on light backgrounds */
-  --white: #FFFFFF;
+  --white: #ffffff;
 
   /* ── Semantic Colour Aliases ──────────────────────────────── */
   --bg-dark: var(--plum-deep);
@@ -171,7 +170,7 @@
 
   /* ── Shadows ───────────────────────────────────────────────── */
   --shadow-sm: 0 1px 4px rgba(28, 10, 36, 0.08);
-  --shadow-md: 0 4px 24px rgba(81, 37, 97, 0.10);
+  --shadow-md: 0 4px 24px rgba(81, 37, 97, 0.1);
   --shadow-lg: 0 8px 40px rgba(81, 37, 97, 0.18);
   --shadow-gold: 0 4px 20px rgba(223, 193, 96, 0.28);
   --shadow-purple: 0 4px 24px rgba(123, 44, 145, 0.25);
@@ -219,7 +218,6 @@
   }
 }
 
-
 /* ═══════════════════════════════════════════════════════════════
    2. BRAND PATTERN BACKGROUNDS
    SVG derived from angular form of the MK icon letterform.
@@ -234,7 +232,7 @@
 
 /* Light variant — inline SVG triangle pattern */
 .mk-bg-light {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   /* --gallery — exact brand spec */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cpolygon points='0,0 60,60 0,120' fill='rgba(250,250,250,0.04)'/%3E%3Cpolygon points='0,0 120,0 60,60' fill='rgba(255,255,255,0.55)'/%3E%3Cpolygon points='120,0 120,120 60,60' fill='rgba(0,0,0,0.03)'/%3E%3Cpolygon points='0,120 120,120 60,60' fill='rgba(255,255,255,0.50)'/%3E%3Cline x1='0' y1='0' x2='60' y2='60' stroke='rgba(0,0,0,0.04)' stroke-width='0.5'/%3E%3Cline x1='120' y1='0' x2='60' y2='60' stroke='rgba(0,0,0,0.04)' stroke-width='0.5'/%3E%3Cline x1='0' y1='120' x2='60' y2='60' stroke='rgba(0,0,0,0.04)' stroke-width='0.5'/%3E%3Cline x1='120' y1='120' x2='60' y2='60' stroke='rgba(0,0,0,0.04)' stroke-width='0.5'/%3E%3C/svg%3E");
   background-repeat: repeat;
@@ -254,7 +252,6 @@
   background-color: var(--white);
 }
 
-
 /* ═══════════════════════════════════════════════════════════════
    3. KEYFRAME ANIMATIONS
    Rules: transform and opacity only — never width/height/margin.
@@ -273,7 +270,6 @@
 
 /* Live indicator dot — opacity only (brand rule: no transform in this animation) */
 @keyframes livePulse {
-
   0%,
   100% {
     opacity: 1;
@@ -284,16 +280,15 @@
   }
 }
 
-/* Gold glow ring — seal, CTA hover */
+/* Gold glow ring — seal, CTA hover (filter: GPU-composited, compliant) */
 @keyframes glowPulse {
-
   0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(223, 193, 96, 0.50);
+    filter: drop-shadow(0 0 2px rgba(223, 193, 96, 0.5));
   }
 
   50% {
-    box-shadow: 0 0 0 10px rgba(223, 193, 96, 0);
+    filter: drop-shadow(0 0 10px rgba(223, 193, 96, 0));
   }
 }
 
@@ -312,7 +307,6 @@
 
 /* Rating glow pulse — 4.9 score highlight */
 @keyframes mk-rating-glow {
-
   0%,
   100% {
     filter: drop-shadow(0 0 4px rgba(223, 193, 96, 0.4));
@@ -323,14 +317,10 @@
   }
 }
 
-/* Gold shimmer — loading skeletons */
+/* Gold shimmer — loading skeletons (transform: GPU-composited, compliant) */
 @keyframes shimmer {
-  0% {
-    background-position: -200% center;
-  }
-
-  100% {
-    background-position: 200% center;
+  to {
+    transform: translateX(200%);
   }
 }
 
@@ -364,7 +354,7 @@
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.90);
+    transform: scale(0.9);
   }
 
   to {
@@ -418,7 +408,6 @@
 }
 
 @keyframes mk-coin-wobble {
-
   0%,
   100% {
     transform: rotateZ(-2deg);
@@ -446,7 +435,6 @@
 }
 
 @keyframes mk-levitate {
-
   0%,
   100% {
     transform: translateY(0);
@@ -461,7 +449,6 @@
   animation: mk-coin-wobble 3s ease-in-out infinite;
   transform-origin: center;
 }
-
 
 /* ═══════════════════════════════════════════════════════════════
    4. BASE RESET
@@ -489,7 +476,7 @@ html {
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-base);
   font-weight: 400;
   line-height: var(--lh-normal);
@@ -507,7 +494,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Tanker', serif;
+  font-family: "Tanker", serif;
   font-weight: 400;
   /* Tanker is a display weight — do not fake-bold */
   line-height: var(--lh-tight);
@@ -518,7 +505,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 600;
   line-height: var(--lh-snug);
 }
@@ -607,7 +594,6 @@ hr {
   border-top: 1px solid var(--gallery-dk);
 }
 
-
 /* ═══════════════════════════════════════════════════════════════
    5. TYPOGRAPHY BASE
    ═══════════════════════════════════════════════════════════════ */
@@ -621,38 +607,38 @@ hr {
 /* Kannada text — must use Anek Kannada */
 :lang(kn),
 .font-kannada {
-  font-family: 'Anek Kannada', sans-serif;
+  font-family: "Anek Kannada", sans-serif;
 }
 
 /* Display text */
 .t-display {
-  font-family: 'Tanker', serif;
+  font-family: "Tanker", serif;
   font-size: var(--t-display);
   line-height: var(--lh-tight);
   letter-spacing: var(--ls-tight);
 }
 
 .t-h1 {
-  font-family: 'Tanker', serif;
+  font-family: "Tanker", serif;
   font-size: var(--t-h1);
   line-height: var(--lh-tight);
 }
 
 .t-h2 {
-  font-family: 'Tanker', serif;
+  font-family: "Tanker", serif;
   font-size: var(--t-h2);
   line-height: var(--lh-snug);
 }
 
 .t-h3 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-h3);
   font-weight: 600;
   line-height: var(--lh-snug);
 }
 
 .t-h4 {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-h4);
   font-weight: 600;
   line-height: var(--lh-snug);
@@ -680,7 +666,7 @@ hr {
 
 /* Section overline — always gold, always uppercase */
 .mk-overline {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-2xs);
   font-weight: 700;
   letter-spacing: var(--ls-overline);
@@ -697,7 +683,7 @@ hr {
 
 /* Number display — large stats */
 .t-stat {
-  font-family: 'Tanker', serif;
+  font-family: "Tanker", serif;
   font-size: clamp(2.5rem, 5vw, 4.5rem);
   line-height: 1;
   color: var(--gold);
@@ -705,13 +691,12 @@ hr {
 
 /* Caption / label */
 .t-label {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-xs);
   font-weight: 500;
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
 }
-
 
 /* ═══════════════════════════════════════════════════════════════
    6. REVEAL ANIMATION CLASSES
@@ -787,13 +772,12 @@ hr {
 }
 
 .delay-5 {
-  transition-delay: 0.40s;
+  transition-delay: 0.4s;
 }
 
 .delay-6 {
   transition-delay: 0.48s;
 }
-
 
 /* ═══════════════════════════════════════════════════════════════
    7. LAYOUT UTILITIES
@@ -837,9 +821,9 @@ hr {
 }
 
 /* Full-bleed row that still constrains inner content */
-.section>.container,
-.section>.container--md,
-.section>.container--sm {
+.section > .container,
+.section > .container--md,
+.section > .container--sm {
   position: relative;
 }
 
@@ -896,7 +880,6 @@ hr {
 }
 
 @media (max-width: 900px) {
-
   .grid-3,
   .grid-4 {
     grid-template-columns: repeat(2, 1fr);
@@ -904,7 +887,6 @@ hr {
 }
 
 @media (max-width: 600px) {
-
   .grid-2,
   .grid-3,
   .grid-4 {
@@ -970,17 +952,28 @@ hr {
   border-width: 0;
 }
 
-/* Gold text shimmer — for sale/rate emphasis */
+/* Gold text shimmer — for sale/rate emphasis (transform-based, GPU-composited) */
 .shimmer {
-  background: linear-gradient(90deg,
-      var(--gold-deep) 0%,
-      var(--gold-light) 40%,
-      var(--gold-deep) 60%,
-      var(--gold-light) 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  position: relative;
+  display: inline-block;
+  color: var(--gold);
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 0%,
+    rgba(237, 212, 122, 0.55) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
   animation: shimmer 3s linear infinite;
 }
 
@@ -1003,7 +996,7 @@ hr {
   display: inline-flex;
   align-items: center;
   gap: var(--s-2);
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-2xs);
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -1020,7 +1013,7 @@ hr {
   display: inline-flex;
   align-items: center;
   gap: var(--s-2);
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-2xs);
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -1041,14 +1034,12 @@ hr {
   animation: livePulse 2s ease-in-out infinite;
 }
 
-
 /* ═══════════════════════════════════════════════════════════════
    8. REDUCED MOTION
    Disable all animations for users who prefer it.
    ═══════════════════════════════════════════════════════════════ */
 
 @media (prefers-reduced-motion: reduce) {
-
   *,
   *::before,
   *::after {
