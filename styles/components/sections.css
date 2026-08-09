@@ -3656,7 +3656,7 @@ body {
   display: flex !important;
   align-items: center !important;
   padding: 0 19px !important;
-  gap: 1.25rem !important;
+  gap: 0.25rem !important;
 }
 
 .mk-navbar__inner {

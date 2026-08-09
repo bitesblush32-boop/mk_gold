@@ -81,3 +81,311 @@
     margin-bottom: 6px !important;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   TIRANGA THEME — Indian Independence Day Aug 1–31
+   Activated via data-tiranga="true" on <body> (HomeClient.tsx)
+   and .mk-footer--tiranga class (MkFooter.tsx, server-rendered).
+   Remove this entire block after Aug 31 if desired, or leave it —
+   the date gate means it never activates in September+.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 1+6 — Left-edge tricolor bar (3px) + saffron dawn bleed from the left */
+[data-tiranga="true"] .mk-navbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, #FF9933 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #138808 66.66%)
+      left / 3px 100% no-repeat,
+    radial-gradient(ellipse at -5% 50%, rgba(255, 153, 51, 0.13) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 2 — Saffron-tinted glass: warm the existing plum backdrop slightly */
+[data-tiranga="true"] .mk-navbar {
+  background-image: linear-gradient(135deg, rgba(255, 153, 51, 0.07) 0%, transparent 45%);
+  background-color: rgba(59, 24, 72, 0.96);
+}
+
+/* 2a — Navbar bottom: original gold hairline retained (tricolor stripe removed) */
+
+/* 4 — Navbar CTA "Sell Gold Today" button: tricolor ring (saffron → white → green) */
+[data-tiranga="true"] .mk-navbar .mk-btn--gold {
+  box-shadow:
+    0 0 0 1.5px rgba(255, 153, 51, 0.9),
+    0 0 0 3px rgba(255, 255, 255, 0.3),
+    0 0 0 4.5px rgba(19, 136, 8, 0.55);
+}
+
+/* 5 — Active nav link: underline becomes saffron/white/green gradient */
+[data-tiranga="true"] .mk-navbar__link--active::after,
+[data-tiranga="true"] .mk-navbar__link:hover::after {
+  background: linear-gradient(
+    90deg,
+    #FF9933 33.33%,
+    rgba(255, 255, 255, 0.85) 33.33%, rgba(255, 255, 255, 0.85) 66.66%,
+    #138808 66.66%
+  );
+}
+
+/* 8 — Bottom nav: frosted tricolor bands over dark base (mini Indian flag) */
+[data-tiranga="true"] .sc-bottom-nav {
+  border-color: rgba(255, 153, 51, 0.45);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    0 2px 8px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 24px rgba(255, 153, 51, 0.18);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 153, 51, 0.28) 0%     33.33%,
+      rgba(255, 255, 255, 0.14) 33.33% 66.66%,
+      rgba(19,  136,  8,  0.28) 66.66% 100%
+    ),
+    var(--plum-deep);
+}
+
+/* 12 — Saffron sweep: repeats every 10 s (3 s sweep + 7 s pause) */
+@keyframes mkSaffronSweep {
+  0%     { transform: translateX(-100%); animation-timing-function: ease-in-out; }
+  30%    { transform: translateX(200%); }
+  30.1%  { transform: translateX(-100%); }
+  100%   { transform: translateX(-100%); }
+}
+
+[data-tiranga="true"] .mk-navbar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent              0%,
+    transparent              15%,
+    rgba(255, 153, 51, 0.38) 40%,
+    rgba(255, 230, 180, 0.22) 50%,
+    rgba(255, 153, 51, 0.38) 60%,
+    transparent              85%,
+    transparent              100%
+  );
+  transform: translateX(-100%);
+  animation: mkSaffronSweep 10s linear 0.8s infinite;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* 15 — Permanent tricolor wash over navbar throughout August */
+.mk-navbar__aug15-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 153, 51, 0.30) 0%     33.33%,
+    rgba(255, 255, 255, 0.30) 33.33% 66.66%,
+    rgba(19,  136,  8,  0.30) 66.66% 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+  animation: none;
+}
+
+
+/* 2b — Hero: subtle diagonal saffron → transparent → green tint wash */
+.sc-hero__tiranga-wash {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 153, 51, 0.14) 0%,
+    transparent 35%,
+    transparent 65%,
+    rgba(19, 136, 8, 0.14) 100%
+  );
+  pointer-events: none;
+}
+
+/* 2c — 3D waving tricolor flag (transform only — GPU composited) */
+.sc-tiranga-flag {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  z-index: 6;
+  display: flex;
+  align-items: flex-start;
+}
+
+.sc-tiranga-flag__pole {
+  width: 3px;
+  height: 88px;
+  background: linear-gradient(180deg, var(--gold) 0%, rgba(223, 193, 96, 0.5) 100%);
+  border-radius: 1.5px;
+  flex-shrink: 0;
+}
+
+.sc-tiranga-flag__cloth {
+  width: 72px;
+  height: 48px;
+  overflow: hidden;
+  transform-origin: left center;
+  animation: tirangaWave 3s ease-in-out infinite;
+}
+
+@keyframes tirangaWave {
+  0%, 100% { transform: perspective(200px) rotateY(0deg); }
+  25%       { transform: perspective(200px) rotateY(14deg); }
+  75%       { transform: perspective(200px) rotateY(-7deg); }
+}
+
+.sc-tiranga-flag__stripe {
+  width: 100%;
+  height: 33.333%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sc-tiranga-flag__stripe--saffron { background: #FF9933; }
+.sc-tiranga-flag__stripe--white   { background: #FFFFFF; }
+.sc-tiranga-flag__stripe--green   { background: #138808; }
+
+.sc-ashoka-chakra {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+/* 2d — Hero "Jai Hind" pill badge (bottom-left) */
+.sc-hero__independence-badge {
+  position: absolute;
+  bottom: 28px;
+  left: 28px;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(28, 10, 36, 0.72);
+  border: 1px solid rgba(255, 153, 51, 0.35);
+  border-radius: 9999px;
+  padding: 0.35rem 0.875rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+.sc-independence-jai {
+  font-family: 'Tanker', serif;
+  font-size: 0.9rem;
+  color: var(--tiranga-saffron);
+  letter-spacing: 0.04em;
+}
+
+.sc-independence-divider {
+  width: 1px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+}
+
+.sc-independence-date {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* 2e — Footer: tricolor divider at top + "Jai Hind" note */
+.mk-footer--tiranga::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    #FF9933 33.33%,
+    #FFFFFF 33.33%, #FFFFFF 66.66%,
+    #138808 66.66%
+  );
+  width: 100%;
+}
+
+.mk-footer__independence-note {
+  font-family: 'Poppins', sans-serif;
+  font-size: var(--t-xs);
+  font-weight: 500;
+  color: rgba(255, 153, 51, 0.7);
+  letter-spacing: 0.1em;
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+/* 7+9 — Hide chip + dots on mobile (hamburger breakpoint) — they take navbar space */
+@media (max-width: 768px) {
+  .mk-navbar__tiranga-chip,
+  .mk-navbar__tiranga-dots {
+    display: none;
+  }
+}
+
+/* 7m — Mobile-only pennant: tricolor chip hangs from navbar, short downward point */
+.mk-navbar__tiranga-chip--mobile {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mk-navbar__tiranga-chip--mobile {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    /* Mostly rectangular, small V-point at bottom */
+    clip-path: polygon(0 0, 100% 0, 100% 82%, 50% 100%, 0 82%);
+
+    /* Full horizontal tricolor fill */
+    background: linear-gradient(
+      90deg,
+      #FF9933 33.33%,
+      #FFFFFF 33.33% 66.66%,
+      #138808 66.66%
+    );
+
+    min-width: 152px;
+    padding: 6px 16px 13px;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.71rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: #1C0A24;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* 2f — Mobile: scale down flag on small screens */
+@media (max-width: 480px) {
+  .sc-tiranga-flag {
+    top: 16px;
+    right: 16px;
+  }
+  .sc-tiranga-flag__cloth {
+    width: 54px;
+    height: 36px;
+  }
+  .sc-tiranga-flag__pole {
+    height: 66px;
+  }
+  .sc-hero__independence-badge {
+    bottom: 18px;
+    left: 18px;
+  }
+}

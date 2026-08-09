@@ -8,6 +8,10 @@ import { MkButton } from "@/components/ui/MkButton";
 import { trackFormSubmit } from "@/lib/analytics";
 import { getUtmParams } from "@/lib/utm";
 
+// Module-level — computed once when client bundle loads (Aug = month index 7)
+const IS_TIRANGA_MONTH =
+  typeof window !== "undefined" && new Date().getMonth() === 7;
+
 export function MkLeadPopup() {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -225,7 +229,15 @@ export function MkLeadPopup() {
         </div>
 
         {/* Body */}
-        <div style={{ background: "white", padding: "2rem" }}>
+        <div
+          style={{
+            background: IS_TIRANGA_MONTH
+              ? "linear-gradient(155deg, rgba(255,153,51,0.45) 0%, rgba(255,255,255,1) 38%, rgba(255,255,255,1) 62%, rgba(19,136,8,0.45) 100%)"
+              : "white",
+            padding: "2rem",
+            position: "relative",
+          }}
+        >
           {status === "success" ? (
             <div style={{ textAlign: "center", padding: "1rem 0" }}>
               <div
@@ -491,6 +503,90 @@ export function MkLeadPopup() {
                 No spam. No pressure. We call once.
               </p>
             </form>
+          )}
+
+          {/* Red Fort + tricolor flag + birds — decorative illustration, Aug only */}
+          {IS_TIRANGA_MONTH && (
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                width: "160px",
+                opacity: 0.1,
+                pointerEvents: "none",
+                zIndex: 0,
+              }}
+            >
+              <svg
+                viewBox="0 0 200 140"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {/* Ground */}
+                <rect x="0" y="128" width="200" height="12" fill="#138808" rx="3" />
+                {/* Fort base wall */}
+                <rect x="15" y="78" width="170" height="50" fill="#CC6633" />
+                {/* Battlements */}
+                {[0, 18, 36, 54, 72, 90, 108, 126, 144].map((x, i) => (
+                  <rect
+                    key={i}
+                    x={15 + x}
+                    y="68"
+                    width="11"
+                    height="13"
+                    fill="#CC6633"
+                    rx="1"
+                  />
+                ))}
+                {/* Main gate arch */}
+                <rect x="82" y="98" width="36" height="30" fill="#7A3A1A" />
+                <path
+                  d="M82,98 Q100,82 118,98"
+                  fill="none"
+                  stroke="#7A3A1A"
+                  strokeWidth="2"
+                />
+                {/* Side towers */}
+                <rect x="15" y="60" width="24" height="68" fill="#B85C2C" />
+                <rect x="161" y="60" width="24" height="68" fill="#B85C2C" />
+                {/* Flag pole */}
+                <line
+                  x1="100"
+                  y1="28"
+                  x2="100"
+                  y2="68"
+                  stroke="#DFC160"
+                  strokeWidth="2.5"
+                />
+                {/* Tricolor flag */}
+                <rect x="100" y="28" width="38" height="12" fill="#FF9933" />
+                <rect x="100" y="40" width="38" height="12" fill="#FFFFFF" />
+                <rect x="100" y="52" width="38" height="12" fill="#138808" />
+                {/* Birds */}
+                <path
+                  d="M38,16 Q43,10 48,16 Q53,10 58,16"
+                  fill="none"
+                  stroke="#512561"
+                  strokeWidth="1.8"
+                  opacity="0.8"
+                />
+                <path
+                  d="M145,8 Q150,3 155,8 Q160,3 165,8"
+                  fill="none"
+                  stroke="#512561"
+                  strokeWidth="1.8"
+                  opacity="0.8"
+                />
+                <path
+                  d="M62,30 Q65,26 68,30 Q71,26 74,30"
+                  fill="none"
+                  stroke="#512561"
+                  strokeWidth="1.2"
+                  opacity="0.5"
+                />
+              </svg>
+            </div>
           )}
         </div>
       </div>
