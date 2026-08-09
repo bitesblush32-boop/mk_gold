@@ -1,30 +1,39 @@
-'use client';
+"use client";
 // Final CTA band — mk-bg-purple + pattern
 
-import { MkButton } from '@/components/ui/MkButton';
-import { trackCallConversion } from '@/lib/analytics';
+import { MkButton } from "@/components/ui/MkButton";
+import { trackCallConversion } from "@/lib/analytics";
 
-const MAIN_PHONE = '+917019500600';
+const MAIN_PHONE = "+917019500600";
 
 export function MkCtaBand() {
   return (
-    <section className="mk-cta-band mk-bg-dark section" aria-labelledby="cta-band-headline">
+    <section
+      className="mk-cta-band mk-bg-dark section"
+      aria-labelledby="cta-band-headline"
+    >
       <div className="mk-container mk-cta-band__inner">
-
         <div className="mk-cta-band__copy reveal">
           <p className="mk-section-overline">Get Started Today</p>
           <h2 className="mk-cta-band__headline" id="cta-band-headline">
-            Your gold is worth<br />
+            Your gold is worth
+            <br />
             more than you think.
           </h2>
           <p className="mk-cta-band__sub">
-            Get a certified XRF valuation at any MK Gold branch in Karnataka.
-            No appointment needed. Payment in 30 minutes.
+            Get a certified XRF valuation at any MK Gold branch in Karnataka. No
+            appointment needed. Payment in 30 minutes.
           </p>
         </div>
 
         <div className="mk-cta-band__actions reveal delay-2">
-          <MkButton variant="gold" size="lg" onClick={() => window.dispatchEvent(new CustomEvent('mk:openPopup'))}>
+          <MkButton
+            variant="gold"
+            size="lg"
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent("mk:openPopup"))
+            }
+          >
             Book Appointment
           </MkButton>
           <MkButton
@@ -41,7 +50,6 @@ export function MkCtaBand() {
           Branches across Bangalore, Mysore, Mangalore &amp; Davangere
           &nbsp;&middot;&nbsp; Open Mon–Sun, 10:00 AM – 8:00 PM
         </p>
-
       </div>
     </section>
   );

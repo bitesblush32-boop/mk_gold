@@ -1,8 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef } from "react";
 
-export interface FaqItem { q: string; a: string; }
+export interface FaqItem {
+  q: string;
+  a: string;
+}
 
 interface CityFaqProps {
   faqs: FaqItem[];
@@ -18,19 +21,31 @@ export function CityFaq({ faqs, idPrefix }: CityFaqProps) {
 
   function handleKeyDown(e: React.KeyboardEvent, i: number) {
     const count = faqs.length;
-    if (e.key === 'ArrowDown') { e.preventDefault(); triggerRefs.current[(i + 1) % count]?.focus(); }
-    if (e.key === 'ArrowUp')   { e.preventDefault(); triggerRefs.current[(i - 1 + count) % count]?.focus(); }
-    if (e.key === 'Home')      { e.preventDefault(); triggerRefs.current[0]?.focus(); }
-    if (e.key === 'End')       { e.preventDefault(); triggerRefs.current[count - 1]?.focus(); }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      triggerRefs.current[(i + 1) % count]?.focus();
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      triggerRefs.current[(i - 1 + count) % count]?.focus();
+    }
+    if (e.key === "Home") {
+      e.preventDefault();
+      triggerRefs.current[0]?.focus();
+    }
+    if (e.key === "End") {
+      e.preventDefault();
+      triggerRefs.current[count - 1]?.focus();
+    }
   }
 
   const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqs.map(f => ({
-      '@type': 'Question',
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
       name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: f.a },
+      acceptedAnswer: { "@type": "Answer", text: f.a },
     })),
   };
 
@@ -56,14 +71,16 @@ export function CityFaq({ faqs, idPrefix }: CityFaqProps) {
             return (
               <div
                 key={i}
-                className={`mk-faq__item${isOpen ? ' mk-faq__item--open' : ''}`}
+                className={`mk-faq__item${isOpen ? " mk-faq__item--open" : ""}`}
               >
                 <dt>
                   <button
-                    ref={el => { triggerRefs.current[i] = el; }}
+                    ref={(el) => {
+                      triggerRefs.current[i] = el;
+                    }}
                     className="mk-faq__trigger"
                     onClick={() => toggle(i)}
-                    onKeyDown={e => handleKeyDown(e, i)}
+                    onKeyDown={(e) => handleKeyDown(e, i)}
                     aria-expanded={isOpen}
                     aria-controls={`${idPrefix}-faq-answer-${i}`}
                     id={`${idPrefix}-faq-q-${i}`}

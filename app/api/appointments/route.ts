@@ -1,48 +1,57 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createAppointment, getSlotBookings } from '@/lib/db/appointments';
-import { getBranchBySlug } from '@/lib/branch-router';
-import { sendWhatsApp } from '@/lib/whatsapp';
+import { NextRequest, NextResponse } from "next/server";
+import { createAppointment, getSlotBookings } from "@/lib/db/appointments";
+import { getBranchBySlug } from "@/lib/branch-router";
+import { sendWhatsApp } from "@/lib/whatsapp";
 
 /* ─── Google Sheets sync ─────────────────────────────────────────── */
 
 async function syncAppointmentToSheets(data: {
-  name: string; phone: string; city: string; gold_type: string;
-  slot_date: string; slot_time: string;
+  name: string;
+  phone: string;
+  city: string;
+  gold_type: string;
+  slot_date: string;
+  slot_time: string;
 }): Promise<void> {
   const url = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   if (!url) return;
 
-  const now     = new Date();
-  const ist     = now.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-  const istDate = now.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata' });
+  const now = new Date();
+  const ist = now.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+  const istDate = now.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
 
   const payload = JSON.stringify({
-    date:         istDate,
+    date: istDate,
     created_time: ist,
-    name:         data.name,
-    phone:        data.phone,
-    city:         data.city,
-    gold_type:    data.gold_type,
-    weight:       '',
-    purity:       '',
-    email:        '',
-    channel:      `Appointment Form (${data.slot_date} ${data.slot_time})`,
+    name: data.name,
+    phone: data.phone,
+    city: data.city,
+    gold_type: data.gold_type,
+    weight: "",
+    purity: "",
+    email: "",
+    channel: `Appointment Form (${data.slot_date} ${data.slot_time})`,
   });
 
   const postOptions: RequestInit = {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    payload,
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: payload,
   };
 
   try {
-    const res = await fetch(url, { ...postOptions, redirect: 'manual' });
-    if (res.status === 301 || res.status === 302 || res.status === 307 || res.status === 308) {
-      const location = res.headers.get('location');
+    const res = await fetch(url, { ...postOptions, redirect: "manual" });
+    if (
+      res.status === 301 ||
+      res.status === 302 ||
+      res.status === 307 ||
+      res.status === 308
+    ) {
+      const location = res.headers.get("location");
       if (location) await fetch(location, postOptions);
     }
   } catch (err) {
-    console.error('[sheets-sync/appointments] failed:', err);
+    console.error("[sheets-sync/appointments] failed:", err);
   }
 }
 
@@ -51,10 +60,25 @@ async function syncAppointmentToSheets(data: {
 const MAX_PER_SLOT = 4;
 
 const ALL_SLOTS = [
-  '9:30 AM',  '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
-  '12:00 PM', '12:30 PM', '1:00 PM',  '1:30 PM',  '2:00 PM',
-  '2:30 PM',  '3:00 PM',  '3:30 PM',  '4:00 PM',  '4:30 PM',
-  '5:00 PM',  '5:30 PM',  '6:00 PM',  '6:30 PM',
+  "9:30 AM",
+  "10:00 AM",
+  "10:30 AM",
+  "11:00 AM",
+  "11:30 AM",
+  "12:00 PM",
+  "12:30 PM",
+  "1:00 PM",
+  "1:30 PM",
+  "2:00 PM",
+  "2:30 PM",
+  "3:00 PM",
+  "3:30 PM",
+  "4:00 PM",
+  "4:30 PM",
+  "5:00 PM",
+  "5:30 PM",
+  "6:00 PM",
+  "6:30 PM",
 ];
 
 function makeCode(): string {
@@ -68,22 +92,30 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const { name, phone, branch_slug, slot_date, slot_time, gold_type, weight_estimate, notes } =
-    body as Record<string, string | undefined>;
+  const {
+    name,
+    phone,
+    branch_slug,
+    slot_date,
+    slot_time,
+    gold_type,
+    weight_estimate,
+    notes,
+  } = body as Record<string, string | undefined>;
 
   if (!name || !phone || !branch_slug || !slot_date || !slot_time) {
     return NextResponse.json(
-      { error: 'name, phone, branch_slug, slot_date, slot_time are required' },
+      { error: "name, phone, branch_slug, slot_date, slot_time are required" },
       { status: 400 },
     );
   }
 
-  if (!/^[6-9]\d{9}$/.test(phone.replace(/\s/g, ''))) {
+  if (!/^[6-9]\d{9}$/.test(phone.replace(/\s/g, ""))) {
     return NextResponse.json(
-      { error: 'Enter a valid 10-digit Indian mobile number' },
+      { error: "Enter a valid 10-digit Indian mobile number" },
       { status: 400 },
     );
   }
@@ -91,28 +123,33 @@ export async function POST(req: NextRequest) {
   // Validate date not in the past
   const today = new Date().toISOString().slice(0, 10);
   if (slot_date < today) {
-    return NextResponse.json({ error: 'slot_date cannot be in the past' }, { status: 400 });
+    return NextResponse.json(
+      { error: "slot_date cannot be in the past" },
+      { status: 400 },
+    );
   }
 
   try {
     // Check slot availability
     const existing = await getSlotBookings(branch_slug, slot_date);
     const slotCount = existing.filter(
-      a => a.slot_time === slot_time && a.status !== 'cancelled',
+      (a) => a.slot_time === slot_time && a.status !== "cancelled",
     ).length;
 
     if (slotCount >= MAX_PER_SLOT) {
       // Build suggestion list: slots with < MAX_PER_SLOT bookings
       const bookedMap: Record<string, number> = {};
       for (const appt of existing) {
-        if (appt.status !== 'cancelled') {
+        if (appt.status !== "cancelled") {
           bookedMap[appt.slot_time] = (bookedMap[appt.slot_time] ?? 0) + 1;
         }
       }
-      const suggestNext = ALL_SLOTS.filter(s => (bookedMap[s] ?? 0) < MAX_PER_SLOT).slice(0, 5);
+      const suggestNext = ALL_SLOTS.filter(
+        (s) => (bookedMap[s] ?? 0) < MAX_PER_SLOT,
+      ).slice(0, 5);
 
       return NextResponse.json(
-        { error: 'Slot full. Please choose another time.', suggestNext },
+        { error: "Slot full. Please choose another time.", suggestNext },
         { status: 409 },
       );
     }
@@ -120,14 +157,14 @@ export async function POST(req: NextRequest) {
     const confirmationCode = makeCode();
     const appt = await createAppointment({
       name,
-      phone:           phone.replace(/\s/g, ''),
+      phone: phone.replace(/\s/g, ""),
       branch_slug,
       slot_date,
       slot_time,
-      gold_type:       gold_type ?? undefined,
+      gold_type: gold_type ?? undefined,
       weight_estimate: weight_estimate ?? undefined,
-      notes:           notes ?? undefined,
-      status:          'pending',
+      notes: notes ?? undefined,
+      status: "pending",
       confirmation_code: confirmationCode,
     });
 
@@ -135,16 +172,16 @@ export async function POST(req: NextRequest) {
     const branch = getBranchBySlug(branch_slug);
     syncAppointmentToSheets({
       name,
-      phone:     phone.replace(/\s/g, ''),
-      city:      branch?.city ?? '',
-      gold_type: gold_type ?? (notes?.replace('Gold type: ', '') ?? ''),
+      phone: phone.replace(/\s/g, ""),
+      city: branch?.city ?? "",
+      gold_type: gold_type ?? notes?.replace("Gold type: ", "") ?? "",
       slot_date,
       slot_time,
     }).catch(() => {});
 
     // Notify customer and branch (non-blocking)
-    const customerMsg = `MK Gold appointment confirmed!\nDate: ${slot_date} at ${slot_time}\nBranch: ${branch?.name ?? branch_slug}\nAddress: ${branch?.address ?? ''}\nRef: ${confirmationCode}`;
-    const branchMsg   = `New appointment:\nName: ${name} | Phone: ${phone}\nDate: ${slot_date} at ${slot_time}${gold_type ? `\nGold: ${gold_type}` : ''}\nRef: ${confirmationCode}`;
+    const customerMsg = `MK Gold appointment confirmed!\nDate: ${slot_date} at ${slot_time}\nBranch: ${branch?.name ?? branch_slug}\nAddress: ${branch?.address ?? ""}\nRef: ${confirmationCode}`;
+    const branchMsg = `New appointment:\nName: ${name} | Phone: ${phone}\nDate: ${slot_date} at ${slot_time}${gold_type ? `\nGold: ${gold_type}` : ""}\nRef: ${confirmationCode}`;
 
     sendWhatsApp(phone, customerMsg).catch(() => {});
     if (branch) sendWhatsApp(branch.whatsapp, branchMsg).catch(() => {});
@@ -154,8 +191,11 @@ export async function POST(req: NextRequest) {
       { status: 201 },
     );
   } catch (err) {
-    console.error('[api/appointments] error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("[api/appointments] error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -163,12 +203,12 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const branch = searchParams.get('branch');
-  const date   = searchParams.get('date');
+  const branch = searchParams.get("branch");
+  const date = searchParams.get("date");
 
   if (!branch || !date) {
     return NextResponse.json(
-      { error: 'branch and date query params are required' },
+      { error: "branch and date query params are required" },
       { status: 400 },
     );
   }
@@ -179,22 +219,30 @@ export async function GET(req: NextRequest) {
     // Count bookings per slot (excluding cancelled)
     const bookedMap: Record<string, number> = {};
     for (const appt of existing) {
-      if (appt.status !== 'cancelled') {
+      if (appt.status !== "cancelled") {
         bookedMap[appt.slot_time] = (bookedMap[appt.slot_time] ?? 0) + 1;
       }
     }
 
-    const slots = ALL_SLOTS.map(time => ({
+    const slots = ALL_SLOTS.map((time) => ({
       time,
-      booked:    bookedMap[time] ?? 0,
+      booked: bookedMap[time] ?? 0,
       available: (bookedMap[time] ?? 0) < MAX_PER_SLOT,
     }));
 
-    return NextResponse.json({ slots }, {
-      headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120' },
-    });
+    return NextResponse.json(
+      { slots },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        },
+      },
+    );
   } catch (err) {
-    console.error('[api/appointments] GET error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("[api/appointments] GET error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

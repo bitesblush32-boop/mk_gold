@@ -1,40 +1,46 @@
-import type { Metadata } from 'next';
-import Link from 'next/link';
+import type { Metadata } from "next";
+import Link from "next/link";
 
 export const revalidate = 3600; // ISR: FAQ content changes infrequently
 
-import { MkNavbar } from '@/components/layout/MkNavbar';
-import { MkFooter } from '@/components/layout/MkFooter';
-import { MkButton } from '@/components/ui/MkButton';
-import { MkBadge } from '@/components/ui/MkBadge';
-import { MkSectionHeader } from '@/components/ui/MkSectionHeader';
-import { MkSteps } from '@/components/sections/MkSteps';
-import { MkTrust } from '@/components/sections/MkTrust';
-import { MkFaq } from '@/components/sections/MkFaq';
-import { getFaqsByPage } from '@/lib/db/faqs';
-import { MkCtaBand } from '@/components/sections/MkCtaBand';
-import { MkRateWidget } from '@/components/features/MkRateWidget';
-import { MkCalculator } from '@/components/features/MkCalculator';
-import { MkBranchFinder } from '@/components/features/MkBranchFinder';
-import { MkEmergency } from '@/components/features/MkEmergency';
-import { howToSchema } from '@/lib/schema/how-to';
-import { HOW_TO_STEPS, GOLD_TYPES, PAYMENT_METHODS, REQUIRED_DOCS, NOT_NEEDED } from '@/lib/data/sell-gold';
+import { MkNavbar } from "@/components/layout/MkNavbar";
+import { MkFooter } from "@/components/layout/MkFooter";
+import { MkButton } from "@/components/ui/MkButton";
+import { MkBadge } from "@/components/ui/MkBadge";
+import { MkSectionHeader } from "@/components/ui/MkSectionHeader";
+import { MkSteps } from "@/components/sections/MkSteps";
+import { MkTrust } from "@/components/sections/MkTrust";
+import { MkFaq } from "@/components/sections/MkFaq";
+import { getFaqsByPage } from "@/lib/db/faqs";
+import { MkCtaBand } from "@/components/sections/MkCtaBand";
+import { MkRateWidget } from "@/components/features/MkRateWidget";
+import { MkCalculator } from "@/components/features/MkCalculator";
+import { MkBranchFinder } from "@/components/features/MkBranchFinder";
+import { MkEmergency } from "@/components/features/MkEmergency";
+import { howToSchema } from "@/lib/schema/how-to";
+import {
+  HOW_TO_STEPS,
+  GOLD_TYPES,
+  PAYMENT_METHODS,
+  REQUIRED_DOCS,
+  NOT_NEEDED,
+} from "@/lib/data/sell-gold";
 
 /* ─── Metadata ────────────────────────────────────────────────── */
 
 export const metadata: Metadata = {
-  title: 'Sell Gold | Best Rate Today | MK Gold Karnataka',
+  title: "Sell Gold | Best Rate Today | MK Gold Karnataka",
   description:
-    'Sell gold at MK Gold. Live MCX rates, XRF purity test, payment in 30 minutes. Branches in Bangalore, Mysore, Mangalore & Davangere. Walk in today — no appointment needed.', // was: 16 branches
-  alternates: { canonical: 'https://mkgold.in/sell-gold' },
+    "Sell gold at MK Gold. Live MCX rates, XRF purity test, payment in 30 minutes. Branches in Bangalore, Mysore, Mangalore & Davangere. Walk in today — no appointment needed.", // was: 16 branches
+  alternates: { canonical: "https://mkgold.in/sell-gold" },
   openGraph: {
-    title: 'Sell Gold | Best Rate Today | MK Gold Karnataka',
+    title: "Sell Gold | Best Rate Today | MK Gold Karnataka",
     description:
-      'Sell gold at live MCX rates. XRF purity test. Payment in 30 minutes. Branches across Karnataka. Trusted since 2014.', // was: 16 branches
-    url: 'https://mkgold.in/sell-gold',
-    siteName: 'MK Gold',
-    locale: 'en_IN',
-    type: 'website',
+      "Sell gold at live MCX rates. XRF purity test. Payment in 30 minutes. Branches across Karnataka. Trusted since 2014.", // was: 16 branches
+    url: "https://mkgold.in/sell-gold",
+    siteName: "MK Gold",
+    locale: "en_IN",
+    type: "website",
   },
   robots: { index: true, follow: true },
 };
@@ -42,37 +48,37 @@ export const metadata: Metadata = {
 /* ─── Schema data ─────────────────────────────────────────────── */
 
 const SERVICE_SCHEMA = {
-  '@context': 'https://schema.org',
-  '@type': 'Service',
-  name: 'Sell Gold for Instant Cash',
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Sell Gold for Instant Cash",
   description:
-    'MK Gold buys gold jewellery, coins, and bars at live MCX rates. XRF purity test. Instant payment in 45 minutes. Branches across Karnataka.', // was: 16 branches
+    "MK Gold buys gold jewellery, coins, and bars at live MCX rates. XRF purity test. Instant payment in 45 minutes. Branches across Karnataka.", // was: 16 branches
   provider: {
-    '@type': 'LocalBusiness',
-    name: 'MK Gold',
-    url: 'https://mkgold.in',
+    "@type": "LocalBusiness",
+    name: "MK Gold",
+    url: "https://mkgold.in",
     address: {
-      '@type': 'PostalAddress',
-      addressRegion: 'Karnataka',
-      addressCountry: 'IN',
+      "@type": "PostalAddress",
+      addressRegion: "Karnataka",
+      addressCountry: "IN",
     },
   },
-  areaServed: { '@type': 'State', name: 'Karnataka' },
-  serviceType: 'Gold Buying',
+  areaServed: { "@type": "State", name: "Karnataka" },
+  serviceType: "Gold Buying",
   offers: {
-    '@type': 'Offer',
-    description: '97.5% of live MCX gold rate',
+    "@type": "Offer",
+    description: "97.5% of live MCX gold rate",
   },
 };
 
 /* ─── Page ────────────────────────────────────────────────────── */
 
 export default async function SellGoldPage() {
-  const faqs = await getFaqsByPage('general');
+  const faqs = await getFaqsByPage("general");
   const howToJson = howToSchema(
     HOW_TO_STEPS,
-    'How to Sell Gold at MK Gold',
-    'Step-by-step guide to selling gold at MK Gold — from walk-in to payment in 45 minutes.',
+    "How to Sell Gold at MK Gold",
+    "Step-by-step guide to selling gold at MK Gold — from walk-in to payment in 45 minutes.",
   );
 
   return (
@@ -91,30 +97,47 @@ export default async function SellGoldPage() {
       {/* ── 1. HERO ─────────────────────────────────────────────── */}
       <section className="mk-bg-dark section">
         <div className="mk-container">
-
           {/* Breadcrumb */}
           <nav
             aria-label="Breadcrumb"
             style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 'var(--t-xs)',
-              color: 'rgba(255,255,255,0.45)',
-              marginBottom: '2.5rem',
-              display: 'flex',
-              gap: '0.5rem',
-              alignItems: 'center',
+              fontFamily: "Poppins, sans-serif",
+              fontSize: "var(--t-xs)",
+              color: "rgba(255,255,255,0.45)",
+              marginBottom: "2.5rem",
+              display: "flex",
+              gap: "0.5rem",
+              alignItems: "center",
             }}
           >
-            <Link href="/" style={{ color: 'rgba(255,255,255,0.45)', textDecoration: 'none' }}>
+            <Link
+              href="/"
+              style={{
+                color: "rgba(255,255,255,0.45)",
+                textDecoration: "none",
+              }}
+            >
               Home
             </Link>
-            <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.25)' }}>›</span>
-            <span style={{ color: 'var(--gold)' }}>Sell Gold</span>
+            <span
+              aria-hidden="true"
+              style={{ color: "rgba(255,255,255,0.25)" }}
+            >
+              ›
+            </span>
+            <span style={{ color: "var(--gold)" }}>Sell Gold</span>
           </nav>
 
-          <div style={{ maxWidth: '760px' }}>
+          <div style={{ maxWidth: "760px" }}>
             {/* Trust badges */}
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "0.5rem",
+                flexWrap: "wrap",
+                marginBottom: "1.5rem",
+              }}
+            >
               <MkBadge variant="gold">Est. 2014</MkBadge>
               {/* <MkBadge variant="gold">16 Branches</MkBadge> */}
               <MkBadge variant="gold">XRF Certified</MkBadge>
@@ -123,32 +146,39 @@ export default async function SellGoldPage() {
 
             <h1
               style={{
-                fontFamily: 'Tanker, serif',
-                fontSize: 'var(--t-h1)',
-                color: 'var(--white)',
+                fontFamily: "Tanker, serif",
+                fontSize: "var(--t-h1)",
+                color: "var(--white)",
                 lineHeight: 1.1,
-                margin: '0 0 1.25rem',
+                margin: "0 0 1.25rem",
               }}
             >
-              Sell Your Gold at{' '}
-              <span style={{ color: 'var(--gold)' }}>Live MCX Rates</span>
+              Sell Your Gold at{" "}
+              <span style={{ color: "var(--gold)" }}>Live MCX Rates</span>
             </h1>
 
             <p
               style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 'var(--t-lg)',
-                color: 'rgba(255,255,255,0.7)',
-                margin: '0 0 2rem',
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "var(--t-lg)",
+                color: "rgba(255,255,255,0.7)",
+                margin: "0 0 2rem",
                 lineHeight: 1.65,
-                maxWidth: '600px',
+                maxWidth: "600px",
               }}
             >
-              XRF purity test. Transparent pricing. Payment in 45 minutes.
-              Walk in at any of our branches — no appointment needed.
+              XRF purity test. Transparent pricing. Payment in 45 minutes. Walk
+              in at any of our branches — no appointment needed.
             </p>
 
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                flexWrap: "wrap",
+                marginBottom: "2.5rem",
+              }}
+            >
               <MkButton variant="gold" size="lg" href="/contact">
                 Book Free Valuation
               </MkButton>
@@ -160,24 +190,24 @@ export default async function SellGoldPage() {
             {/* Quick stats */}
             <div
               style={{
-                display: 'flex',
-                gap: '2.5rem',
-                flexWrap: 'wrap',
-                paddingTop: '1.75rem',
-                borderTop: '1px solid rgba(223,193,96,0.18)',
+                display: "flex",
+                gap: "2.5rem",
+                flexWrap: "wrap",
+                paddingTop: "1.75rem",
+                borderTop: "1px solid rgba(223,193,96,0.18)",
               }}
             >
               {[
-                { n: '45 min', l: 'Avg. payout time' },
-                { n: '97.5%', l: 'Of MCX rate paid' },
-                { n: '10,000+', l: 'Customers served' },
+                { n: "45 min", l: "Avg. payout time" },
+                { n: "97.5%", l: "Of MCX rate paid" },
+                { n: "10,000+", l: "Customers served" },
               ].map(({ n, l }) => (
                 <div key={n}>
                   <div
                     style={{
-                      fontFamily: 'Tanker, serif',
-                      fontSize: 'var(--t-h3)',
-                      color: 'var(--gold)',
+                      fontFamily: "Tanker, serif",
+                      fontSize: "var(--t-h3)",
+                      color: "var(--gold)",
                       lineHeight: 1,
                     }}
                   >
@@ -185,10 +215,10 @@ export default async function SellGoldPage() {
                   </div>
                   <div
                     style={{
-                      fontFamily: 'Poppins, sans-serif',
-                      fontSize: 'var(--t-xs)',
-                      color: 'rgba(255,255,255,0.5)',
-                      marginTop: '0.25rem',
+                      fontFamily: "Poppins, sans-serif",
+                      fontSize: "var(--t-xs)",
+                      color: "rgba(255,255,255,0.5)",
+                      marginTop: "0.25rem",
                     }}
                   >
                     {l}
@@ -212,10 +242,10 @@ export default async function SellGoldPage() {
 
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '2rem',
-              marginTop: '3rem',
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "2rem",
+              marginTop: "3rem",
             }}
           >
             <MkRateWidget variant="page" />
@@ -225,37 +255,38 @@ export default async function SellGoldPage() {
           {/* MCX transparency row */}
           <div
             style={{
-              marginTop: '1.5rem',
-              padding: '1.25rem 1.5rem',
-              background: 'white',
-              borderRadius: 'var(--r-lg)',
-              border: '1px solid var(--gallery-dk)',
+              marginTop: "1.5rem",
+              padding: "1.25rem 1.5rem",
+              background: "white",
+              borderRadius: "var(--r-lg)",
+              border: "1px solid var(--gallery-dk)",
             }}
           >
             <p
               style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 'var(--t-xs)',
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "var(--t-xs)",
                 fontWeight: 700,
-                color: 'var(--mist)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                margin: '0 0 0.25rem',
+                color: "var(--mist)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                margin: "0 0 0.25rem",
               }}
             >
               How your rate is calculated
             </p>
             <p
               style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 'var(--t-sm)',
-                color: 'var(--ink-mid)',
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "var(--t-sm)",
+                color: "var(--ink-mid)",
                 margin: 0,
                 lineHeight: 1.6,
               }}
             >
-              Live MCX rate &times; weight (grams) &times; purity factor &times; 97.5% = your payment.
-              Our 2.5% margin is shown openly next to the MCX rate — always.
+              Live MCX rate &times; weight (grams) &times; purity factor &times;
+              97.5% = your payment. Our 2.5% margin is shown openly next to the
+              MCX rate — always.
             </p>
           </div>
         </div>
@@ -363,13 +394,18 @@ export default async function SellGoldPage() {
 
           <div className="mk-gt-grid">
             {GOLD_TYPES.map((type, i) => (
-              <article key={type.title} className={`mk-gt-card reveal delay-${i + 1}`}>
+              <article
+                key={type.title}
+                className={`mk-gt-card reveal delay-${i + 1}`}
+              >
                 <span className="mk-gt-card__num" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
+                  {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="mk-gt-card__purities">
                   {type.purities.map((p) => (
-                    <span key={p} className="mk-gt-card__purity">{p}</span>
+                    <span key={p} className="mk-gt-card__purity">
+                      {p}
+                    </span>
                   ))}
                 </div>
                 <h3 className="mk-gt-card__title">{type.title}</h3>
@@ -381,12 +417,12 @@ export default async function SellGoldPage() {
 
           <p
             style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 'var(--t-xs)',
-              color: 'rgba(255,255,255,0.28)',
-              textAlign: 'center',
-              marginTop: '2rem',
-              letterSpacing: '0.02em',
+              fontFamily: "Poppins, sans-serif",
+              fontSize: "var(--t-xs)",
+              color: "rgba(255,255,255,0.28)",
+              textAlign: "center",
+              marginTop: "2rem",
+              letterSpacing: "0.02em",
             }}
           >
             We do not buy gold-plated or gold-filled jewellery.
@@ -412,61 +448,70 @@ export default async function SellGoldPage() {
 
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '2rem',
-              marginTop: '3rem',
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "2rem",
+              marginTop: "3rem",
             }}
           >
             {/* Required — gold border */}
             <div
               style={{
-                padding: '2rem',
-                background: 'rgba(223,193,96,0.06)',
-                borderRadius: 'var(--r-xl)',
-                borderLeft: '3px solid var(--gold)',
+                padding: "2rem",
+                background: "rgba(223,193,96,0.06)",
+                borderRadius: "var(--r-xl)",
+                borderLeft: "3px solid var(--gold)",
               }}
             >
               <h3
                 style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 'var(--t-xs)',
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: "var(--t-xs)",
                   fontWeight: 700,
-                  color: 'var(--gold)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  margin: '0 0 1.25rem',
+                  color: "var(--gold)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.12em",
+                  margin: "0 0 1.25rem",
                 }}
               >
                 Bring one of these
               </h3>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <ul
+                style={{
+                  listStyle: "none",
+                  padding: 0,
+                  margin: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.75rem",
+                }}
+              >
                 {REQUIRED_DOCS.map((doc) => (
                   <li
                     key={doc}
                     style={{
-                      fontFamily: 'Poppins, sans-serif',
-                      fontSize: 'var(--t-sm)',
-                      color: 'rgba(255,255,255,0.85)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem',
+                      fontFamily: "Poppins, sans-serif",
+                      fontSize: "var(--t-sm)",
+                      color: "rgba(255,255,255,0.85)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.75rem",
                     }}
                   >
                     <span
                       style={{
-                        width: '1.25rem',
-                        height: '1.25rem',
-                        borderRadius: '50%',
-                        background: 'var(--gold)',
+                        width: "1.25rem",
+                        height: "1.25rem",
+                        borderRadius: "50%",
+                        background: "var(--gold)",
                         flexShrink: 0,
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontFamily: 'Poppins, sans-serif',
-                        fontSize: '0.6rem',
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "0.6rem",
                         fontWeight: 700,
-                        color: 'var(--plum)',
+                        color: "var(--plum)",
                       }}
                     >
                       ✓
@@ -480,51 +525,60 @@ export default async function SellGoldPage() {
             {/* Not required */}
             <div
               style={{
-                padding: '2rem',
-                background: 'rgba(255,255,255,0.03)',
-                borderRadius: 'var(--r-xl)',
-                borderLeft: '3px solid rgba(255,255,255,0.1)',
+                padding: "2rem",
+                background: "rgba(255,255,255,0.03)",
+                borderRadius: "var(--r-xl)",
+                borderLeft: "3px solid rgba(255,255,255,0.1)",
               }}
             >
               <h3
                 style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 'var(--t-xs)',
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: "var(--t-xs)",
                   fontWeight: 700,
-                  color: 'rgba(255,255,255,0.4)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  margin: '0 0 1.25rem',
+                  color: "rgba(255,255,255,0.4)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.12em",
+                  margin: "0 0 1.25rem",
                 }}
               >
                 Not required
               </h3>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <ul
+                style={{
+                  listStyle: "none",
+                  padding: 0,
+                  margin: 0,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.75rem",
+                }}
+              >
                 {NOT_NEEDED.map((item) => (
                   <li
                     key={item}
                     style={{
-                      fontFamily: 'Poppins, sans-serif',
-                      fontSize: 'var(--t-sm)',
-                      color: 'rgba(255,255,255,0.4)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem',
+                      fontFamily: "Poppins, sans-serif",
+                      fontSize: "var(--t-sm)",
+                      color: "rgba(255,255,255,0.4)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.75rem",
                     }}
                   >
                     <span
                       style={{
-                        width: '1.25rem',
-                        height: '1.25rem',
-                        borderRadius: '50%',
-                        background: 'rgba(255,255,255,0.06)',
+                        width: "1.25rem",
+                        height: "1.25rem",
+                        borderRadius: "50%",
+                        background: "rgba(255,255,255,0.06)",
                         flexShrink: 0,
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontFamily: 'Poppins, sans-serif',
-                        fontSize: '0.75rem',
-                        color: 'rgba(255,255,255,0.2)',
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: "0.75rem",
+                        color: "rgba(255,255,255,0.2)",
                       }}
                     >
                       &ndash;
@@ -577,9 +631,12 @@ export default async function SellGoldPage() {
 
           <div className="mk-pm-grid">
             {PAYMENT_METHODS.map((pm, i) => (
-              <article key={pm.method} className={`mk-gt-card reveal delay-${i + 1}`}>
+              <article
+                key={pm.method}
+                className={`mk-gt-card reveal delay-${i + 1}`}
+              >
                 <span className="mk-gt-card__num" aria-hidden="true">
-                  {String(i + 1).padStart(2, '0')}
+                  {String(i + 1).padStart(2, "0")}
                 </span>
                 <div className="mk-gt-card__limit">{pm.limit}</div>
                 <h3 className="mk-gt-card__title">{pm.method}</h3>
@@ -595,7 +652,9 @@ export default async function SellGoldPage() {
       <MkTrust />
 
       {/* ── 8. BRANCH FINDER ────────────────────────────────────── */}
-      <MkBranchFinder allowedSlugs={['sell-gold-jayanagar', 'sell-gold-basaveshwaranagar']} />
+      <MkBranchFinder
+        allowedSlugs={["sell-gold-jayanagar", "sell-gold-basaveshwaranagar"]}
+      />
 
       {/* ── 9. FAQ ──────────────────────────────────────────────── */}
       <MkFaq variant="sell-gold" faqs={faqs} />

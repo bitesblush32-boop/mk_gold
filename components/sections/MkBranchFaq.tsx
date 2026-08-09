@@ -1,8 +1,8 @@
-'use client';
+"use client";
 // Branch-specific FAQ accordion — accepts dynamic FAQs as props
 
-import { useState, useRef } from 'react';
-import type { FaqItem } from '@/lib/schema/faq-page';
+import { useState, useRef } from "react";
+import type { FaqItem } from "@/lib/schema/faq-page";
 
 interface MkBranchFaqProps {
   faqs: FaqItem[];
@@ -17,10 +17,22 @@ export function MkBranchFaq({ faqs, areaName }: MkBranchFaqProps) {
 
   function handleKeyDown(e: React.KeyboardEvent, i: number) {
     const count = faqs.length;
-    if (e.key === 'ArrowDown') { e.preventDefault(); triggerRefs.current[(i + 1) % count]?.focus(); }
-    if (e.key === 'ArrowUp')   { e.preventDefault(); triggerRefs.current[(i - 1 + count) % count]?.focus(); }
-    if (e.key === 'Home')      { e.preventDefault(); triggerRefs.current[0]?.focus(); }
-    if (e.key === 'End')       { e.preventDefault(); triggerRefs.current[count - 1]?.focus(); }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      triggerRefs.current[(i + 1) % count]?.focus();
+    }
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      triggerRefs.current[(i - 1 + count) % count]?.focus();
+    }
+    if (e.key === "Home") {
+      e.preventDefault();
+      triggerRefs.current[0]?.focus();
+    }
+    if (e.key === "End") {
+      e.preventDefault();
+      triggerRefs.current[count - 1]?.focus();
+    }
   }
 
   return (
@@ -28,9 +40,7 @@ export function MkBranchFaq({ faqs, areaName }: MkBranchFaqProps) {
       <div className="mk-container">
         <div className="mk-faq__header reveal">
           <p className="mk-section-overline">FAQ</p>
-          <h2 className="mk-faq__title">
-            Questions about MK Gold {areaName}
-          </h2>
+          <h2 className="mk-faq__title">Questions about MK Gold {areaName}</h2>
         </div>
         <dl
           className="mk-faq__list"
@@ -42,11 +52,13 @@ export function MkBranchFaq({ faqs, areaName }: MkBranchFaqProps) {
             return (
               <div
                 key={i}
-                className={`mk-faq__item${isOpen ? ' mk-faq__item--open' : ''}`}
+                className={`mk-faq__item${isOpen ? " mk-faq__item--open" : ""}`}
               >
                 <dt>
                   <button
-                    ref={el => { triggerRefs.current[i] = el; }}
+                    ref={(el) => {
+                      triggerRefs.current[i] = el;
+                    }}
                     className="mk-faq__trigger"
                     onClick={() => toggle(i)}
                     onKeyDown={(e) => handleKeyDown(e, i)}

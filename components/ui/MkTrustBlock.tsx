@@ -18,15 +18,15 @@ export interface MkTrustBlockProps {
  * Title: gold, uppercase, Poppins 600.
  * Body: muted white (rgba 255 255 255 0.65), Poppins 400.
  */
-export function MkTrustBlock({ title, children, className }: MkTrustBlockProps) {
+export function MkTrustBlock({
+  title,
+  children,
+  className,
+}: MkTrustBlockProps) {
   return (
     <div className={cn("mk-trust-block", className)}>
-      {title && (
-        <p className="mk-trust-block__title">{title}</p>
-      )}
-      <div className="mk-trust-block__body">
-        {children}
-      </div>
+      {title && <p className="mk-trust-block__title">{title}</p>}
+      <div className="mk-trust-block__body">{children}</div>
     </div>
   );
 }

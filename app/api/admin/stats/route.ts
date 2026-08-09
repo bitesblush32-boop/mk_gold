@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/admin-auth';
-import { db } from '@/db';
-import { leads, appointments, goldRateOverride } from '@/db/schema';
-import { eq, desc, count } from 'drizzle-orm';
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/admin-auth";
+import { db } from "@/db";
+import { leads, appointments, goldRateOverride } from "@/db/schema";
+import { eq, desc, count } from "drizzle-orm";
 
 export async function GET(req: NextRequest) {
   const deny = requireAdmin(req);
@@ -36,19 +36,19 @@ export async function GET(req: NextRequest) {
       appointmentsToday,
       goldRate: isManual
         ? {
-            status:   'manual',
-            rate24k:  override.rate_24k,
+            status: "manual",
+            rate24k: override.rate_24k,
             expiresAt: override.override_until,
             updatedAt: override.updated_at,
           }
-        : { status: 'live', updatedAt: new Date().toISOString() },
+        : { status: "live", updatedAt: new Date().toISOString() },
     });
   } catch (err) {
-    console.error('[api/admin/stats] error:', err);
+    console.error("[api/admin/stats] error:", err);
     return NextResponse.json({
-      totalLeads:        0,
+      totalLeads: 0,
       appointmentsToday: 0,
-      goldRate:          { status: 'live', updatedAt: new Date().toISOString() },
+      goldRate: { status: "live", updatedAt: new Date().toISOString() },
     });
   }
 }

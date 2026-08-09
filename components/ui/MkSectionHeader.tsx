@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 
 /* ─── Props ──────────────────────────────────────────────────── */
 
@@ -7,7 +7,7 @@ export interface MkSectionHeaderProps {
   title: string;
   accentWord?: string;
   subtitle?: string;
-  align?: 'center' | 'left';
+  align?: "center" | "left";
   dark?: boolean;
   className?: string;
 }
@@ -35,16 +35,16 @@ export function MkSectionHeader({
   title,
   accentWord,
   subtitle,
-  align = 'center',
+  align = "center",
   dark = false,
   className,
 }: MkSectionHeaderProps) {
   return (
     <div
       className={cn(
-        'mk-sh',
-        align === 'left' && 'mk-sh--left',
-        dark && 'mk-sh--dark',
+        "mk-sh",
+        align === "left" && "mk-sh--left",
+        dark && "mk-sh--dark",
         className,
       )}
     >
@@ -54,13 +54,9 @@ export function MkSectionHeader({
         <span className="mk-sh__line" aria-hidden="true" />
       </div>
 
-      <h2 className="mk-sh__title">
-        {renderTitle(title, accentWord)}
-      </h2>
+      <h2 className="mk-sh__title">{renderTitle(title, accentWord)}</h2>
 
-      {subtitle && (
-        <p className="mk-sh__subtitle">{subtitle}</p>
-      )}
+      {subtitle && <p className="mk-sh__subtitle">{subtitle}</p>}
     </div>
   );
 }

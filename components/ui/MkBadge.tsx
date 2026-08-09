@@ -13,11 +13,11 @@ export interface MkBadgeProps {
 /* ─── Maps ────────────────────────────────────────────────────── */
 
 const VARIANT_CLASS: Record<BadgeVariant, string> = {
-  gold:    "mk-badge--gold",
-  plum:    "mk-badge--plum",
-  white:   "mk-badge--white",
+  gold: "mk-badge--gold",
+  plum: "mk-badge--plum",
+  white: "mk-badge--white",
   gallery: "mk-badge--gallery",
-  green:   "mk-badge--green",
+  green: "mk-badge--green",
 };
 
 /* ─── Component ───────────────────────────────────────────────── */

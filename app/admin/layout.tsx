@@ -1,12 +1,16 @@
-import type { Metadata } from 'next';
-import '@/styles/components/admin.css';
-import { AdminShell } from '@/components/admin/AdminShell';
+import type { Metadata } from "next";
+import "@/styles/components/admin.css";
+import { AdminShell } from "@/components/admin/AdminShell";
 
 export const metadata: Metadata = {
-  title: 'Admin | MK Gold',
+  title: "Admin | MK Gold",
   robots: { index: false, follow: false },
 };
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <AdminShell>{children}</AdminShell>;
 }

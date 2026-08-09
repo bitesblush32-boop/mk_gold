@@ -1,6 +1,10 @@
-import { MkTicker } from '@/components/layout/MkTicker';
+import { MkTicker } from "@/components/layout/MkTicker";
 
-export default function CityHubsLayout({ children }: { children: React.ReactNode }) {
+export default function CityHubsLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <>
       <MkTicker />

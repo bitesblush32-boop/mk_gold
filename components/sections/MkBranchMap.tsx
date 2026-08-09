@@ -4,33 +4,37 @@
 
 const CITIES = [
   {
-    name: 'Bangalore',
+    name: "Bangalore",
     branches: 10,
     active: true,
     // Approximate SVG coords within the Karnataka outline below (viewBox 0 0 400 500)
-    cx: 230, cy: 310,
-    href: '/sell-gold-bangalore',
+    cx: 230,
+    cy: 310,
+    href: "/sell-gold-bangalore",
   },
   {
-    name: 'Mysore',
+    name: "Mysore",
     branches: 3,
     active: false,
-    cx: 195, cy: 355,
-    href: '/sell-gold-mysore',
+    cx: 195,
+    cy: 355,
+    href: "/sell-gold-mysore",
   },
   {
-    name: 'Mangalore',
+    name: "Mangalore",
     branches: 2,
     active: false,
-    cx: 130, cy: 345,
-    href: '/sell-gold-mangalore',
+    cx: 130,
+    cy: 345,
+    href: "/sell-gold-mangalore",
   },
   {
-    name: 'Davangere',
+    name: "Davangere",
     branches: 1,
     active: false,
-    cx: 190, cy: 240,
-    href: '/sell-gold-davangere',
+    cx: 190,
+    cy: 240,
+    href: "/sell-gold-davangere",
   },
 ] as const;
 
@@ -38,29 +42,55 @@ const CITIES = [
 
 export function MkBranchMap() {
   return (
-    <section className="mk-bg-light section" id="branches" aria-label="MK Gold branch locations in Karnataka">
+    <section
+      className="mk-bg-light section"
+      id="branches"
+      aria-label="MK Gold branch locations in Karnataka"
+    >
       <div className="mk-container">
-
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <p className="mk-section-overline">Our Presence</p>
-          <h2 style={{ fontFamily: 'Tanker, serif', fontSize: 'var(--t-h2)', color: 'var(--ink)', lineHeight: 1.1, margin: '0.5rem 0 1rem' }}>
+          <h2
+            style={{
+              fontFamily: "Tanker, serif",
+              fontSize: "var(--t-h2)",
+              color: "var(--ink)",
+              lineHeight: 1.1,
+              margin: "0.5rem 0 1rem",
+            }}
+          >
             Branches across Karnataka
           </h2>
-          <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-base)', color: 'var(--ink-mid)', maxWidth: '480px', margin: '0 auto' }}>
+          <p
+            style={{
+              fontFamily: "Poppins, sans-serif",
+              fontSize: "var(--t-base)",
+              color: "var(--ink-mid)",
+              maxWidth: "480px",
+              margin: "0 auto",
+            }}
+          >
             Bangalore is fully operational. Other cities coming soon.
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '3rem', justifyContent: 'center' }}>
-
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "flex-start",
+            gap: "3rem",
+            justifyContent: "center",
+          }}
+        >
           {/* SVG Karnataka map */}
-          <div style={{ flex: '0 0 auto', maxWidth: '360px', width: '100%' }}>
+          <div style={{ flex: "0 0 auto", maxWidth: "360px", width: "100%" }}>
             <svg
               viewBox="0 0 400 500"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-label="Map of Karnataka showing MK Gold branch cities"
-              style={{ width: '100%', height: 'auto' }}
+              style={{ width: "100%", height: "auto" }}
             >
               {/* Karnataka state outline — simplified polygon */}
               <path
@@ -71,7 +101,7 @@ export function MkBranchMap() {
               />
 
               {/* Inactive cities — label only, no pin */}
-              {CITIES.filter(c => !c.active).map(city => (
+              {CITIES.filter((c) => !c.active).map((city) => (
                 <g key={city.name}>
                   <text
                     x={city.cx}
@@ -100,12 +130,28 @@ export function MkBranchMap() {
               ))}
 
               {/* Active city — Bangalore with gold marker */}
-              {CITIES.filter(c => c.active).map(city => (
+              {CITIES.filter((c) => c.active).map((city) => (
                 <g key={city.name}>
                   {/* Pulse ring */}
-                  <circle cx={city.cx} cy={city.cy} r="18" fill="var(--gold)" opacity="0.15">
-                    <animate attributeName="r" values="14;22;14" dur="2.5s" repeatCount="indefinite" />
-                    <animate attributeName="opacity" values="0.15;0.05;0.15" dur="2.5s" repeatCount="indefinite" />
+                  <circle
+                    cx={city.cx}
+                    cy={city.cy}
+                    r="18"
+                    fill="var(--gold)"
+                    opacity="0.15"
+                  >
+                    <animate
+                      attributeName="r"
+                      values="14;22;14"
+                      dur="2.5s"
+                      repeatCount="indefinite"
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0.15;0.05;0.15"
+                      dur="2.5s"
+                      repeatCount="indefinite"
+                    />
                   </circle>
                   {/* Marker dot */}
                   <circle cx={city.cx} cy={city.cy} r="8" fill="var(--gold)" />
@@ -136,41 +182,79 @@ export function MkBranchMap() {
           </div>
 
           {/* City legend cards */}
-          <div style={{ flex: '1 1 240px', display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '380px' }}>
-            {CITIES.map(city => (
+          <div
+            style={{
+              flex: "1 1 240px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1rem",
+              maxWidth: "380px",
+            }}
+          >
+            {CITIES.map((city) => (
               <div
                 key={city.name}
                 style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1rem',
-                  padding: '1rem 1.25rem',
-                  borderRadius: 'var(--r-xl)',
-                  background: city.active ? 'var(--plum)' : 'white',
-                  border: city.active ? 'none' : '1px solid var(--gallery-dk)',
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  padding: "1rem 1.25rem",
+                  borderRadius: "var(--r-xl)",
+                  background: city.active ? "var(--plum)" : "white",
+                  border: city.active ? "none" : "1px solid var(--gallery-dk)",
                   opacity: city.active ? 1 : 0.8,
                 }}
               >
                 {/* Dot */}
-                <div style={{
-                  width: '12px', height: '12px', borderRadius: '50%', flexShrink: 0,
-                  background: city.active ? 'var(--gold)' : 'var(--gallery-dk)',
-                }} />
+                <div
+                  style={{
+                    width: "12px",
+                    height: "12px",
+                    borderRadius: "50%",
+                    flexShrink: 0,
+                    background: city.active
+                      ? "var(--gold)"
+                      : "var(--gallery-dk)",
+                  }}
+                />
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 600, fontSize: 'var(--t-sm)', color: city.active ? 'white' : 'var(--ink)', margin: 0, lineHeight: 1.3 }}>
+                  <p
+                    style={{
+                      fontFamily: "Poppins, sans-serif",
+                      fontWeight: 600,
+                      fontSize: "var(--t-sm)",
+                      color: city.active ? "white" : "var(--ink)",
+                      margin: 0,
+                      lineHeight: 1.3,
+                    }}
+                  >
                     {city.name}
                   </p>
-                  <p style={{ fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-xs)', color: city.active ? 'var(--gold)' : 'var(--mist)', margin: 0, marginTop: '0.125rem' }}>
-                    {city.active ? `${city.branches} branches · Open now` : 'Coming Soon'}
+                  <p
+                    style={{
+                      fontFamily: "Poppins, sans-serif",
+                      fontSize: "var(--t-xs)",
+                      color: city.active ? "var(--gold)" : "var(--mist)",
+                      margin: 0,
+                      marginTop: "0.125rem",
+                    }}
+                  >
+                    {city.active
+                      ? `${city.branches} branches · Open now`
+                      : "Coming Soon"}
                   </p>
                 </div>
                 {city.active && (
                   <a
                     href={city.href}
                     style={{
-                      fontFamily: 'Poppins, sans-serif', fontSize: 'var(--t-xs)', fontWeight: 600,
-                      color: 'var(--gold)', textDecoration: 'none', whiteSpace: 'nowrap',
-                      letterSpacing: '0.04em',
+                      fontFamily: "Poppins, sans-serif",
+                      fontSize: "var(--t-xs)",
+                      fontWeight: 600,
+                      color: "var(--gold)",
+                      textDecoration: "none",
+                      whiteSpace: "nowrap",
+                      letterSpacing: "0.04em",
                     }}
                   >
                     View branches
@@ -179,7 +263,6 @@ export function MkBranchMap() {
               </div>
             ))}
           </div>
-
         </div>
       </div>
     </section>

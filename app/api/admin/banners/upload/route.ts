@@ -1,6 +1,6 @@
-import { handleUpload } from '@vercel/blob/client';
-import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/admin-auth';
+import { handleUpload } from "@vercel/blob/client";
+import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/admin-auth";
 
 /**
  * Vercel Blob client-upload handler.
@@ -18,12 +18,12 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
   // Only the token-generation step is browser-initiated and carries the admin cookie.
   // The upload-completed webhook originates from Vercel's servers (no user cookie).
-  if (body.type === 'blob.generate-client-token') {
+  if (body.type === "blob.generate-client-token") {
     const deny = requireAdmin(req);
     if (deny) return deny;
   }
@@ -34,21 +34,26 @@ export async function POST(req: NextRequest) {
       body: body as any,
       request: req,
       onBeforeGenerateToken: async () => ({
-        allowedContentTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
+        allowedContentTypes: [
+          "image/jpeg",
+          "image/png",
+          "image/webp",
+          "image/gif",
+        ],
         maximumSizeInBytes: 10 * 1024 * 1024, // 10 MB
       }),
       onUploadCompleted: async ({ blob }) => {
-        console.log('[blob] upload completed:', blob.url);
+        console.log("[blob] upload completed:", blob.url);
       },
     });
     return NextResponse.json(jsonResponse);
   } catch (err) {
-    console.error('[api/admin/banners/upload] error:', err);
+    console.error("[api/admin/banners/upload] error:", err);
     return NextResponse.json({ error: String(err) }, { status: 400 });
   }
 }
 
 /** Quick health-check — confirms this route is deployed. */
 export async function GET() {
-  return NextResponse.json({ ok: true, route: 'banners/upload' });
+  return NextResponse.json({ ok: true, route: "banners/upload" });
 }
