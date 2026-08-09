@@ -103,10 +103,9 @@ export function MkNavbar() {
     };
   }, []);
 
-  // Tiranga theme — active Aug 1–31; Aug 15 exact-date cinematic reveal
+  // Tiranga theme — active Aug 1–31
   const isTiranga = new Date().getMonth() === 7;
   const independenceEdition = new Date().getFullYear() - 1947 + 1;
-  const isAug15 = isTiranga; // permanent throughout August
 
   const servicesActive = SERVICES_LINKS.some(
     (l) =>
@@ -121,11 +120,6 @@ export function MkNavbar() {
         className={cn("mk-navbar", hidden && "mk-navbar--hidden")}
         aria-label="Main navigation"
       >
-        {/* 15 — Aug 15 only: tricolor overlay fades to plum over 2 s */}
-        {isAug15 && (
-          <div className="mk-navbar__aug15-overlay" aria-hidden="true" />
-        )}
-
         {/* 3 — Ashoka Chakra watermark: centered behind nav content, Aug only */}
         {isTiranga && (
           <div
