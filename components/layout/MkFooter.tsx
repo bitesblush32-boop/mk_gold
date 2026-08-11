@@ -33,9 +33,12 @@ const TRUST_BADGES = [
 
 export function MkFooter() {
   const year = new Date().getFullYear();
+  const isTirangaMonth = new Date().getMonth() === 7;
 
   return (
-    <footer className="mk-footer mk-bg-dark">
+    <footer
+      className={`mk-footer mk-bg-dark${isTirangaMonth ? " mk-footer--tiranga" : ""}`}
+    >
       <div className="mk-container">
         <div className="mk-footer__grid">
           {/* Brand column */}
@@ -228,6 +231,11 @@ export function MkFooter() {
             &copy; {year} MK Gold. All rights reserved.&ensp;·&ensp; GST
             Reg.&ensp;·&ensp;ISO 9001:2015 Certified.
           </p>
+          {isTirangaMonth && (
+            <p className="mk-footer__independence-note">
+              Jai Hind &mdash; Happy Independence Day
+            </p>
+          )}
 
           <nav className="mk-footer__bottom-links" aria-label="Legal links">
             <Link href="/privacy-policy" className="mk-footer__bottom-link">

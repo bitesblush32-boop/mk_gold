@@ -7,6 +7,19 @@ import Image from "next/image";
 import { MkButton } from "@/components/ui/MkButton";
 import { cn } from "@/lib/utils";
 
+// Pre-computed Ashoka Chakra spokes — rounded to 4dp to prevent SSR/client
+// floating-point mismatch between Node.js and browser V8 trig precision
+const r4 = (n: number) => Math.round(n * 10000) / 10000;
+const CHAKRA_SPOKES = Array.from({ length: 24 }, (_, i) => {
+  const a = (i * Math.PI * 2) / 24;
+  return {
+    x1: r4(20 + 3 * Math.cos(a)),
+    y1: r4(20 + 3 * Math.sin(a)),
+    x2: r4(20 + 15 * Math.cos(a)),
+    y2: r4(20 + 15 * Math.sin(a)),
+  };
+});
+
 /* ─── Services dropdown items ─────────────────────────────────── */
 const SERVICES_LINKS = [
   { href: "/sell-gold", label: "Sell Gold" },
@@ -90,6 +103,10 @@ export function MkNavbar() {
     };
   }, []);
 
+  // Tiranga theme — active Aug 1–31
+  const isTiranga = new Date().getMonth() === 7;
+  const independenceEdition = new Date().getFullYear() - 1947 + 1;
+
   const servicesActive = SERVICES_LINKS.some(
     (l) =>
       pathname === l.href || pathname.startsWith(l.href.split("#")[0] + "/"),
@@ -103,6 +120,38 @@ export function MkNavbar() {
         className={cn("mk-navbar", hidden && "mk-navbar--hidden")}
         aria-label="Main navigation"
       >
+        {/* 3 — Ashoka Chakra watermark: centered behind nav content, Aug only */}
+        {isTiranga && (
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "88px",
+              height: "88px",
+              opacity: 0.045,
+              pointerEvents: "none",
+              zIndex: 0,
+            }}
+          >
+            <svg viewBox="0 0 40 40" width="88" height="88">
+              <circle cx="20" cy="20" r="18" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
+              <circle cx="20" cy="20" r="2.5" fill="#FFFFFF" />
+              {CHAKRA_SPOKES.map((s, i) => (
+                <line
+                  key={i}
+                  x1={s.x1} y1={s.y1}
+                  x2={s.x2} y2={s.y2}
+                  stroke="#FFFFFF"
+                  strokeWidth="1"
+                />
+              ))}
+            </svg>
+          </div>
+        )}
+
         {/* Logo — outside the inner pill */}
         <Link
           href="/"
@@ -119,6 +168,50 @@ export function MkNavbar() {
             style={{ height: "56px", width: "auto" }}
           />
         </Link>
+
+        {/* 9 — Pinhole tricolor dots next to logo, Aug only — hidden on mobile */}
+        {isTiranga && (
+          <div
+            aria-hidden="true"
+            className="mk-navbar__tiranga-dots"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "3px",
+              alignSelf: "center",
+              flexShrink: 0,
+              marginLeft: "-8px",
+            }}
+          >
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#FF9933", display: "block" }} />
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.88)", display: "block" }} />
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#138808", display: "block" }} />
+          </div>
+        )}
+
+        {/* 7 — Independence Day edition chip, Aug only — hidden on mobile */}
+        {isTiranga && (
+          <div
+            aria-hidden="true"
+            className="mk-navbar__tiranga-chip"
+            style={{
+              fontFamily: "Poppins, sans-serif",
+              fontSize: "0.58rem",
+              fontWeight: 600,
+              letterSpacing: "0.09em",
+              textTransform: "uppercase",
+              color: "rgba(255,255,255,0.65)",
+              background: "rgba(255,153,51,0.12)",
+              border: "1px solid rgba(255,153,51,0.28)",
+              borderRadius: "9999px",
+              padding: "0.18rem 0.6rem",
+              whiteSpace: "nowrap",
+              flexShrink: 0,
+            }}
+          >
+            {independenceEdition}th Independence Day
+          </div>
+        )}
 
         {/* Inner pill — nav links + actions only */}
         <div className="mk-navbar__inner" style={{ maxWidth: "100%" }}>
@@ -235,6 +328,16 @@ export function MkNavbar() {
             </button>
           </div>
         </div>
+
+        {/* Mobile-only chip — sits below nav bar, centered, doesn't affect flex layout */}
+        {isTiranga && (
+          <div
+            aria-hidden="true"
+            className="mk-navbar__tiranga-chip--mobile"
+          >
+            {independenceEdition}th Independence Day
+          </div>
+        )}
       </nav>
 
       {/* Mobile overlay */}

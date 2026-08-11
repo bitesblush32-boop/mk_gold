@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MkNavbar } from "@/components/layout/MkNavbar";
@@ -21,6 +21,7 @@ import type { FaqItem } from "@/lib/db/faqs";
 
 const CITIES = ["Bangalore", "Mysore", "Mangalore", "Davangere"] as const;
 type City = (typeof CITIES)[number];
+
 
 /* ─── Callback form ────────────────────────────────────────────── */
 
@@ -1677,8 +1678,22 @@ function ScrollToTop() {
 
 /* ─── BottomNav (floating pill — appears when past hero) ───────── */
 
+// Pre-computed Ashoka Chakra spokes for bottom nav watermark — rounded to 4dp
+// to prevent SSR/client float mismatch between Node.js and browser V8
+const _r4 = (n: number) => Math.round(n * 10000) / 10000;
+const BN_CHAKRA_SPOKES = Array.from({ length: 24 }, (_, i) => {
+  const a = (i * Math.PI * 2) / 24;
+  return {
+    x1: _r4(20 + 3 * Math.cos(a)),
+    y1: _r4(20 + 3 * Math.sin(a)),
+    x2: _r4(20 + 15 * Math.cos(a)),
+    y2: _r4(20 + 15 * Math.sin(a)),
+  };
+});
+
 function BottomNav() {
   const [pastHero, setPastHero] = useState(false);
+  const isTiranga = new Date().getMonth() === 7;
 
   useEffect(() => {
     const hero = document.querySelector('[aria-label="Hero"]');
@@ -1711,7 +1726,40 @@ function BottomNav() {
           className="sc-bottom-nav"
           role="navigation"
           aria-label="Quick actions"
+          style={{ position: "relative" }}
         >
+          {/* Ashoka Chakra watermark — centered behind buttons, Aug only */}
+          {isTiranga && (
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "60px",
+                height: "60px",
+                opacity: 0.05,
+                pointerEvents: "none",
+                zIndex: 0,
+              }}
+            >
+              <svg viewBox="0 0 40 40" width="60" height="60">
+                <circle cx="20" cy="20" r="18" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
+                <circle cx="20" cy="20" r="2.5" fill="#FFFFFF" />
+                {BN_CHAKRA_SPOKES.map((s, i) => (
+                  <line
+                    key={i}
+                    x1={s.x1} y1={s.y1}
+                    x2={s.x2} y2={s.y2}
+                    stroke="#FFFFFF"
+                    strokeWidth="1"
+                  />
+                ))}
+              </svg>
+            </div>
+          )}
+
           <a
             href="#branches"
             className="sc-bn-btn sc-bn-btn--ghost sc-bn-hide-768"
@@ -1845,6 +1893,18 @@ export default function HomePage({
     return () => clearTimeout(t);
   }, []);
 
+  // Tiranga theme — active Aug 1–31
+  const isTiranga = useMemo(() => new Date().getMonth() === 7, []);
+
+  useEffect(() => {
+    if (isTiranga) {
+      document.body.setAttribute("data-tiranga", "true");
+      return () => {
+        document.body.removeAttribute("data-tiranga");
+      };
+    }
+  }, [isTiranga]);
+
   useEffect(() => {
     // Only fetch from the API if the server didn't provide banners.
     // When initialBanners is populated it comes from a direct DB read at SSR time
@@ -1922,10 +1982,12 @@ export default function HomePage({
             width: "100%",
             transformOrigin: "left center",
             transform: "scaleX(0)",
-            background:
-              "linear-gradient(90deg, #512561 0%, #7B2C91 40%, #DFC160 80%, #EDD47A 100%)",
-            boxShadow:
-              "0 1px 8px rgba(223,193,96,0.55), 0 2px 4px rgba(123,44,145,0.4)",
+            background: isTiranga
+              ? "linear-gradient(90deg, #FF9933 0% 33.33%, #FFFFFF 33.33% 66.66%, #138808 66.66% 100%)"
+              : "linear-gradient(90deg, #512561 0%, #7B2C91 40%, #DFC160 80%, #EDD47A 100%)",
+            boxShadow: isTiranga
+              ? "0 1px 8px rgba(255,153,51,0.5), 0 2px 4px rgba(19,136,8,0.3)"
+              : "0 1px 8px rgba(223,193,96,0.55), 0 2px 4px rgba(123,44,145,0.4)",
           }}
         />
       </div>
@@ -1998,6 +2060,15 @@ export default function HomePage({
         })}
         <div className="sc-hero__overlay" />
         <div className="sc-grain" />
+
+        {/* ── Independence Day Tiranga elements — Aug 1–31 only ── */}
+        {isTiranga && (
+          <>
+            {/* Subtle saffron → transparent → green diagonal wash over banners */}
+            <div className="sc-hero__tiranga-wash" aria-hidden="true" />
+
+          </>
+        )}
 
         {/* ── Overlapping coin anchor — 70% hero / 30% below ── */}
         <div className="sc-coin-anchor">

@@ -537,6 +537,10 @@
   .mk-hamburger {
     display: flex;
   }
+
+  .mk-navbar__actions {
+    margin-right: -5px;
+  }
 }
 
 /* Very small screens — hide CTA button, shrink logo */
