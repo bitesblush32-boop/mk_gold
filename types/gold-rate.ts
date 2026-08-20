@@ -8,13 +8,13 @@
 export type GoldKarat = 22 | 24;
 
 /** Physical condition of the gold being sold */
-export type GoldCondition = 'perfect' | 'broken';
+export type GoldCondition = "perfect" | "broken";
 
 /** Display variants for the rate widget */
-export type RateWidgetVariant = 'hero' | 'page' | 'compact';
+export type RateWidgetVariant = "hero" | "page" | "compact";
 
 /** Display variants for the calculator */
-export type CalculatorVariant = 'light' | 'dark';
+export type CalculatorVariant = "light" | "dark";
 
 /** One karat's rate — returned by /api/gold-rate */
 export interface KaratRate {

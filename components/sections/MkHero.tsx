@@ -1,14 +1,14 @@
-import React from 'react';
-import { MkButton } from '@/components/ui/MkButton';
-import { MkRateWidget } from '@/components/features/MkRateWidget';
+import React from "react";
+import { MkButton } from "@/components/ui/MkButton";
+import { MkRateWidget } from "@/components/features/MkRateWidget";
 
 /* ─── Stats ──────────────────────────────────────────────────── */
 
 const STATS = [
-  { value: '15+', label: 'Years of trust' },
+  { value: "15+", label: "Years of trust" },
   // { value: '16', label: 'Branches' }, // TODO: restore when all branches are live
-  { value: '10K+', label: 'Customers served' },
-  { value: '30 min', label: 'Payment guarantee' },
+  { value: "10K+", label: "Customers served" },
+  { value: "30 min", label: "Payment guarantee" },
 ] as const;
 
 /* ─── Component ───────────────────────────────────────────────── */
@@ -16,17 +16,14 @@ const STATS = [
 export function MkHero() {
   return (
     <section className="mk-hero mk-bg-dark" aria-label="Homepage hero">
-
       <div className="mk-hero__slides" aria-hidden="true" />
 
       {/* Purple atmospheric glow — radial, no hard edges */}
       <div className="mk-hero__glow" aria-hidden="true" />
 
       <div className="mk-container mk-hero__inner">
-
         {/* ── Left column — copy ─────────────────────────────── */}
         <div className="mk-hero__copy">
-
           {/* Eyebrow — line + label */}
           <div className="mk-hero__eyebrow reveal delay-1">
             <span className="mk-hero__eyebrow-line" aria-hidden="true" />
@@ -37,16 +34,15 @@ export function MkHero() {
 
           {/* H1 — display size, Tanker */}
           <h1 className="mk-hero__h1 reveal delay-2">
-            Instant{' '}
-            <span className="mk-hero__accent">Money.</span>
+            Instant <span className="mk-hero__accent">Money.</span>
             <br />
             Lasting Trust.
           </h1>
 
           {/* Subtitle */}
           <p className="mk-hero__subtitle reveal delay-3">
-            Sell gold at MCX-linked rates. XRF purity test.
-            Payment in 30 minutes. Branches across Karnataka.
+            Sell gold at MCX-linked rates. XRF purity test. Payment in 30
+            minutes. Branches across Karnataka.
           </p>
 
           {/* CTA row */}
@@ -54,7 +50,11 @@ export function MkHero() {
             <MkButton variant="gold" size="lg" href="/sell-gold">
               Sell Gold Today
             </MkButton>
-            <MkButton variant="outline-light" size="lg" href="/release-pledged-gold">
+            <MkButton
+              variant="outline-light"
+              size="lg"
+              href="/release-pledged-gold"
+            >
               Release Pledged Gold
             </MkButton>
           </div>
@@ -79,7 +79,6 @@ export function MkHero() {
         <div className="mk-hero__widget reveal-r delay-2">
           <MkRateWidget />
         </div>
-
       </div>
     </section>
   );

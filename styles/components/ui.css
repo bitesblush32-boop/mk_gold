@@ -3,7 +3,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 600;
   font-size: var(--t-sm);
   letter-spacing: 0.03em;
@@ -84,7 +84,7 @@
 
 /* WhatsApp */
 .mk-btn--whatsapp {
-  background: #1BA448;
+  background: #1ba448;
   color: var(--white);
 }
 
@@ -105,14 +105,15 @@
   padding: 0.45rem 1.1rem;
 }
 
-
 /* ─── Cards ──────────────────────────────────────────────────── */
 .mk-card {
   border-radius: var(--r-xl);
   background: var(--white);
   box-shadow: var(--shadow-md);
   overflow: hidden;
-  transition: transform var(--t-base), box-shadow var(--t-base);
+  transition:
+    transform var(--t-base),
+    box-shadow var(--t-base);
   will-change: transform;
 }
 
@@ -143,16 +144,15 @@
   box-shadow: var(--shadow-md);
 }
 
-
 /* ─── Badges ─────────────────────────────────────────────────── */
 .mk-badge {
   display: inline-flex;
   align-items: center;
   gap: var(--s-1-5);
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-2xs);
   font-weight: 700;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: var(--s-1) var(--s-3);
   border-radius: var(--r-full);
@@ -163,17 +163,17 @@
 .mk-badge--gold {
   background: rgba(223, 193, 96, 0.14);
   color: var(--gold-deep);
-  border: 1px solid rgba(223, 193, 96, 0.30);
+  border: 1px solid rgba(223, 193, 96, 0.3);
 }
 
 .mk-badge--plum {
-  background: rgba(81, 37, 97, 0.10);
+  background: rgba(81, 37, 97, 0.1);
   color: var(--plum);
-  border: 1px solid rgba(81, 37, 97, 0.20);
+  border: 1px solid rgba(81, 37, 97, 0.2);
 }
 
 .mk-badge--white {
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.1);
   color: var(--gold);
   border: 1px solid rgba(223, 193, 96, 0.25);
 }
@@ -181,7 +181,7 @@
 .mk-badge--green {
   background: rgba(74, 222, 128, 0.12);
   color: #16a34a;
-  border: 1px solid rgba(74, 222, 128, 0.30);
+  border: 1px solid rgba(74, 222, 128, 0.3);
 }
 
 .mk-badge--gallery {
@@ -190,12 +190,11 @@
   border: 1px solid var(--gallery-dk);
 }
 
-
 /* ─── Inputs ─────────────────────────────────────────────────── */
 .mk-input,
 .mk-select,
 .mk-textarea {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-sm);
   font-weight: 400;
   color: var(--ink);
@@ -205,7 +204,9 @@
   padding: 0.7rem 1rem;
   width: 100%;
   outline: none;
-  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+  transition:
+    border-color var(--t-fast),
+    box-shadow var(--t-fast);
   appearance: none;
   -webkit-appearance: none;
 }
@@ -219,13 +220,13 @@
 .mk-select:focus,
 .mk-textarea:focus {
   border-color: var(--gold);
-  box-shadow: 0 0 0 3px rgba(223, 193, 96, 0.20);
+  box-shadow: 0 0 0 3px rgba(223, 193, 96, 0.2);
 }
 
 .mk-input--error,
 .mk-select--error {
   border-color: #dc2626;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.10);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
 }
 
 /* Dark surface variant — on plum-deep / dark backgrounds */
@@ -234,7 +235,7 @@
 .mk-textarea--dark {
   background: rgba(255, 255, 255, 0.07);
   border: 1.5px solid rgba(255, 255, 255, 0.18);
-  color: rgba(255, 255, 255, 0.90);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .mk-input--dark:focus,
@@ -242,7 +243,7 @@
 .mk-textarea--dark:focus {
   border-color: var(--gold);
   box-shadow: 0 0 0 3px rgba(223, 193, 96, 0.18);
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .mk-input--dark::placeholder,
@@ -255,7 +256,7 @@
 }
 
 .mk-field-hint {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-xs);
   color: var(--mist);
   margin-top: var(--s-1);
@@ -274,7 +275,7 @@
 }
 
 .mk-trust-block__title {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-sm);
   font-weight: 600;
   color: var(--gold);
@@ -284,14 +285,14 @@
 }
 
 .mk-trust-block__body {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-sm);
   color: rgba(255, 255, 255, 0.65);
   line-height: 1.65;
 }
 
 .mk-label {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-sm);
   font-weight: 500;
   color: var(--ink-mid);
@@ -300,9 +301,8 @@
 }
 
 .mk-field-error {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-xs);
   color: #dc2626;
   margin-top: var(--s-1);
 }
-

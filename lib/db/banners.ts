@@ -1,15 +1,31 @@
-import { db, heroBanners } from '@/db';
-import { eq, asc } from 'drizzle-orm';
+import { db, heroBanners } from "@/db";
+import { eq, asc } from "drizzle-orm";
 
-export type { HeroBanner } from '@/db/schema';
+export type { HeroBanner } from "@/db/schema";
 
 /* ─── Default banners (Vercel Blob CDN) ─────────────────────────── */
 
 const DEFAULT_BANNERS = [
-  { src: 'https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828487004-banner1.jpeg', alt: 'Turn your gold into instant cash - MK Gold Karnataka',    order: 0 },
-  { src: 'https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828526733-banner.jpeg',  alt: 'We buy your gold at the right value - MK Gold',            order: 1 },
-  { src: 'https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828536536-banner3.jpeg', alt: 'MK Gold - Instant Cash for Gold in Karnataka',              order: 2 },
-  { src: 'https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828917372-banner2.jpeg', alt: 'MK Gold branch - trusted gold buyers since 2014',           order: 3 },
+  {
+    src: "https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828487004-banner1.jpeg",
+    alt: "Turn your gold into instant cash - MK Gold Karnataka",
+    order: 0,
+  },
+  {
+    src: "https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828526733-banner.jpeg",
+    alt: "We buy your gold at the right value - MK Gold",
+    order: 1,
+  },
+  {
+    src: "https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828536536-banner3.jpeg",
+    alt: "MK Gold - Instant Cash for Gold in Karnataka",
+    order: 2,
+  },
+  {
+    src: "https://pmcape3baplvglbo.public.blob.vercel-storage.com/banners/1778828917372-banner2.jpeg",
+    alt: "MK Gold branch - trusted gold buyers since 2014",
+    order: 3,
+  },
 ];
 
 export async function seedDefaultBanners() {
@@ -34,10 +50,21 @@ export async function getAllBanners() {
 
 /* ─── Create ─────────────────────────────────────────────────────── */
 
-export async function createBanner(data: { src: string; alt: string; src_mobile?: string | null; order?: number }) {
+export async function createBanner(data: {
+  src?: string | null;
+  alt: string;
+  src_mobile?: string | null;
+  order?: number;
+}) {
   const [row] = await db
     .insert(heroBanners)
-    .values({ src: data.src, src_mobile: data.src_mobile ?? null, alt: data.alt, order: data.order ?? 99, is_active: true })
+    .values({
+      src: data.src ?? "",
+      src_mobile: data.src_mobile ?? null,
+      alt: data.alt,
+      order: data.order ?? 99,
+      is_active: true,
+    })
     .returning();
   return row;
 }
@@ -53,7 +80,10 @@ export async function updateBannerAlt(id: number, alt: string) {
 }
 
 export async function toggleBanner(id: number, isActive: boolean) {
-  await db.update(heroBanners).set({ is_active: isActive }).where(eq(heroBanners.id, id));
+  await db
+    .update(heroBanners)
+    .set({ is_active: isActive })
+    .where(eq(heroBanners.id, id));
 }
 
 /* ─── Delete ─────────────────────────────────────────────────────── */

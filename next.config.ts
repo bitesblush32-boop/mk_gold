@@ -21,20 +21,26 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      // sw.js — no service worker in this project; fast 404, no browser retry
+      {
+        source: "/sw.js",
+        headers: [{ key: "Cache-Control", value: "no-store, no-cache" }],
+      },
       // Admin pages — never cache in browser or CDN
       {
-        source: '/admin(.*)',
+        source: "/admin(.*)",
         headers: [
-          { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate' },
-          { key: 'Pragma',        value: 'no-cache' },
+          {
+            key: "Cache-Control",
+            value: "no-store, no-cache, must-revalidate",
+          },
+          { key: "Pragma", value: "no-cache" },
         ],
       },
       // Admin API — never cache
       {
-        source: '/api/admin(.*)',
-        headers: [
-          { key: 'Cache-Control', value: 'no-store' },
-        ],
+        source: "/api/admin(.*)",
+        headers: [{ key: "Cache-Control", value: "no-store" }],
       },
       {
         source: "/(.*)",

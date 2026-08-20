@@ -45,7 +45,7 @@ export function formatWeight(grams: number): string {
 export function calcGoldValue(
   weightGrams: number,
   purityKarat: 18 | 20 | 22 | 24,
-  rate24kPerGram: number
+  rate24kPerGram: number,
 ): number {
   const purityFactor = purityKarat / 24;
   return Math.round(weightGrams * purityFactor * rate24kPerGram);

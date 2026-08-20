@@ -10,3 +10,4 @@ Host: https://mkgold.in
 
 # Sitemaps
 Sitemap: https://mkgold.in/sitemap.xml
+Sitemap: https://mkgold.in/blog/sitemap.xml

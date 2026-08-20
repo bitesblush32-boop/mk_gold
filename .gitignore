@@ -43,3 +43,6 @@ next-env.d.ts
 # graphify
 graphify-out/
 .graphify_*
+
+/ss
+WHATSAPP_AUTOMATION_PLAN.md

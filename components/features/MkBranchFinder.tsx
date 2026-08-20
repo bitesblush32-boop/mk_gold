@@ -1,15 +1,21 @@
-'use client';
+"use client";
 
 // N16 — Dynamic branch finder: city tabs + area search + geolocation
 
-import { useState, useMemo } from 'react';
-import { BRANCHES, findNearestBranch, type Branch } from '@/lib/branch-router';
-import { MkButton } from '@/components/ui/MkButton';
+import { useState, useMemo } from "react";
+import { BRANCHES, findNearestBranch, type Branch } from "@/lib/branch-router";
+import { MkButton } from "@/components/ui/MkButton";
 
 /* ─── Types ──────────────────────────────────────────────────── */
 
-type GeoState = 'idle' | 'loading' | 'found' | 'denied';
-const CITIES = ['All', 'Bangalore', 'Mysore', 'Mangalore', 'Davangere'] as const;
+type GeoState = "idle" | "loading" | "found" | "denied";
+const CITIES = [
+  "All",
+  "Bangalore",
+  "Mysore",
+  "Mangalore",
+  "Davangere",
+] as const;
 type City = (typeof CITIES)[number];
 
 /* ─── Branch card ────────────────────────────────────────────── */
@@ -27,8 +33,8 @@ function BranchCard({
       style={
         highlighted
           ? {
-              outline: '2px solid var(--gold)',
-              boxShadow: '0 0 0 4px rgba(223,193,96,0.15)',
+              outline: "2px solid var(--gold)",
+              boxShadow: "0 0 0 4px rgba(223,193,96,0.15)",
             }
           : undefined
       }
@@ -40,13 +46,13 @@ function BranchCard({
       {highlighted && (
         <p
           style={{
-            fontFamily: 'Poppins, sans-serif',
-            fontSize: 'var(--t-2xs)',
+            fontFamily: "Poppins, sans-serif",
+            fontSize: "var(--t-2xs)",
             fontWeight: 700,
-            color: 'var(--gold-deep)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            margin: '0 0 0.5rem',
+            color: "var(--gold-deep)",
+            textTransform: "uppercase",
+            letterSpacing: "0.1em",
+            margin: "0 0 0.5rem",
           }}
         >
           Nearest to you
@@ -63,7 +69,7 @@ function BranchCard({
         <MkButton
           variant="whatsapp"
           size="sm"
-          href={`https://wa.me/${branch.whatsapp.replace('+', '')}`}
+          href="https://wa.me/917019500600"
           external
         >
           WhatsApp
@@ -78,18 +84,20 @@ function BranchCard({
 
 /* ─── Main component ─────────────────────────────────────────── */
 
-export function MkBranchFinder() {
-  const [city, setCity] = useState<City>('Bangalore');
-  const [search, setSearch] = useState('');
-  const [geoState, setGeoState] = useState<GeoState>('idle');
+export function MkBranchFinder({
+  allowedSlugs,
+}: { allowedSlugs?: string[] } = {}) {
+  const [city, setCity] = useState<City>("Bangalore");
+  const [search, setSearch] = useState("");
+  const [geoState, setGeoState] = useState<GeoState>("idle");
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
 
   function handleGeoLocate() {
     if (!navigator.geolocation) {
-      setGeoState('denied');
+      setGeoState("denied");
       return;
     }
-    setGeoState('loading');
+    setGeoState("loading");
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const nearest = findNearestBranch(
@@ -97,21 +105,26 @@ export function MkBranchFinder() {
           pos.coords.longitude,
         );
         setCity(nearest.city as City);
-        setSearch('');
+        setSearch("");
         setHighlightedSlug(nearest.slug);
-        setGeoState('found');
+        setGeoState("found");
       },
       () => {
-        setGeoState('denied');
+        setGeoState("denied");
       },
       { timeout: 8000 },
     );
   }
 
   const filtered = useMemo(() => {
+    const source = (
+      allowedSlugs
+        ? BRANCHES.filter((b) => allowedSlugs.includes(b.slug))
+        : BRANCHES
+    ).filter((b) => b.active !== false);
     const term = search.trim().toLowerCase();
-    return BRANCHES.filter((b) => {
-      const cityMatch = city === 'All' || b.city === city;
+    return source.filter((b) => {
+      const cityMatch = city === "All" || b.city === city;
       const searchMatch =
         !term ||
         b.area.toLowerCase().includes(term) ||
@@ -119,7 +132,7 @@ export function MkBranchFinder() {
         b.address.toLowerCase().includes(term);
       return cityMatch && searchMatch;
     });
-  }, [city, search]);
+  }, [city, search, allowedSlugs]);
 
   return (
     <>
@@ -133,13 +146,10 @@ export function MkBranchFinder() {
 
       <section className="mk-branch-finder mk-bg-light section" id="branches">
         <div className="mk-container">
-
           {/* Header */}
           <div className="mk-branch-finder__header reveal">
             <p className="mk-section-overline">Our Branches</p>
-            <h2 className="mk-branch-finder__title">
-              Find a branch near you
-            </h2>
+            <h2 className="mk-branch-finder__title">Find a branch near you</h2>
             <p className="mk-branch-finder__subtitle">
               All branches are open Monday to Saturday, 9:30 AM – 7:00 PM.
               Walk-ins always welcome.
@@ -149,50 +159,50 @@ export function MkBranchFinder() {
           {/* Geo row — above city tabs */}
           <div
             style={{
-              textAlign: 'center',
-              minHeight: '2rem',
-              marginBottom: '0.75rem',
+              textAlign: "center",
+              minHeight: "2rem",
+              marginBottom: "0.75rem",
             }}
           >
-            {geoState === 'idle' && (
+            {geoState === "idle" && (
               <button
                 onClick={handleGeoLocate}
                 style={{
-                  fontFamily: 'Poppins, sans-serif',
+                  fontFamily: "Poppins, sans-serif",
                   fontWeight: 500,
-                  fontSize: 'var(--t-sm)',
-                  color: 'var(--gold-deep)',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '0.25rem 0',
-                  textDecoration: 'underline',
-                  textDecorationColor: 'rgba(201,169,64,0.4)',
-                  textUnderlineOffset: '3px',
+                  fontSize: "var(--t-sm)",
+                  color: "var(--gold-deep)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "0.25rem 0",
+                  textDecoration: "underline",
+                  textDecorationColor: "rgba(201,169,64,0.4)",
+                  textUnderlineOffset: "3px",
                 }}
               >
                 Use my location
               </button>
             )}
-            {geoState === 'loading' && (
+            {geoState === "loading" && (
               <span
                 className="mk-geo-loading"
                 style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 'var(--t-sm)',
-                  color: 'var(--ink-mid)',
-                  fontStyle: 'italic',
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: "var(--t-sm)",
+                  color: "var(--ink-mid)",
+                  fontStyle: "italic",
                 }}
               >
                 Finding nearest branch...
               </span>
             )}
-            {geoState === 'denied' && (
+            {geoState === "denied" && (
               <span
                 style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 'var(--t-sm)',
-                  color: 'var(--mist)',
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: "var(--t-sm)",
+                  color: "var(--mist)",
                 }}
               >
                 Please select your city below.
@@ -202,7 +212,6 @@ export function MkBranchFinder() {
 
           {/* Controls */}
           <div className="mk-branch-finder__controls reveal delay-1">
-
             {/* City tabs */}
             <div
               className="mk-branch-finder__city-tabs"
@@ -214,7 +223,7 @@ export function MkBranchFinder() {
                   key={c}
                   role="tab"
                   aria-selected={city === c}
-                  className={`mk-bf-tab${city === c ? ' mk-bf-tab--active' : ''}`}
+                  className={`mk-bf-tab${city === c ? " mk-bf-tab--active" : ""}`}
                   onClick={() => {
                     setCity(c);
                     setHighlightedSlug(null);
@@ -241,7 +250,7 @@ export function MkBranchFinder() {
             <div
               className="mk-branch-finder__grid"
               role="list"
-              aria-label={`${filtered.length} branch${filtered.length !== 1 ? 'es' : ''} found`}
+              aria-label={`${filtered.length} branch${filtered.length !== 1 ? "es" : ""} found`}
             >
               {filtered.map((b) => (
                 <div key={b.slug} role="listitem">
@@ -252,14 +261,29 @@ export function MkBranchFinder() {
                 </div>
               ))}
             </div>
-          ) : (
+          ) : city !== "All" && city !== "Bangalore" ? (
             <p className="mk-branch-finder__empty">
-              No branches found for &ldquo;{search}&rdquo;.{' '}
+              MK Gold {city} is <strong>coming soon</strong>. We&apos;re
+              currently active in Bangalore only —{" "}
               <button
                 className="mk-branch-finder__reset"
                 onClick={() => {
-                  setSearch('');
-                  setCity('All');
+                  setSearch("");
+                  setCity("Bangalore");
+                  setHighlightedSlug(null);
+                }}
+              >
+                view Bangalore branches
+              </button>
+            </p>
+          ) : (
+            <p className="mk-branch-finder__empty">
+              No branches found for &ldquo;{search}&rdquo;.{" "}
+              <button
+                className="mk-branch-finder__reset"
+                onClick={() => {
+                  setSearch("");
+                  setCity("All");
                   setHighlightedSlug(null);
                 }}
               >
@@ -267,7 +291,6 @@ export function MkBranchFinder() {
               </button>
             </p>
           )}
-
         </div>
       </section>
     </>

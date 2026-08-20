@@ -18,18 +18,18 @@ export interface MkCardProps {
 /* ─── Maps ────────────────────────────────────────────────────── */
 
 const VARIANT_CLASS: Record<CardVariant, string> = {
-  "default":     "",
-  "plum":        "mk-card--plum",
-  "gallery":     "mk-card--gallery",
+  default: "",
+  plum: "mk-card--plum",
+  gallery: "mk-card--gallery",
   "gold-border": "mk-card--gold-border",
 };
 
 /* ─── Component ───────────────────────────────────────────────── */
 
 export function MkCard({
-  variant  = "default",
-  hover    = true,
-  as: Tag  = "div",
+  variant = "default",
+  hover = true,
+  as: Tag = "div",
   className,
   style,
   children,

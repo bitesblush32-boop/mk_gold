@@ -14,6 +14,8 @@ export interface Branch {
   mapEmbed: string;
   /** Google Maps get-directions URL */
   googleMapsUrl: string;
+  /** False for branches not yet open to the public — hidden from listings. Defaults to true. */
+  active?: boolean;
 }
 
 export const BRANCHES: Branch[] = [
@@ -33,6 +35,7 @@ export const BRANCHES: Branch[] = [
       "https://maps.google.com/maps?q=12.9916,77.5518&z=15&output=embed",
     googleMapsUrl:
       "https://www.google.com/maps/dir/?api=1&destination=12.9916,77.5518",
+    active: false, // not yet open — only Basaveshwaranagar & Jayanagar are live
   },
   {
     slug: "sell-gold-malleshwaram",
@@ -49,6 +52,7 @@ export const BRANCHES: Branch[] = [
       "https://maps.google.com/maps?q=13.0035,77.5668&z=15&output=embed",
     googleMapsUrl:
       "https://www.google.com/maps/dir/?api=1&destination=13.0035,77.5668",
+    active: false,
   },
   {
     slug: "sell-gold-vijayanagar",
@@ -65,6 +69,7 @@ export const BRANCHES: Branch[] = [
       "https://maps.google.com/maps?q=12.9719,77.5218&z=15&output=embed",
     googleMapsUrl:
       "https://www.google.com/maps/dir/?api=1&destination=12.9719,77.5218",
+    active: false,
   },
   {
     slug: "sell-gold-basaveshwaranagar",
@@ -72,8 +77,8 @@ export const BRANCHES: Branch[] = [
     city: "Bangalore",
     area: "Basaveshwaranagar",
     address: "Basaveshwaranagar, Bangalore, Karnataka 560079",
-    phone: "+91 80 0000 0004",
-    whatsapp: "+918000000004",
+    phone: "+91 70195 00600",
+    whatsapp: "+917019500600",
     coordinates: { lat: 12.9803, lng: 77.5324 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
     landmarksNear: "Near Basaveshwaranagar Circle and Navarang Theatre",
@@ -97,6 +102,7 @@ export const BRANCHES: Branch[] = [
       "https://maps.google.com/maps?q=13.0215,77.5485&z=15&output=embed",
     googleMapsUrl:
       "https://www.google.com/maps/dir/?api=1&destination=13.0215,77.5485",
+    active: false,
   },
   {
     slug: "sell-gold-jayanagar",
@@ -104,11 +110,12 @@ export const BRANCHES: Branch[] = [
     city: "Bangalore",
     area: "Jayanagar",
     address: "Jayanagar, Bangalore, Karnataka 560041",
-    phone: "+91 80 0000 0006",
-    whatsapp: "+918000000006",
+    phone: "+91 70195 00600",
+    whatsapp: "+917019500600",
     coordinates: { lat: 12.9299, lng: 77.5832 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
-    landmarksNear: "Near Jayanagar 4th Block Shopping Complex and South End Circle",
+    landmarksNear:
+      "Near Jayanagar 4th Block Shopping Complex and South End Circle",
     mapEmbed:
       "https://maps.google.com/maps?q=12.9299,77.5832&z=15&output=embed",
     googleMapsUrl:
@@ -129,6 +136,7 @@ export const BRANCHES: Branch[] = [
       "https://maps.google.com/maps?q=12.9719,77.6412&z=15&output=embed",
     googleMapsUrl:
       "https://www.google.com/maps/dir/?api=1&destination=12.9719,77.6412",
+    active: false,
   },
   {
     slug: "sell-gold-koramangala",
@@ -145,6 +153,7 @@ export const BRANCHES: Branch[] = [
       "https://maps.google.com/maps?q=12.9352,77.6245&z=15&output=embed",
     googleMapsUrl:
       "https://www.google.com/maps/dir/?api=1&destination=12.9352,77.6245",
+    active: false,
   },
   {
     slug: "sell-gold-whitefield",
@@ -154,13 +163,14 @@ export const BRANCHES: Branch[] = [
     address: "Whitefield, Bangalore, Karnataka 560066",
     phone: "+91 80 0000 0009",
     whatsapp: "+918000000009",
-    coordinates: { lat: 12.9698, lng: 77.7500 },
+    coordinates: { lat: 12.9698, lng: 77.75 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
     landmarksNear: "Near Phoenix Marketcity and Whitefield Railway Station",
     mapEmbed:
       "https://maps.google.com/maps?q=12.9698,77.7500&z=15&output=embed",
     googleMapsUrl:
       "https://www.google.com/maps/dir/?api=1&destination=12.9698,77.7500",
+    active: false,
   },
   {
     slug: "sell-gold-jp-nagar",
@@ -177,6 +187,7 @@ export const BRANCHES: Branch[] = [
       "https://maps.google.com/maps?q=12.9063,77.5857&z=15&output=embed",
     googleMapsUrl:
       "https://www.google.com/maps/dir/?api=1&destination=12.9063,77.5857",
+    active: false,
   },
   // ─── Mysore ───────────────────────────────────────────────────
   {
@@ -238,7 +249,8 @@ export const BRANCHES: Branch[] = [
     whatsapp: "+918240000001",
     coordinates: { lat: 12.8698, lng: 74.8431 },
     openHours: { days: "Mon–Sat", time: "9:30 AM – 7:00 PM" },
-    landmarksNear: "Near Hampankatta Circle and Mangalore Central Railway Station",
+    landmarksNear:
+      "Near Hampankatta Circle and Mangalore Central Railway Station",
     mapEmbed:
       "https://maps.google.com/maps?q=12.8698,74.8431&z=15&output=embed",
     googleMapsUrl:
@@ -298,7 +310,8 @@ function haversineKm(
 }
 
 export function findNearestBranch(lat: number, lng: number): Branch {
-  return BRANCHES.reduce((nearest, branch) => {
+  const activeBranches = BRANCHES.filter((b) => b.active !== false);
+  return activeBranches.reduce((nearest, branch) => {
     const distNearest = haversineKm(
       lat,
       lng,

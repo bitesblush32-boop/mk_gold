@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 /**
  * Global IntersectionObserver for all .reveal* elements.
@@ -16,7 +16,7 @@ export function MkRevealObserver() {
     const timer = setTimeout(() => {
       // Only select elements that haven't been revealed yet
       const els = document.querySelectorAll<HTMLElement>(
-        '.reveal:not(.in), .reveal-l:not(.in), .reveal-r:not(.in), .reveal-scale:not(.in)'
+        ".reveal:not(.in), .reveal-l:not(.in), .reveal-r:not(.in), .reveal-scale:not(.in)",
       );
       if (!els.length) return;
 
@@ -24,12 +24,12 @@ export function MkRevealObserver() {
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              entry.target.classList.add('in');
+              entry.target.classList.add("in");
               observer.unobserve(entry.target);
             }
           });
         },
-        { threshold: 0, rootMargin: '0px 0px -16px 0px' }
+        { threshold: 0, rootMargin: "0px 0px -16px 0px" },
       );
 
       els.forEach((el) => observer.observe(el));

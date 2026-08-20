@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   createContext,
@@ -6,43 +6,52 @@ import {
   useState,
   useEffect,
   type ReactNode,
-} from 'react';
-import type {
-  GoldRateContextValue,
-  GoldRateData,
-} from '@/types/gold-rate';
+} from "react";
+import type { GoldRateContextValue, GoldRateData } from "@/types/gold-rate";
 
 /* ─── Context ────────────────────────────────────────────────── */
 
 const GoldRateContext = createContext<GoldRateContextValue>({
-  rates:       [],
-  baseRates:   [],
-  mcxRate:     0,
+  rates: [],
+  baseRates: [],
+  mcxRate: 0,
   lastUpdated: null,
-  isLoading:   true,
-  isError:     false,
+  isLoading: true,
+  isError: false,
 });
 
 /* ─── Provider ───────────────────────────────────────────────── */
 
 interface GoldRateProviderProps {
-  children:     ReactNode;
+  children: ReactNode;
   /** Server-fetched admin rates passed from layout — avoids loading flash */
   initialData?: GoldRateData | null;
 }
 
-export function GoldRateProvider({ children, initialData }: GoldRateProviderProps) {
-  const [data, setData]         = useState<GoldRateData | null>(initialData ?? null);
+export function GoldRateProvider({
+  children,
+  initialData,
+}: GoldRateProviderProps) {
+  const [data, setData] = useState<GoldRateData | null>(initialData ?? null);
   const [isLoading, setLoading] = useState(!initialData);
   const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const load = () => {
       setHasError(false);
-      fetch('/api/gold-rate')
-        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
-        .then((d: GoldRateData) => { setData(d); setLoading(false); })
-        .catch(() => { setHasError(true); setLoading(false); });
+      fetch("/api/gold-rate")
+        .then((r) => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        })
+        .then((d: GoldRateData) => {
+          setData(d);
+          setLoading(false);
+        })
+        .catch(() => {
+          setHasError(true);
+          setLoading(false);
+        });
     };
     load();
     // Poll every 3s — keeps ticker ±200 variation and rate widget both current
@@ -50,19 +59,19 @@ export function GoldRateProvider({ children, initialData }: GoldRateProviderProp
     return () => clearInterval(id);
   }, []);
 
-  const rawRates  = data?.rates ?? [];
+  const rawRates = data?.rates ?? [];
   // baseRates: use the stable admin-set `base` field where available, else fall back to `value`
-  const baseRates = rawRates.map(r => ({ ...r, value: r.base ?? r.value }));
+  const baseRates = rawRates.map((r) => ({ ...r, value: r.base ?? r.value }));
 
   return (
     <GoldRateContext.Provider
       value={{
-        rates:       rawRates,
+        rates: rawRates,
         baseRates,
-        mcxRate:     data?.mcxRate   ?? 0,
+        mcxRate: data?.mcxRate ?? 0,
         lastUpdated: data?.updatedAt ?? null,
         isLoading,
-        isError:     hasError && !data,
+        isError: hasError && !data,
       }}
     >
       {children}

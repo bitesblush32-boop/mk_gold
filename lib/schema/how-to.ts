@@ -3,7 +3,11 @@ export interface HowToStep {
   text: string;
 }
 
-export function howToSchema(steps: HowToStep[], name: string, description: string) {
+export function howToSchema(
+  steps: HowToStep[],
+  name: string,
+  description: string,
+) {
   return {
     "@context": "https://schema.org",
     "@type": "HowTo",

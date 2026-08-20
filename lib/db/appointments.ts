@@ -1,8 +1,8 @@
-import { db, appointments } from '@/db';
-import { eq, and, desc } from 'drizzle-orm';
-import type { NewAppointment } from '@/db/schema';
+import { db, appointments } from "@/db";
+import { eq, and, desc } from "drizzle-orm";
+import type { NewAppointment } from "@/db/schema";
 
-export type { Appointment } from '@/db/schema';
+export type { Appointment } from "@/db/schema";
 
 /* ─── Create ─────────────────────────────────────────────────────── */
 
@@ -42,7 +42,7 @@ export async function getAppointmentByCode(confirmationCode: string) {
 
 export async function updateAppointmentStatus(
   id: number,
-  status: 'pending' | 'confirmed' | 'visited' | 'no_show' | 'cancelled',
+  status: "pending" | "confirmed" | "visited" | "no_show" | "cancelled",
 ) {
   const [row] = await db
     .update(appointments)

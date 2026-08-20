@@ -1,35 +1,37 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 interface Stats {
-  totalLeads:        number;
+  totalLeads: number;
   appointmentsToday: number;
   goldRate: {
-    status:    'manual' | 'live';
-    rate24k?:  string;
+    status: "manual" | "live";
+    rate24k?: string;
     expiresAt?: string | Date | null;
     updatedAt?: string | Date;
   };
 }
 
 function fmtTime(val: string | Date | null | undefined): string {
-  if (!val) return '—';
-  return new Date(val as string).toLocaleTimeString('en-IN', {
-    hour: '2-digit', minute: '2-digit', hour12: true,
+  if (!val) return "—";
+  return new Date(val as string).toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
   });
 }
 
 export default function AdminDashboard() {
-  const [stats, setStats]   = useState<Stats | null>(null);
-  const [error, setError]   = useState('');
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch('/api/admin/stats')
-      .then(r => r.json())
-      .then(d => setStats(d))
-      .catch(() => setError('Could not load stats.'));
+    fetch("/api/admin/stats")
+      .then((r) => r.json())
+      .then((d) => setStats(d))
+      .catch(() => setError("Could not load stats."));
   }, []);
 
   return (
@@ -38,14 +40,16 @@ export default function AdminDashboard() {
         <h1 className="mk-admin-page-title">Dashboard</h1>
       </div>
 
-      {error && <div className="mk-admin-alert mk-admin-alert--error">{error}</div>}
+      {error && (
+        <div className="mk-admin-alert mk-admin-alert--error">{error}</div>
+      )}
 
       {/* Stats row */}
       <div className="mk-admin-stats">
         {/* Total Leads */}
         <div className="mk-admin-stat-card">
           <div className="mk-admin-stat-card__value">
-            {stats ? stats.totalLeads : '—'}
+            {stats ? stats.totalLeads : "—"}
           </div>
           <div className="mk-admin-stat-card__label">Total Leads</div>
         </div>
@@ -53,7 +57,7 @@ export default function AdminDashboard() {
         {/* Appointments Today */}
         <div className="mk-admin-stat-card">
           <div className="mk-admin-stat-card__value">
-            {stats ? stats.appointmentsToday : '—'}
+            {stats ? stats.appointmentsToday : "—"}
           </div>
           <div className="mk-admin-stat-card__label">Appointments Today</div>
         </div>
@@ -61,11 +65,11 @@ export default function AdminDashboard() {
         {/* Gold Rate Status */}
         <div className="mk-admin-stat-card">
           {stats ? (
-            stats.goldRate.status === 'manual' ? (
+            stats.goldRate.status === "manual" ? (
               <>
                 <div
                   className="mk-admin-stat-card__value"
-                  style={{ fontSize: '1rem', color: 'var(--gold)' }}
+                  style={{ fontSize: "1rem", color: "var(--gold)" }}
                 >
                   Manual Override
                 </div>
@@ -77,7 +81,7 @@ export default function AdminDashboard() {
               <>
                 <div
                   className="mk-admin-stat-card__value"
-                  style={{ fontSize: '1rem', color: '#22a85a' }}
+                  style={{ fontSize: "1rem", color: "#22a85a" }}
                 >
                   Live MCX Rate
                 </div>
@@ -96,7 +100,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick links */}
-      <div className="mk-admin-section" style={{ marginTop: 'var(--s-6)' }}>
+      <div className="mk-admin-section" style={{ marginTop: "var(--s-6)" }}>
         <h2 className="mk-admin-section-title">Quick Actions</h2>
         <div className="mk-admin-quick-links">
           <Link href="/admin/banners" className="mk-admin-quick-link">

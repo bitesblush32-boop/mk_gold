@@ -36,11 +36,11 @@ export type MkButtonProps = AsButton | AsAnchor;
 /* ─── Maps ────────────────────────────────────────────────────── */
 
 const VARIANT_CLASS: Record<ButtonVariant, string> = {
-  "gold":          "mk-btn--gold",
-  "plum":          "mk-btn--plum",
+  gold: "mk-btn--gold",
+  plum: "mk-btn--plum",
   "outline-light": "mk-btn--outline-light",
-  "outline-plum":  "mk-btn--outline-plum",
-  "whatsapp":      "mk-btn--whatsapp",
+  "outline-plum": "mk-btn--outline-plum",
+  whatsapp: "mk-btn--whatsapp",
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
@@ -62,15 +62,22 @@ export function MkButton(props: MkButtonProps) {
   );
 
   if ("href" in props && props.href !== undefined) {
-    const { href, external, variant: _v, size: _s, className: _c, children: _ch, ...rest } = props;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {
+      href,
+      external,
+      variant: _v,
+      size: _s,
+      className: _c,
+      children: _ch,
+      ...rest
+    } = props;
 
     return (
       <a
         href={href}
         className={classes}
-        {...(external
-          ? { target: "_blank", rel: "noopener noreferrer" }
-          : {})}
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
         {...(rest as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
       >
         {children}
@@ -78,7 +85,14 @@ export function MkButton(props: MkButtonProps) {
     );
   }
 
-  const { variant: _v, size: _s, className: _c, children: _ch, ...rest } = props as AsButton;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {
+    variant: _v,
+    size: _s,
+    className: _c,
+    children: _ch,
+    ...rest
+  } = props as AsButton;
 
   return (
     <button className={classes} {...rest}>

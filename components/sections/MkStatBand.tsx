@@ -1,25 +1,25 @@
 // F17 — Horizontal stats band
 
-import React from 'react';
+import React from "react";
 
 /* ─── Data ────────────────────────────────────────────────────── */
 
 const STATS = [
-  { number: '15+',     label: 'Years of Trust' },
+  { number: "15+", label: "Years of Trust" },
   // { number: '16', label: 'Branches Across Karnataka' }, // TODO: restore when all branches are live
-  { number: '10,000+', label: 'Customers Served' },
-  { number: '₹100Cr+', label: 'Gold Purchased Value' },
-  { number: '30 min',  label: 'Average Payout Time' },
+  { number: "10,000+", label: "Customers Served" },
+  { number: "₹100Cr+", label: "Gold Purchased Value" },
+  { number: "30 min", label: "Average Payout Time" },
 ] as const;
 
 /* ─── Helpers ────────────────────────────────────────────────── */
 
 /** Split a number string so the ₹ symbol renders in Poppins, rest in Tanker */
 function StatNumber({ value }: { value: string }) {
-  if (value.startsWith('₹')) {
+  if (value.startsWith("₹")) {
     return (
       <>
-        <span style={{ fontFamily: 'Poppins, sans-serif' }}>₹</span>
+        <span style={{ fontFamily: "Poppins, sans-serif" }}>₹</span>
         <span className="mk-stat-band__number">{value.slice(1)}</span>
       </>
     );

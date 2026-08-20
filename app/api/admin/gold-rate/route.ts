@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath, revalidateTag } from 'next/cache';
-import { requireAdmin } from '@/lib/admin-auth';
+import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath, revalidateTag } from "next/cache";
+import { requireAdmin } from "@/lib/admin-auth";
 import {
   getGoldRateOverride,
   setGoldRateOverride,
   clearGoldRateOverride,
-} from '@/lib/db/rates';
+} from "@/lib/db/rates";
 
 /* ─── GET — current override ─────────────────────────────────────── */
 
@@ -17,8 +17,11 @@ export async function GET(req: NextRequest) {
     const override = await getGoldRateOverride();
     return NextResponse.json({ override: override ?? null });
   } catch (err) {
-    console.error('[api/admin/gold-rate] GET error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("[api/admin/gold-rate] GET error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -32,14 +35,14 @@ export async function POST(req: NextRequest) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
   const { rate_24k, rate_22k } = body as Record<string, unknown>;
 
   if (!rate_24k || !rate_22k) {
     return NextResponse.json(
-      { error: 'rate_24k, rate_22k are required' },
+      { error: "rate_24k, rate_22k are required" },
       { status: 400 },
     );
   }
@@ -49,13 +52,16 @@ export async function POST(req: NextRequest) {
       rate_24k: String(rate_24k),
       rate_22k: String(rate_22k),
     });
-    revalidateTag('gold-rate', { expire: 0 });        // invalidates unstable_cache instantly
-    revalidatePath('/gold-rate-today');
-    revalidatePath('/');
+    revalidateTag("gold-rate", { expire: 0 }); // invalidates unstable_cache instantly
+    revalidatePath("/gold-rate-today");
+    revalidatePath("/");
     return NextResponse.json({ success: true, override: row });
   } catch (err) {
-    console.error('[api/admin/gold-rate] POST error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("[api/admin/gold-rate] POST error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -67,12 +73,15 @@ export async function DELETE(req: NextRequest) {
 
   try {
     await clearGoldRateOverride();
-    revalidateTag('gold-rate', { expire: 0 });
-    revalidatePath('/gold-rate-today');
-    revalidatePath('/');
+    revalidateTag("gold-rate", { expire: 0 });
+    revalidatePath("/gold-rate-today");
+    revalidatePath("/");
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('[api/admin/gold-rate] DELETE error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error("[api/admin/gold-rate] DELETE error:", err);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }

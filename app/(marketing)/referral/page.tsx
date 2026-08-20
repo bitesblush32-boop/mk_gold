@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { MkNavbar } from "@/components/layout/MkNavbar";
+import { MkFooter } from "@/components/layout/MkFooter";
 
 export const revalidate = false; // Static at build — content never changes without redeploy
 
@@ -11,10 +13,14 @@ export const metadata: Metadata = {
 
 export default function ReferralPage() {
   return (
-    <main>
-      <p style={{ fontFamily: "Poppins, sans-serif", padding: "2rem" }}>
-        MK Gold — Referral page (scaffold)
-      </p>
-    </main>
+    <>
+      <MkNavbar />
+      <main>
+        <p style={{ fontFamily: "Poppins, sans-serif", padding: "2rem" }}>
+          MK Gold — Referral page (scaffold)
+        </p>
+      </main>
+      <MkFooter />
+    </>
   );
 }

@@ -1,33 +1,38 @@
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
+import Link from "next/link";
 
 export const revalidate = 3600; // ISR: content changes infrequently
 
-import { MkNavbar } from '@/components/layout/MkNavbar';
-import { MkFooter } from '@/components/layout/MkFooter';
-import { MkButton } from '@/components/ui/MkButton';
-import { MkBadge } from '@/components/ui/MkBadge';
-import { MkSectionHeader } from '@/components/ui/MkSectionHeader';
-import { MkTrustBlock } from '@/components/ui/MkTrustBlock';
-import { MkPledgedCalculator } from '@/components/features/MkPledgedCalculator';
-import { MkPledgedFaq } from '@/components/sections/MkPledgedFaq';
-import { getFaqsByPage } from '@/lib/db/faqs';
-import { HOW_IT_WORKS, LENDERS, PAYMENT_METHODS } from '@/lib/data/pledged-gold';
+import { MkNavbar } from "@/components/layout/MkNavbar";
+import { MkFooter } from "@/components/layout/MkFooter";
+import { MkButton } from "@/components/ui/MkButton";
+import { MkBadge } from "@/components/ui/MkBadge";
+import { MkSectionHeader } from "@/components/ui/MkSectionHeader";
+import { MkTrustBlock } from "@/components/ui/MkTrustBlock";
+import { MkPledgedCalculator } from "@/components/features/MkPledgedCalculator";
+import { MkPledgedFaq } from "@/components/sections/MkPledgedFaq";
+import { getFaqsByPage } from "@/lib/db/faqs";
+import {
+  HOW_IT_WORKS,
+  LENDERS,
+  PAYMENT_METHODS,
+} from "@/lib/data/pledged-gold";
 
 /* ─── Metadata ────────────────────────────────────────────────── */
 
 export const metadata: Metadata = {
-  title: 'Release Pledged Gold | Confidential Help | MK Gold Karnataka',
+  title: "Release Pledged Gold | Confidential Help | MK Gold Karnataka",
   description:
-    'We help you release gold pledged at banks and NBFCs across Karnataka. We pay the lender directly in front of you. Confidential, dignified service.', // was: 16 branches
-  alternates: { canonical: 'https://mkgold.in/release-pledged-gold' },
+    "We help you release gold pledged at banks and NBFCs across Karnataka. We pay the lender directly in front of you. Confidential, dignified service.", // was: 16 branches
+  alternates: { canonical: "https://mkgold.in/release-pledged-gold" },
   openGraph: {
-    title: 'Release Pledged Gold | Confidential Help | MK Gold',
+    title: "Release Pledged Gold | Confidential Help | MK Gold",
     description:
-      'We pay your lender directly. You receive the difference. Confidential service across Karnataka. Trusted since 2014.', // was: 16 branches
-    url: 'https://mkgold.in/release-pledged-gold',
-    siteName: 'MK Gold',
-    locale: 'en_IN',
-    type: 'website',
+      "We pay your lender directly. You receive the difference. Confidential service across Karnataka. Trusted since 2014.", // was: 16 branches
+    url: "https://mkgold.in/release-pledged-gold",
+    siteName: "MK Gold",
+    locale: "en_IN",
+    type: "website",
   },
   robots: { index: true, follow: true },
 };
@@ -35,29 +40,29 @@ export const metadata: Metadata = {
 /* ─── Schema ──────────────────────────────────────────────────── */
 
 const SERVICE_SCHEMA = {
-  '@context': 'https://schema.org',
-  '@type': 'Service',
-  name: 'Pledged Gold Release',
+  "@context": "https://schema.org",
+  "@type": "Service",
+  name: "Pledged Gold Release",
   description:
-    'MK Gold helps customers release gold pledged at banks and NBFCs. We pay the lender directly in front of the customer and purchase the gold immediately. Confidential service across Karnataka.',
+    "MK Gold helps customers release gold pledged at banks and NBFCs. We pay the lender directly in front of the customer and purchase the gold immediately. Confidential service across Karnataka.",
   provider: {
-    '@type': 'LocalBusiness',
-    name: 'MK Gold',
-    url: 'https://mkgold.in',
+    "@type": "LocalBusiness",
+    name: "MK Gold",
+    url: "https://mkgold.in",
     address: {
-      '@type': 'PostalAddress',
-      addressRegion: 'Karnataka',
-      addressCountry: 'IN',
+      "@type": "PostalAddress",
+      addressRegion: "Karnataka",
+      addressCountry: "IN",
     },
   },
-  areaServed: { '@type': 'State', name: 'Karnataka' },
-  serviceType: 'Pledged Gold Release',
+  areaServed: { "@type": "State", name: "Karnataka" },
+  serviceType: "Pledged Gold Release",
 };
 
 /* ─── Page ────────────────────────────────────────────────────── */
 
 export default async function PledgedGoldPage() {
-  const faqs = await getFaqsByPage('pledged-gold');
+  const faqs = await getFaqsByPage("pledged-gold");
   return (
     <>
       <script
@@ -70,30 +75,41 @@ export default async function PledgedGoldPage() {
       {/* ── 1. HERO ─────────────────────────────────────────────── */}
       <section className="mk-bg-dark section">
         <div className="mk-container">
-
           {/* Breadcrumb */}
           <nav
             aria-label="Breadcrumb"
             style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 'var(--t-xs)',
-              color: 'rgba(255,255,255,0.4)',
-              marginBottom: '2.5rem',
-              display: 'flex',
-              gap: '0.5rem',
-              alignItems: 'center',
+              fontFamily: "Poppins, sans-serif",
+              fontSize: "var(--t-xs)",
+              color: "rgba(255,255,255,0.4)",
+              marginBottom: "2.5rem",
+              display: "flex",
+              gap: "0.5rem",
+              alignItems: "center",
             }}
           >
-            <a href="/" style={{ color: 'rgba(255,255,255,0.4)', textDecoration: 'none' }}>
+            <Link
+              href="/"
+              style={{ color: "rgba(255,255,255,0.4)", textDecoration: "none" }}
+            >
               Home
-            </a>
-            <span aria-hidden="true" style={{ color: 'rgba(255,255,255,0.2)' }}>›</span>
-            <span style={{ color: 'var(--gold)' }}>Release Pledged Gold</span>
+            </Link>
+            <span aria-hidden="true" style={{ color: "rgba(255,255,255,0.2)" }}>
+              ›
+            </span>
+            <span style={{ color: "var(--gold)" }}>Release Pledged Gold</span>
           </nav>
 
-          <div style={{ maxWidth: '720px' }}>
+          <div style={{ maxWidth: "720px" }}>
             {/* Badges */}
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "0.5rem",
+                flexWrap: "wrap",
+                marginBottom: "1.5rem",
+              }}
+            >
               <MkBadge variant="gold">Confidential</MkBadge>
               {/* <MkBadge variant="gold">16 Branches</MkBadge> */}
               <MkBadge variant="gold">Same Day</MkBadge>
@@ -101,36 +117,47 @@ export default async function PledgedGoldPage() {
 
             <h1
               style={{
-                fontFamily: 'Tanker, serif',
-                fontSize: 'var(--t-h1)',
-                color: 'var(--white)',
+                fontFamily: "Tanker, serif",
+                fontSize: "var(--t-h1)",
+                color: "var(--white)",
                 lineHeight: 1.1,
-                margin: '0 0 1.25rem',
+                margin: "0 0 1.25rem",
               }}
             >
-              Release Your{' '}
-              <span style={{ color: 'var(--gold)' }}>Pledged Gold</span>
+              Release Your{" "}
+              <span style={{ color: "var(--gold)" }}>Pledged Gold</span>
             </h1>
 
             <p
               style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 'var(--t-lg)',
-                color: 'rgba(255,255,255,0.7)',
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "var(--t-lg)",
+                color: "rgba(255,255,255,0.7)",
                 lineHeight: 1.65,
-                margin: '0 0 2rem',
-                maxWidth: '580px',
+                margin: "0 0 2rem",
+                maxWidth: "580px",
               }}
             >
-              We pay your lender directly. You receive the difference.
-              The process is confidential.
+              We pay your lender directly. You receive the difference. The
+              process is confidential.
             </p>
 
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1.75rem' }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                flexWrap: "wrap",
+                marginBottom: "1.75rem",
+              }}
+            >
               <MkButton variant="gold" size="lg" href="/contact">
                 Get Help Today
               </MkButton>
-              <MkButton variant="outline-light" size="lg" href="tel:+918000000001">
+              <MkButton
+                variant="outline-light"
+                size="lg"
+                href="tel:+918000000001"
+              >
                 Call a Branch
               </MkButton>
             </div>
@@ -138,30 +165,31 @@ export default async function PledgedGoldPage() {
             {/* Confidential note */}
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.625rem',
+                display: "flex",
+                alignItems: "center",
+                gap: "0.625rem",
               }}
             >
               <span
                 style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '50%',
-                  background: 'var(--gold)',
+                  width: "6px",
+                  height: "6px",
+                  borderRadius: "50%",
+                  background: "var(--gold)",
                   flexShrink: 0,
                   opacity: 0.7,
                 }}
               />
               <p
                 style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 'var(--t-xs)',
-                  color: 'rgba(223,193,96,0.65)',
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: "var(--t-xs)",
+                  color: "rgba(223,193,96,0.65)",
                   margin: 0,
                 }}
               >
-                This enquiry is private. We do not share your details with anyone.
+                This enquiry is private. We do not share your details with
+                anyone.
               </p>
             </div>
           </div>
@@ -180,11 +208,11 @@ export default async function PledgedGoldPage() {
 
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '0',
-              marginTop: '3.5rem',
-              position: 'relative',
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: "0",
+              marginTop: "3.5rem",
+              position: "relative",
             }}
           >
             {HOW_IT_WORKS.map((step, i) => (
@@ -192,9 +220,9 @@ export default async function PledgedGoldPage() {
                 key={step.n}
                 className="reveal"
                 style={{
-                  padding: '0 2rem 2rem',
-                  textAlign: 'center',
-                  position: 'relative',
+                  padding: "0 2rem 2rem",
+                  textAlign: "center",
+                  position: "relative",
                   animationDelay: `${i * 0.12}s`,
                 }}
               >
@@ -203,12 +231,13 @@ export default async function PledgedGoldPage() {
                   <span
                     aria-hidden="true"
                     style={{
-                      position: 'absolute',
-                      top: '2.25rem',
-                      right: '-1px',
-                      width: '2rem',
-                      height: '1px',
-                      background: 'linear-gradient(90deg, var(--gold) 0%, transparent 100%)',
+                      position: "absolute",
+                      top: "2.25rem",
+                      right: "-1px",
+                      width: "2rem",
+                      height: "1px",
+                      background:
+                        "linear-gradient(90deg, var(--gold) 0%, transparent 100%)",
                       opacity: 0.3,
                     }}
                   />
@@ -217,22 +246,22 @@ export default async function PledgedGoldPage() {
                 {/* Circle */}
                 <div
                   style={{
-                    width: '4rem',
-                    height: '4rem',
-                    borderRadius: '50%',
-                    background: 'var(--plum)',
-                    border: '2px solid rgba(223,193,96,0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    margin: '0 auto 1.5rem',
+                    width: "4rem",
+                    height: "4rem",
+                    borderRadius: "50%",
+                    background: "var(--plum)",
+                    border: "2px solid rgba(223,193,96,0.3)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto 1.5rem",
                   }}
                 >
                   <span
                     style={{
-                      fontFamily: 'Tanker, serif',
-                      fontSize: '1.5rem',
-                      color: 'var(--gold)',
+                      fontFamily: "Tanker, serif",
+                      fontSize: "1.5rem",
+                      color: "var(--gold)",
                       lineHeight: 1,
                     }}
                   >
@@ -242,20 +271,20 @@ export default async function PledgedGoldPage() {
 
                 <h3
                   style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: 'var(--t-h4)',
+                    fontFamily: "Poppins, sans-serif",
+                    fontSize: "var(--t-h4)",
                     fontWeight: 600,
-                    color: 'var(--plum)',
-                    margin: '0 0 0.75rem',
+                    color: "var(--plum)",
+                    margin: "0 0 0.75rem",
                   }}
                 >
                   {step.title}
                 </h3>
                 <p
                   style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: 'var(--t-sm)',
-                    color: 'var(--ink-mid)',
+                    fontFamily: "Poppins, sans-serif",
+                    fontSize: "var(--t-sm)",
+                    color: "var(--ink-mid)",
                     lineHeight: 1.65,
                     margin: 0,
                   }}
@@ -269,11 +298,11 @@ export default async function PledgedGoldPage() {
           {/* Consent note */}
           <p
             style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 'var(--t-sm)',
-              color: 'var(--mist)',
-              textAlign: 'center',
-              marginTop: '2.5rem',
+              fontFamily: "Poppins, sans-serif",
+              fontSize: "var(--t-sm)",
+              color: "var(--mist)",
+              textAlign: "center",
+              marginTop: "2.5rem",
             }}
           >
             Nothing is done without your knowledge or consent.
@@ -282,7 +311,7 @@ export default async function PledgedGoldPage() {
       </section>
 
       {/* ── 3. SUPPORTED LENDERS ────────────────────────────────── */}
-      <section style={{ background: 'white' }} className="section">
+      <section style={{ background: "white" }} className="section">
         <div className="mk-container">
           <MkSectionHeader
             tag="Lenders We Work With"
@@ -293,11 +322,11 @@ export default async function PledgedGoldPage() {
 
           <div
             style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '0.75rem 1.5rem',
-              justifyContent: 'center',
-              marginTop: '3rem',
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "0.75rem 1.5rem",
+              justifyContent: "center",
+              marginTop: "3rem",
             }}
           >
             {LENDERS.map((lender) => (
@@ -305,15 +334,15 @@ export default async function PledgedGoldPage() {
                 key={lender}
                 className="reveal"
                 style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontSize: 'var(--t-sm)',
+                  fontFamily: "Poppins, sans-serif",
+                  fontSize: "var(--t-sm)",
                   fontWeight: 600,
-                  color: 'var(--plum)',
-                  padding: '0.5rem 1.125rem',
-                  borderRadius: '9999px',
-                  border: '1.5px solid rgba(81,37,97,0.18)',
-                  background: 'rgba(81,37,97,0.04)',
-                  whiteSpace: 'nowrap',
+                  color: "var(--plum)",
+                  padding: "0.5rem 1.125rem",
+                  borderRadius: "9999px",
+                  border: "1.5px solid rgba(81,37,97,0.18)",
+                  background: "rgba(81,37,97,0.04)",
+                  whiteSpace: "nowrap",
                 }}
               >
                 {lender}
@@ -323,21 +352,25 @@ export default async function PledgedGoldPage() {
 
           <p
             style={{
-              fontFamily: 'Poppins, sans-serif',
-              fontSize: 'var(--t-sm)',
-              color: 'var(--ink-mid)',
-              textAlign: 'center',
-              marginTop: '2rem',
+              fontFamily: "Poppins, sans-serif",
+              fontSize: "var(--t-sm)",
+              color: "var(--ink-mid)",
+              textAlign: "center",
+              marginTop: "2rem",
             }}
           >
-            Don&apos;t see your lender?{' '}
+            Don&apos;t see your lender?{" "}
             <a
-              href="https://wa.me/918000000001"
-              style={{ color: 'var(--plum)', fontWeight: 600, textDecoration: 'underline' }}
+              href="https://wa.me/917019500600"
+              style={{
+                color: "var(--plum)",
+                fontWeight: 600,
+                textDecoration: "underline",
+              }}
             >
               Call us
-            </a>
-            {' '}— we likely work with them.
+            </a>{" "}
+            — we likely work with them.
           </p>
         </div>
       </section>
@@ -367,26 +400,30 @@ export default async function PledgedGoldPage() {
 
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '1.5rem',
-              marginTop: '3rem',
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: "1.5rem",
+              marginTop: "3rem",
             }}
           >
             <MkTrustBlock className="reveal">
-              We pay the lender directly in front of you. No money changes hands without your presence and approval.
+              We pay the lender directly in front of you. No money changes hands
+              without your presence and approval.
             </MkTrustBlock>
 
             <MkTrustBlock className="reveal delay-1">
-              ISO 9001:2015 certified process. The same standards as our standard gold buying service — no shortcuts.
+              ISO 9001:2015 certified process. The same standards as our
+              standard gold buying service — no shortcuts.
             </MkTrustBlock>
 
             <MkTrustBlock className="reveal delay-2">
-              Private consultation available at all our branches. You do not need to discuss your situation in an open area.
+              Private consultation available at all our branches. You do not
+              need to discuss your situation in an open area.
             </MkTrustBlock>
 
             <MkTrustBlock className="reveal delay-3">
-              No judgment. This is a financial service, not a moral evaluation. We treat every customer with the same dignity.
+              No judgment. This is a financial service, not a moral evaluation.
+              We treat every customer with the same dignity.
             </MkTrustBlock>
           </div>
         </div>
@@ -404,10 +441,10 @@ export default async function PledgedGoldPage() {
 
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-              gap: '1.5rem',
-              marginTop: '3rem',
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: "1.5rem",
+              marginTop: "3rem",
             }}
           >
             {PAYMENT_METHODS.map((pm, i) => (
@@ -418,32 +455,32 @@ export default async function PledgedGoldPage() {
               >
                 <div
                   style={{
-                    fontFamily: 'Tanker, serif',
-                    fontSize: 'var(--t-h3)',
-                    color: 'var(--plum)',
-                    marginBottom: '0.25rem',
+                    fontFamily: "Tanker, serif",
+                    fontSize: "var(--t-h3)",
+                    color: "var(--plum)",
+                    marginBottom: "0.25rem",
                   }}
                 >
                   {pm.method}
                 </div>
                 <div
                   style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: 'var(--t-xs)',
+                    fontFamily: "Poppins, sans-serif",
+                    fontSize: "var(--t-xs)",
                     fontWeight: 700,
-                    color: 'var(--gold-deep)',
-                    letterSpacing: '0.06em',
-                    textTransform: 'uppercase',
-                    marginBottom: '0.75rem',
+                    color: "var(--gold-deep)",
+                    letterSpacing: "0.06em",
+                    textTransform: "uppercase",
+                    marginBottom: "0.75rem",
                   }}
                 >
                   {pm.limit}
                 </div>
                 <p
                   style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontSize: 'var(--t-sm)',
-                    color: 'var(--ink-mid)',
+                    fontFamily: "Poppins, sans-serif",
+                    fontSize: "var(--t-sm)",
+                    color: "var(--ink-mid)",
                     lineHeight: 1.6,
                     margin: 0,
                   }}
@@ -460,61 +497,76 @@ export default async function PledgedGoldPage() {
       <MkPledgedFaq faqs={faqs} />
 
       {/* ── 8. CTA BAND ─────────────────────────────────────────── */}
-      <section className="mk-bg-dark section" aria-labelledby="pledged-cta-headline">
+      <section
+        className="mk-bg-dark section"
+        aria-labelledby="pledged-cta-headline"
+      >
         <div className="mk-container">
-          <div style={{ textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
-
+          <div
+            style={{ textAlign: "center", maxWidth: "600px", margin: "0 auto" }}
+          >
             <p className="mk-section-overline">We Are Here</p>
 
             <h2
               id="pledged-cta-headline"
               style={{
-                fontFamily: 'Tanker, serif',
-                fontSize: 'var(--t-h2)',
-                color: 'var(--white)',
+                fontFamily: "Tanker, serif",
+                fontSize: "var(--t-h2)",
+                color: "var(--white)",
                 lineHeight: 1.2,
-                margin: '0.75rem 0 1rem',
+                margin: "0.75rem 0 1rem",
               }}
             >
-              Your gold.{' '}
-              <span style={{ color: 'var(--gold)' }}>Your decision.</span>
+              Your gold.{" "}
+              <span style={{ color: "var(--gold)" }}>Your decision.</span>
               <br />
               We are here to help.
             </h2>
 
             <p
               style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 'var(--t-base)',
-                color: 'rgba(255,255,255,0.6)',
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "var(--t-base)",
+                color: "rgba(255,255,255,0.6)",
                 lineHeight: 1.65,
-                margin: '0 0 2rem',
+                margin: "0 0 2rem",
               }}
             >
-              Speak to someone at your nearest branch.
-              No forms. No pressure. Just a quiet conversation.
+              Speak to someone at your nearest branch. No forms. No pressure.
+              Just a quiet conversation.
             </p>
 
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2rem' }}>
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                justifyContent: "center",
+                flexWrap: "wrap",
+                marginBottom: "2rem",
+              }}
+            >
               <MkButton variant="gold" size="lg" href="/contact">
                 Book a Confidential Appointment
               </MkButton>
-              <MkButton variant="outline-light" size="lg" href="tel:+918000000001">
+              <MkButton
+                variant="outline-light"
+                size="lg"
+                href="tel:+918000000001"
+              >
                 Call a Branch
               </MkButton>
             </div>
 
             <p
               style={{
-                fontFamily: 'Poppins, sans-serif',
-                fontSize: 'var(--t-xs)',
-                color: 'rgba(255,255,255,0.3)',
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "var(--t-xs)",
+                color: "rgba(255,255,255,0.3)",
               }}
             >
               Branches across Bangalore, Mysore, Mangalore &amp; Davangere
               &nbsp;&middot;&nbsp; Open Mon–Sat, 9:30 AM – 7:00 PM
             </p>
-
           </div>
         </div>
       </section>

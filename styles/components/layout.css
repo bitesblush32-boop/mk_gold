@@ -40,7 +40,7 @@
 }
 
 .mk-ticker__live-label {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 0.9125rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -66,7 +66,7 @@
 .mk-ticker__item {
   display: inline-flex;
   align-items: center;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 1rem;
   font-weight: 500;
   color: var(--gold);
@@ -90,8 +90,13 @@
   transition: color 300ms ease;
 }
 
-.mk-ticker__value--up   { color: #4ade80; }
-.mk-ticker__value--down { color: #f87171; }
+.mk-ticker__value--up {
+  color: #4ade80;
+}
+
+.mk-ticker__value--down {
+  color: #f87171;
+}
 
 .mk-ticker__change {
   font-size: 0.9375rem;
@@ -107,7 +112,7 @@
 }
 
 .mk-ticker__indicator {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.01em;
@@ -117,8 +122,13 @@
   white-space: nowrap;
 }
 
-.mk-ticker__indicator--up   { color: #4ade80; }
-.mk-ticker__indicator--down { color: #f87171; }
+.mk-ticker__indicator--up {
+  color: #4ade80;
+}
+
+.mk-ticker__indicator--down {
+  color: #f87171;
+}
 
 .mk-ticker__sep {
   color: rgba(255, 255, 255, 0.18);
@@ -127,16 +137,15 @@
 }
 
 .mk-ticker__note {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 0.9375rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.50);
+  color: rgba(255, 255, 255, 0.5);
   letter-spacing: 0.04em;
   padding: 0 1.5rem;
   white-space: nowrap;
   user-select: none;
 }
-
 
 /* ── Logo image helpers ──────────────────────────────────────── */
 .mk-navbar__logo-link {
@@ -147,7 +156,7 @@
 }
 
 .mk-navbar__logo-img {
-  height: 85px;
+  height: 100px;
   width: auto;
   object-fit: contain;
 }
@@ -166,7 +175,6 @@
   padding-inline: var(--pad-x);
 }
 
-
 /* ─── Navbar ─────────────────────────────────────────────────── */
 .mk-navbar {
   position: fixed;
@@ -181,7 +189,9 @@
   -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid rgba(223, 193, 96, 0.14);
   /* transform used for hide/show — must be in transition */
-  transition: transform var(--t-slow), box-shadow var(--t-base);
+  transition:
+    transform var(--t-slow),
+    box-shadow var(--t-base);
   will-change: transform;
 }
 
@@ -217,7 +227,7 @@
 /* Nav links — gold underline slide animation, no pill bg */
 .mk-navbar__link {
   position: relative;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-sm);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.75);
@@ -228,7 +238,7 @@
 
 /* Gold underline — scaleX slides in from left on hover */
 .mk-navbar__link::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 2px;
   left: var(--s-2);
@@ -306,6 +316,18 @@
   transform: rotate(-135deg) translateY(2px);
 }
 
+/* Invisible bridge over the gap between the trigger and the panel, so
+   moving the cursor from one to the other doesn't count as a mouseleave */
+.mk-navbar .mk-nav-item--dropdown .mk-nav-dropdown__bridge {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  min-width: 440px;
+  height: 12px;
+  z-index: 299;
+}
+
 /* Dropdown panel — specificity boosted to beat Tailwind layer resets */
 .mk-navbar .mk-nav-item--dropdown .mk-nav-dropdown__panel {
   position: absolute;
@@ -332,8 +354,13 @@
   visibility: hidden;
   transform: translateY(-6px);
   pointer-events: none;
-  transition: opacity var(--t-base), transform var(--t-base), visibility 0s var(--t-base);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(223, 193, 96, 0.06);
+  transition:
+    opacity var(--t-base),
+    transform var(--t-base),
+    visibility 0s var(--t-base);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(223, 193, 96, 0.06);
 }
 
 /* Show: CSS hover, keyboard focus-within, or JS --open class (click/touch) */
@@ -344,19 +371,24 @@
   visibility: visible;
   transform: translateY(0);
   pointer-events: auto;
-  transition: opacity var(--t-base), transform var(--t-base), visibility 0s;
+  transition:
+    opacity var(--t-base),
+    transform var(--t-base),
+    visibility 0s;
 }
 
 .mk-nav-dropdown__item {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-sm);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.80);
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   padding: 0.5rem 0.75rem;
   border-radius: 8px;
   display: block;
-  transition: color var(--t-fast), background-color var(--t-fast);
+  transition:
+    color var(--t-fast),
+    background-color var(--t-fast);
   white-space: nowrap;
 }
 
@@ -387,7 +419,7 @@
 }
 
 .mk-mobile-services__item {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-sm);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.65);
@@ -395,7 +427,9 @@
   padding: 0.5rem var(--s-4) 0.5rem var(--s-8);
   display: block;
   border-radius: var(--r-lg);
-  transition: color var(--t-fast), background-color var(--t-fast);
+  transition:
+    color var(--t-fast),
+    background-color var(--t-fast);
 }
 
 .mk-mobile-services__item:hover {
@@ -428,7 +462,9 @@
   height: 2px;
   background: var(--gold);
   border-radius: 2px;
-  transition: transform var(--t-base), opacity var(--t-base);
+  transition:
+    transform var(--t-base),
+    opacity var(--t-base);
   transform-origin: center;
   will-change: transform;
 }
@@ -469,14 +505,16 @@
 }
 
 .mk-mobile-menu__link {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-base);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.80);
+  color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   padding: var(--s-3) var(--s-4);
   border-radius: var(--r-lg);
-  transition: color var(--t-fast), background-color var(--t-fast);
+  transition:
+    color var(--t-fast),
+    background-color var(--t-fast);
 }
 
 .mk-mobile-menu__link:hover,
@@ -499,6 +537,10 @@
   .mk-hamburger {
     display: flex;
   }
+
+  .mk-navbar__actions {
+    margin-right: -5px;
+  }
 }
 
 /* Very small screens — hide CTA button, shrink logo */
@@ -512,7 +554,6 @@
     width: auto;
   }
 }
-
 
 /* ─── Logo ───────────────────────────────────────────────────── */
 .mk-logo {
@@ -533,7 +574,7 @@
 
 .mk-logo__mk,
 .mk-logo__gold-text {
-  font-family: 'Tanker', serif;
+  font-family: "Tanker", serif;
   font-weight: 400;
   font-size: 1.75rem;
   line-height: 1;
@@ -544,7 +585,7 @@
 }
 
 .mk-logo__tagline {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 0.42rem;
   font-weight: 500;
   letter-spacing: 0.22em;
@@ -563,7 +604,7 @@
 }
 
 .mk-logo--light .mk-logo__tagline {
-  color: rgba(255, 255, 255, 0.60);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 /* Dark variant — on gallery/white backgrounds */
@@ -590,7 +631,6 @@
   gap: 0;
 }
 
-
 /* ─── Seal ───────────────────────────────────────────────────── */
 .mk-seal {
   display: inline-flex;
@@ -612,7 +652,7 @@
 }
 
 .mk-seal::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 4px;
   border-radius: 50%;
@@ -621,7 +661,7 @@
 }
 
 .mk-seal__main {
-  font-family: 'Tanker', serif;
+  font-family: "Tanker", serif;
   font-size: 0.95rem;
   color: var(--gold);
   letter-spacing: 0.04em;
@@ -629,10 +669,10 @@
 }
 
 .mk-seal__sub {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 0.38rem;
   font-weight: 600;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(223, 193, 96, 0.72);
   text-align: center;
@@ -667,11 +707,10 @@
 }
 
 .mk-seal--kannada .mk-seal__main {
-  font-family: 'Anek Kannada', sans-serif;
+  font-family: "Anek Kannada", sans-serif;
 }
 
 /* Entrance animation (applied once on mount) */
 .mk-seal--animate {
   animation: sealBounce var(--t-spring) both;
 }
-

@@ -1,7 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import { upload } from '@vercel/blob/client';
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Compress an image to fit within maxBytes using Canvas.
@@ -11,7 +10,7 @@ import { upload } from '@vercel/blob/client';
 async function compressImage(file: File, maxBytes = 3_500_000): Promise<Blob> {
   if (file.size <= maxBytes) return file;
   return new Promise((resolve, reject) => {
-    const img  = new Image();
+    const img = new Image();
     const objUrl = URL.createObjectURL(file);
     img.onload = () => {
       URL.revokeObjectURL(objUrl);
@@ -23,89 +22,100 @@ async function compressImage(file: File, maxBytes = 3_500_000): Promise<Blob> {
         w = Math.round(w * r);
         h = Math.round(h * r);
       }
-      const canvas = document.createElement('canvas');
-      canvas.width  = w;
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
       canvas.height = h;
-      canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
+      canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
       let quality = 0.85;
       const attempt = () => {
-        canvas.toBlob(blob => {
-          if (!blob) { reject(new Error('Canvas compression failed')); return; }
-          if (blob.size <= maxBytes || quality < 0.25) { resolve(blob); return; }
-          quality -= 0.10;
-          attempt();
-        }, 'image/jpeg', quality);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error("Canvas compression failed"));
+              return;
+            }
+            if (blob.size <= maxBytes || quality < 0.25) {
+              resolve(blob);
+              return;
+            }
+            quality -= 0.1;
+            attempt();
+          },
+          "image/jpeg",
+          quality,
+        );
       };
       attempt();
     };
-    img.onerror = () => { URL.revokeObjectURL(objUrl); reject(new Error('Image load failed')); };
+    img.onerror = () => {
+      URL.revokeObjectURL(objUrl);
+      reject(new Error("Image load failed"));
+    };
     img.src = objUrl;
   });
 }
 
 /**
- * Upload a single file to Vercel Blob, falling back to FormData on localhost.
- * Returns the CDN URL string, or throws on error.
+ * Compress the file client-side, then POST FormData to our server-side upload route.
+ * The server calls Vercel Blob put() directly using BLOB_READ_WRITE_TOKEN — no client token needed.
  */
 async function uploadFileToBlob(file: File, prefix: string): Promise<string> {
-  // Path A: Vercel Blob client upload
-  try {
-    const safeFilename = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const blob = await upload(
-      `${prefix}${Date.now()}-${safeFilename}`,
-      file,
-      { access: 'public', handleUploadUrl: '/api/admin/banners/upload' },
-    );
-    return blob.url;
-  } catch (blobErr) {
-    console.warn('[banners] blob upload failed, trying compression fallback:', blobErr);
-  }
-
-  // Path B: FormData fallback (localhost / no BLOB token)
   let uploadFile: Blob;
   try {
     uploadFile = await compressImage(file, 3_500_000);
   } catch {
     uploadFile = file;
   }
-  const compressedName = file.name.replace(/\.[^.]+$/, '.jpg');
+
+  const compressedName = file.name.replace(/\.[^.]+$/, ".jpg");
   const fd = new FormData();
-  fd.append('file', new File([uploadFile], compressedName, { type: 'image/jpeg' }));
-  fd.append('alt', '_temp_');  // alt not used by upload endpoint but field is expected
-  const res  = await fetch('/api/admin/banners', { method: 'POST', body: fd });
+  fd.append(
+    "file",
+    new File([uploadFile], compressedName, { type: "image/jpeg" }),
+  );
+  fd.append("prefix", prefix);
+
+  const res = await fetch("/api/admin/banners/upload-server", {
+    method: "POST",
+    body: fd,
+  });
   const data = await res.json();
-  if (res.ok && data.banner?.src) return data.banner.src;
-  throw new Error(data.error ?? 'Upload failed');
+  if (res.ok && data.url) return data.url as string;
+  throw new Error(data.error ?? "Upload failed");
 }
 
 interface Banner {
-  id:         number;
-  src:        string;
+  id: number;
+  src: string;
   src_mobile: string | null;
-  alt:        string;
-  order:      number;
-  is_active:  boolean;
+  alt: string;
+  order: number;
+  is_active: boolean;
   created_at: string;
 }
 
-const MAX_BANNERS = 8;
+const MAX_BANNERS = 12;
 
 export default function BannersPage() {
-  const [banners, setBanners]   = useState<Banner[]>([]);
-  const [loading, setLoading]   = useState(true);
-  const [message, setMessage]   = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState<{
+    type: "ok" | "err";
+    text: string;
+  } | null>(null);
+  const [blobConfigured, setBlobConfigured] = useState<boolean | null>(null);
 
   // Desktop upload state
-  const [desktopFile, setDesktopFile]     = useState<File | null>(null);
+  const [desktopFile, setDesktopFile] = useState<File | null>(null);
   const [desktopPreview, setDesktopPreview] = useState<string | null>(null);
   const desktopInputRef = useRef<HTMLInputElement>(null);
 
   // Mobile upload state
-  const [mobileFile, setMobileFile]     = useState<File | null>(null);
+  const [mobileFile, setMobileFile] = useState<File | null>(null);
   const [mobilePreview, setMobilePreview] = useState<string | null>(null);
   const mobileInputRef = useRef<HTMLInputElement>(null);
 
-  const [altText, setAltText]   = useState('');
+  const [altText, setAltText] = useState("");
   const [uploading, setUploading] = useState(false);
   const [resetting, setResetting] = useState(false);
 
@@ -114,17 +124,21 @@ export default function BannersPage() {
 
   async function fetchBanners() {
     try {
-      const res  = await fetch('/api/admin/banners');
+      const res = await fetch("/api/admin/banners");
       const data = await res.json();
       setBanners(data.banners ?? []);
+      if ("blob_configured" in data) setBlobConfigured(data.blob_configured);
     } catch {
-      setMessage({ type: 'err', text: 'Could not load banners.' });
+      setMessage({ type: "err", text: "Could not load banners." });
     } finally {
       setLoading(false);
     }
   }
 
-  useEffect(() => { fetchBanners(); }, []);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => {
+    fetchBanners();
+  }, []);
 
   function handleDesktopChange(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -143,53 +157,74 @@ export default function BannersPage() {
   function clearMobile() {
     setMobileFile(null);
     setMobilePreview(null);
-    if (mobileInputRef.current) mobileInputRef.current.value = '';
+    if (mobileInputRef.current) mobileInputRef.current.value = "";
   }
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
-    if (!desktopFile || !altText) return;
+    // Require at least one image AND alt text
+    if ((!desktopFile && !mobileFile) || !altText) return;
     if (banners.length >= MAX_BANNERS) {
-      setMessage({ type: 'err', text: `Maximum ${MAX_BANNERS} banners allowed.` });
+      setMessage({
+        type: "err",
+        text: `Maximum ${MAX_BANNERS} banners allowed.`,
+      });
       return;
     }
     setUploading(true);
     setMessage(null);
 
     try {
-      // 1. Upload desktop image (required)
-      const desktopUrl = await uploadFileToBlob(desktopFile, 'banners/');
+      // 1. Upload desktop image (optional)
+      let desktopUrl: string | null = null;
+      if (desktopFile) {
+        desktopUrl = await uploadFileToBlob(desktopFile, "banners/");
+      }
 
-      // 2. Upload mobile image (optional)
+      // 2. Upload mobile image (optional) — completely independent
       let mobileUrl: string | null = null;
+      let mobileWarning: string | null = null;
       if (mobileFile) {
         try {
-          mobileUrl = await uploadFileToBlob(mobileFile, 'banners/mobile/');
+          mobileUrl = await uploadFileToBlob(mobileFile, "banners/mobile/");
         } catch (err) {
-          setMessage({ type: 'err', text: `Desktop uploaded but mobile upload failed: ${String(err)}` });
-          setUploading(false);
-          return;
+          mobileWarning = `Mobile image could not be uploaded and was skipped: ${String(err)}`;
         }
       }
 
-      // 3. Save both URLs to DB in one POST
-      const res  = await fetch('/api/admin/banners', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ src: desktopUrl, src_mobile: mobileUrl, alt: altText }),
+      // 3. Save to DB — src can be empty string when desktop not provided
+      const res = await fetch("/api/admin/banners", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          src: desktopUrl ?? "",
+          src_mobile: mobileUrl,
+          alt: altText,
+        }),
       });
       const data = await res.json();
       if (res.ok) {
-        setMessage({ type: 'ok', text: mobileUrl ? 'Banner uploaded (desktop + mobile).' : 'Banner uploaded (desktop only).' });
-        setDesktopFile(null); setDesktopPreview(null); setAltText('');
+        const parts: string[] = [];
+        if (desktopUrl) parts.push("desktop");
+        if (mobileUrl) parts.push("mobile");
+        const successText = `Banner uploaded (${parts.join(" + ")}).`;
+        setMessage({
+          type: mobileWarning ? "err" : "ok",
+          text: mobileWarning
+            ? `${successText} Warning: ${mobileWarning}`
+            : successText,
+        });
+        setDesktopFile(null);
+        setDesktopPreview(null);
+        setAltText("");
         clearMobile();
-        if (desktopInputRef.current) desktopInputRef.current.value = '';
+        if (desktopInputRef.current) desktopInputRef.current.value = "";
         await fetchBanners();
       } else {
-        setMessage({ type: 'err', text: data.error ?? 'DB save failed.' });
+        setMessage({ type: "err", text: data.error ?? "DB save failed." });
       }
     } catch (err) {
-      setMessage({ type: 'err', text: `Upload failed: ${String(err)}` });
+      setMessage({ type: "err", text: `Upload failed: ${String(err)}` });
     } finally {
       setUploading(false);
     }
@@ -197,63 +232,74 @@ export default function BannersPage() {
 
   async function handleToggle(banner: Banner) {
     try {
-      await fetch('/api/admin/banners', {
-        method:  'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ id: banner.id, is_active: !banner.is_active }),
+      await fetch("/api/admin/banners", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: banner.id, is_active: !banner.is_active }),
       });
-      setBanners(bs => bs.map(b => b.id === banner.id ? { ...b, is_active: !b.is_active } : b));
+      setBanners((bs) =>
+        bs.map((b) =>
+          b.id === banner.id ? { ...b, is_active: !b.is_active } : b,
+        ),
+      );
     } catch {
-      setMessage({ type: 'err', text: 'Failed to update banner.' });
+      setMessage({ type: "err", text: "Failed to update banner." });
     }
   }
 
   async function handleDelete(id: number) {
-    if (!window.confirm('Delete this banner?')) return;
+    if (!window.confirm("Delete this banner?")) return;
     try {
-      await fetch('/api/admin/banners', {
-        method:  'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ id }),
+      await fetch("/api/admin/banners", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
       });
-      setBanners(bs => bs.filter(b => b.id !== id));
-      setMessage({ type: 'ok', text: 'Banner deleted.' });
+      setBanners((bs) => bs.filter((b) => b.id !== id));
+      setMessage({ type: "ok", text: "Banner deleted." });
     } catch {
-      setMessage({ type: 'err', text: 'Delete failed.' });
+      setMessage({ type: "err", text: "Delete failed." });
     }
   }
 
   async function handleReset() {
-    if (!window.confirm('Reset all banners to the 4 default images? This cannot be undone.')) return;
+    if (
+      !window.confirm(
+        "Reset all banners to the 4 default images? This cannot be undone.",
+      )
+    )
+      return;
     setResetting(true);
     setMessage(null);
     try {
-      const res  = await fetch('/api/admin/banners', { method: 'PUT' });
+      const res = await fetch("/api/admin/banners", { method: "PUT" });
       const data = await res.json();
       if (res.ok) {
         setBanners(data.banners ?? []);
-        setMessage({ type: 'ok', text: 'Banners reset to defaults.' });
+        setMessage({ type: "ok", text: "Banners reset to defaults." });
       } else {
-        setMessage({ type: 'err', text: data.error ?? 'Reset failed.' });
+        setMessage({ type: "err", text: data.error ?? "Reset failed." });
       }
     } catch {
-      setMessage({ type: 'err', text: 'Network error.' });
+      setMessage({ type: "err", text: "Network error." });
     } finally {
       setResetting(false);
     }
   }
 
   // HTML5 native drag-and-drop reordering
-  function onDragStart(id: number) { dragId.current = id; }
+  function onDragStart(id: number) {
+    dragId.current = id;
+  }
 
   async function onDrop(targetId: number) {
     if (dragId.current === null || dragId.current === targetId) return;
-    const fromIdx = banners.findIndex(b => b.id === dragId.current);
-    const toIdx   = banners.findIndex(b => b.id === targetId);
+    const fromIdx = banners.findIndex((b) => b.id === dragId.current);
+    const toIdx = banners.findIndex((b) => b.id === targetId);
     if (fromIdx === -1 || toIdx === -1) return;
 
     const reordered = [...banners];
-    const [moved]   = reordered.splice(fromIdx, 1);
+    const [moved] = reordered.splice(fromIdx, 1);
     reordered.splice(toIdx, 0, moved);
 
     const updated = reordered.map((b, i) => ({ ...b, order: i }));
@@ -261,11 +307,11 @@ export default function BannersPage() {
     dragId.current = null;
 
     await Promise.all(
-      updated.map(b =>
-        fetch('/api/admin/banners', {
-          method:  'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ id: b.id, sort_order: b.order }),
+      updated.map((b) =>
+        fetch("/api/admin/banners", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: b.id, sort_order: b.order }),
         }),
       ),
     );
@@ -281,16 +327,41 @@ export default function BannersPage() {
           disabled={resetting}
           title="Wipe all DB rows and re-seed the 4 default banner images"
         >
-          {resetting ? 'Resetting…' : 'Reset to defaults'}
+          {resetting ? "Resetting…" : "Reset to defaults"}
         </button>
       </div>
       <p className="mk-admin-subtitle">
-        These appear in the homepage slideshow. Drag to reorder.
-        {' '}({banners.length}/{MAX_BANNERS} banners)
+        These appear in the homepage slideshow. Drag to reorder. (
+        {banners.length}/{MAX_BANNERS} banners)
       </p>
 
+      {blobConfigured === false && (
+        <div
+          style={{
+            background: "rgba(223,193,96,0.12)",
+            border: "1px solid rgba(223,193,96,0.4)",
+            borderRadius: 6,
+            padding: "10px 14px",
+            marginBottom: "var(--s-3)",
+            fontFamily: "Poppins,sans-serif",
+            fontSize: "var(--t-sm)",
+            color: "#1C0A24",
+            lineHeight: 1.5,
+          }}
+        >
+          <strong>Local mode:</strong> <code>BLOB_READ_WRITE_TOKEN</code> is not
+          set. Uploaded images will be saved to <code>/public/banners/</code> on
+          the local filesystem. These files will{" "}
+          <strong>not persist on Vercel deployments</strong>. Add{" "}
+          <code>BLOB_READ_WRITE_TOKEN</code> to your <code>.env.local</code>{" "}
+          (from Vercel dashboard &rarr; Storage &rarr; Blob) for production use.
+        </div>
+      )}
+
       {message && (
-        <div className={`mk-admin-alert mk-admin-alert--${message.type === 'ok' ? 'success' : 'error'}`}>
+        <div
+          className={`mk-admin-alert mk-admin-alert--${message.type === "ok" ? "success" : "error"}`}
+        >
           {message.text}
         </div>
       )}
@@ -304,41 +375,93 @@ export default function BannersPage() {
           <p className="mk-admin-muted">No banners yet. Upload one below.</p>
         ) : (
           <div className="mk-admin-banner-list">
-            {banners.map(banner => (
+            {banners.map((banner) => (
               <div
                 key={banner.id}
                 className="mk-admin-banner-row"
                 draggable
                 onDragStart={() => onDragStart(banner.id)}
-                onDragOver={e => e.preventDefault()}
+                onDragOver={(e) => e.preventDefault()}
                 onDrop={() => onDrop(banner.id)}
               >
                 {/* Drag handle */}
-                <span className="mk-admin-drag-handle" title="Drag to reorder">⠿</span>
+                <span className="mk-admin-drag-handle" title="Drag to reorder">
+                  ⠿
+                </span>
 
                 {/* Thumbnails */}
-                <div style={{ display: 'flex', gap: 6, flexShrink: 0, alignItems: 'center' }}>
-                  {/* Desktop thumbnail */}
-                  <div style={{ position: 'relative' }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={banner.src}
-                      alt={banner.alt}
-                      title={`Desktop: ${banner.src}`}
-                      className="mk-admin-banner-thumb"
-                      onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = '0.3'; }}
-                    />
-                    <span style={{
-                      position: 'absolute', bottom: 2, left: 2,
-                      background: 'rgba(81,37,97,0.85)', color: '#fff',
-                      fontSize: '0.5rem', fontFamily: 'Poppins,sans-serif', fontWeight: 700,
-                      padding: '1px 4px', borderRadius: 2, letterSpacing: '0.05em',
-                    }}>DESKTOP</span>
-                  </div>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 6,
+                    flexShrink: 0,
+                    alignItems: "center",
+                  }}
+                >
+                  {/* Desktop thumbnail — only when src is non-empty */}
+                  {banner.src ? (
+                    <div style={{ position: "relative" }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={banner.src}
+                        alt={banner.alt}
+                        title={`Desktop: ${banner.src}`}
+                        className="mk-admin-banner-thumb"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.opacity =
+                            "0.3";
+                        }}
+                      />
+                      <span
+                        style={{
+                          position: "absolute",
+                          bottom: 2,
+                          left: 2,
+                          background: "rgba(81,37,97,0.85)",
+                          color: "#fff",
+                          fontSize: "0.5rem",
+                          fontFamily: "Poppins,sans-serif",
+                          fontWeight: 700,
+                          padding: "1px 4px",
+                          borderRadius: 2,
+                          letterSpacing: "0.05em",
+                        }}
+                      >
+                        DESKTOP
+                      </span>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        width: 80,
+                        height: 45,
+                        border: "1px dashed var(--gallery-dk)",
+                        borderRadius: 4,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: "Poppins,sans-serif",
+                          fontSize: "0.5rem",
+                          color: "var(--mist)",
+                          textAlign: "center",
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        No
+                        <br />
+                        desktop
+                      </span>
+                    </div>
+                  )}
 
                   {/* Mobile thumbnail (only if uploaded) */}
                   {banner.src_mobile ? (
-                    <div style={{ position: 'relative' }}>
+                    <div style={{ position: "relative" }}>
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={banner.src_mobile}
@@ -347,31 +470,60 @@ export default function BannersPage() {
                         style={{
                           width: 45,
                           height: 80,
-                          objectFit: 'cover',
+                          objectFit: "cover",
                           borderRadius: 4,
-                          border: '1px solid var(--gallery-dk)',
+                          border: "1px solid var(--gallery-dk)",
                           flexShrink: 0,
-                          display: 'block',
+                          display: "block",
                         }}
-                        onError={e => { (e.currentTarget as HTMLImageElement).style.opacity = '0.3'; }}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.opacity =
+                            "0.3";
+                        }}
                       />
-                      <span style={{
-                        position: 'absolute', bottom: 2, left: 2,
-                        background: 'rgba(81,37,97,0.85)', color: '#fff',
-                        fontSize: '0.5rem', fontFamily: 'Poppins,sans-serif', fontWeight: 700,
-                        padding: '1px 4px', borderRadius: 2, letterSpacing: '0.05em',
-                      }}>MOBILE</span>
+                      <span
+                        style={{
+                          position: "absolute",
+                          bottom: 2,
+                          left: 2,
+                          background: "rgba(81,37,97,0.85)",
+                          color: "#fff",
+                          fontSize: "0.5rem",
+                          fontFamily: "Poppins,sans-serif",
+                          fontWeight: 700,
+                          padding: "1px 4px",
+                          borderRadius: 2,
+                          letterSpacing: "0.05em",
+                        }}
+                      >
+                        MOBILE
+                      </span>
                     </div>
                   ) : (
-                    <div style={{
-                      width: 45, height: 80,
-                      border: '1px dashed var(--gallery-dk)',
-                      borderRadius: 4,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      flexShrink: 0,
-                    }}>
-                      <span style={{ fontFamily: 'Poppins,sans-serif', fontSize: '0.5rem', color: 'var(--mist)', textAlign: 'center', lineHeight: 1.3 }}>
-                        No<br />mobile
+                    <div
+                      style={{
+                        width: 45,
+                        height: 80,
+                        border: "1px dashed var(--gallery-dk)",
+                        borderRadius: 4,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexShrink: 0,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontFamily: "Poppins,sans-serif",
+                          fontSize: "0.5rem",
+                          color: "var(--mist)",
+                          textAlign: "center",
+                          lineHeight: 1.3,
+                        }}
+                      >
+                        No
+                        <br />
+                        mobile
                       </span>
                     </div>
                   )}
@@ -382,13 +534,13 @@ export default function BannersPage() {
                   type="text"
                   defaultValue={banner.alt}
                   className="mk-admin-input mk-admin-input--sm"
-                  onBlur={async e => {
+                  onBlur={async (e) => {
                     const newAlt = e.target.value.trim();
                     if (newAlt && newAlt !== banner.alt) {
-                      await fetch('/api/admin/banners', {
-                        method:  'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body:    JSON.stringify({ id: banner.id, alt: newAlt }),
+                      await fetch("/api/admin/banners", {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ id: banner.id, alt: newAlt }),
                       });
                     }
                   }}
@@ -396,7 +548,10 @@ export default function BannersPage() {
                 />
 
                 {/* Active toggle */}
-                <label className="mk-admin-toggle" title={banner.is_active ? 'Active' : 'Inactive'}>
+                <label
+                  className="mk-admin-toggle"
+                  title={banner.is_active ? "Active" : "Inactive"}
+                >
                   <input
                     type="checkbox"
                     checked={banner.is_active}
@@ -420,52 +575,79 @@ export default function BannersPage() {
       </div>
 
       {/* ── Upload form ── */}
-      <div className="mk-admin-section" style={{ marginTop: 'var(--s-5)' }}>
+      <div className="mk-admin-section" style={{ marginTop: "var(--s-5)" }}>
         <h2 className="mk-admin-section-title">Upload New Banner</h2>
 
-        <p className="mk-admin-muted" style={{ marginBottom: 'var(--s-4)' }}>
-          Upload a <strong>desktop (landscape)</strong> image. Optionally also upload a <strong>mobile (portrait)</strong> version
-          — if provided, phones will show the portrait image instead of cropping the landscape one.
+        <p className="mk-admin-muted" style={{ marginBottom: "var(--s-4)" }}>
+          Upload a <strong>desktop (landscape)</strong> image, a{" "}
+          <strong>mobile (portrait)</strong> image, or both. Desktop images are
+          shown on tablets &amp; desktops only. Mobile images are shown on
+          phones only. They are completely independent — phones will{" "}
+          <strong>never</strong> crop a desktop image.
         </p>
 
         {banners.length >= MAX_BANNERS ? (
-          <p className="mk-admin-muted" style={{ color: '#c0392b' }}>
-            Maximum {MAX_BANNERS} banners reached. Delete one to upload a new banner.
+          <p className="mk-admin-muted" style={{ color: "#c0392b" }}>
+            Maximum {MAX_BANNERS} banners reached. Delete one to upload a new
+            banner.
           </p>
         ) : (
           <form onSubmit={handleUpload} noValidate>
             <div className="mk-admin-form-grid mk-admin-form-grid--2">
-
-              {/* Desktop image (required) */}
+              {/* Desktop image (optional) */}
               <div className="mk-admin-field">
                 <label className="mk-admin-label">
-                  Desktop image — landscape (required)
+                  Desktop image — landscape
+                  <span
+                    style={{
+                      fontFamily: "Poppins,sans-serif",
+                      fontSize: "var(--t-2xs)",
+                      fontWeight: 400,
+                      color: "var(--mist)",
+                      marginLeft: 6,
+                    }}
+                  >
+                    shown on tablet &amp; desktop
+                  </span>
                 </label>
                 <label
-                  className={`mk-admin-drop-zone${desktopFile ? ' mk-admin-drop-zone--over' : ''}`}
-                  style={{ cursor: 'pointer' }}
+                  className={`mk-admin-drop-zone${desktopFile ? " mk-admin-drop-zone--over" : ""}`}
+                  style={{ cursor: "pointer" }}
                 >
                   <input
                     ref={desktopInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleDesktopChange}
-                    style={{ display: 'none' }}
-                    required
+                    style={{ display: "none" }}
                   />
                   {desktopPreview ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={desktopPreview} alt="Desktop preview" className="mk-admin-upload-preview" style={{ margin: '0 auto' }} />
+                    <img
+                      src={desktopPreview}
+                      alt="Desktop preview"
+                      className="mk-admin-upload-preview"
+                      style={{ margin: "0 auto" }}
+                    />
                   ) : (
                     <>
-                      <p className="mk-admin-drop-zone__label">Click to choose desktop image</p>
-                      <p className="mk-admin-drop-zone__sub">Landscape · JPG, PNG or WebP · max 5 MB</p>
+                      <p className="mk-admin-drop-zone__label">
+                        Click to choose desktop image
+                      </p>
+                      <p className="mk-admin-drop-zone__sub">
+                        Landscape · 1920×600 px recommended · JPG, PNG or WebP ·
+                        max 5 MB · skip if not needed
+                      </p>
                     </>
                   )}
                 </label>
                 {desktopFile && (
-                  <p className="mk-admin-muted" style={{ marginTop: '0.375rem' }}>
-                    {desktopFile.name} ({(desktopFile.size / 1024).toFixed(0)} KB)
+                  <p
+                    className="mk-admin-muted"
+                    style={{ marginTop: "0.375rem" }}
+                  >
+                    {desktopFile.name} ({(desktopFile.size / 1024).toFixed(0)}{" "}
+                    KB)
                   </p>
                 )}
               </div>
@@ -474,20 +656,28 @@ export default function BannersPage() {
               <div className="mk-admin-field">
                 <label className="mk-admin-label">
                   Mobile image — portrait (optional)
-                  <span style={{ fontFamily: 'Poppins,sans-serif', fontSize: 'var(--t-2xs)', fontWeight: 400, color: 'var(--mist)', marginLeft: 6 }}>
+                  <span
+                    style={{
+                      fontFamily: "Poppins,sans-serif",
+                      fontSize: "var(--t-2xs)",
+                      fontWeight: 400,
+                      color: "var(--mist)",
+                      marginLeft: 6,
+                    }}
+                  >
                     shown on phones instead of cropping desktop
                   </span>
                 </label>
                 <label
-                  className={`mk-admin-drop-zone${mobileFile ? ' mk-admin-drop-zone--over' : ''}`}
-                  style={{ cursor: 'pointer', borderStyle: 'dashed' }}
+                  className={`mk-admin-drop-zone${mobileFile ? " mk-admin-drop-zone--over" : ""}`}
+                  style={{ cursor: "pointer", borderStyle: "dashed" }}
                 >
                   <input
                     ref={mobileInputRef}
                     type="file"
                     accept="image/*"
                     onChange={handleMobileChange}
-                    style={{ display: 'none' }}
+                    style={{ display: "none" }}
                   />
                   {mobilePreview ? (
                     /* eslint-disable-next-line @next/next/no-img-element */
@@ -495,27 +685,44 @@ export default function BannersPage() {
                       src={mobilePreview}
                       alt="Mobile preview"
                       style={{
-                        height: 160, width: 'auto', maxWidth: '100%',
-                        objectFit: 'contain', margin: '0 auto', display: 'block',
+                        height: 160,
+                        width: "auto",
+                        maxWidth: "100%",
+                        objectFit: "contain",
+                        margin: "0 auto",
+                        display: "block",
                       }}
                     />
                   ) : (
                     <>
-                      <p className="mk-admin-drop-zone__label">Click to choose mobile image</p>
-                      <p className="mk-admin-drop-zone__sub">Portrait · JPG, PNG or WebP · max 5 MB · skip if not needed</p>
+                      <p className="mk-admin-drop-zone__label">
+                        Click to choose mobile image
+                      </p>
+                      <p className="mk-admin-drop-zone__sub">
+                        Portrait 9:16 · 1080×1920 px recommended · JPG, PNG or
+                        WebP · max 5 MB · skip if not needed
+                      </p>
                     </>
                   )}
                 </label>
                 {mobileFile && (
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: '0.375rem' }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 8,
+                      alignItems: "center",
+                      marginTop: "0.375rem",
+                    }}
+                  >
                     <p className="mk-admin-muted" style={{ flex: 1 }}>
-                      {mobileFile.name} ({(mobileFile.size / 1024).toFixed(0)} KB)
+                      {mobileFile.name} ({(mobileFile.size / 1024).toFixed(0)}{" "}
+                      KB)
                     </p>
                     <button
                       type="button"
                       className="mk-admin-btn-text mk-admin-btn-text--plum"
                       onClick={clearMobile}
-                      style={{ fontSize: 'var(--t-xs)' }}
+                      style={{ fontSize: "var(--t-xs)" }}
                     >
                       Remove
                     </button>
@@ -524,33 +731,43 @@ export default function BannersPage() {
               </div>
 
               {/* Alt text */}
-              <div className="mk-admin-field" style={{ gridColumn: '1 / -1' }}>
-                <label className="mk-admin-label">Alt text (accessibility &amp; SEO)</label>
+              <div className="mk-admin-field" style={{ gridColumn: "1 / -1" }}>
+                <label className="mk-admin-label">
+                  Alt text (accessibility &amp; SEO)
+                </label>
                 <input
                   type="text"
                   value={altText}
-                  onChange={e => setAltText(e.target.value)}
+                  onChange={(e) => setAltText(e.target.value)}
                   placeholder="e.g. MK Gold Bangalore — instant cash for gold"
                   className="mk-admin-input"
                   required
                 />
-                <p className="mk-admin-muted" style={{ marginTop: '0.5rem', fontSize: '0.7rem' }}>
-                  Describe the banner for screen readers and Google image search.
+                <p
+                  className="mk-admin-muted"
+                  style={{ marginTop: "0.5rem", fontSize: "0.7rem" }}
+                >
+                  Describe the banner for screen readers and Google image
+                  search.
                 </p>
               </div>
             </div>
 
-            <div style={{ marginTop: 'var(--s-4)' }}>
+            <div style={{ marginTop: "var(--s-4)" }}>
               <button
                 type="submit"
                 className="mk-admin-btn mk-admin-btn--gold"
-                disabled={uploading || !desktopFile || !altText}
+                disabled={
+                  uploading || (!desktopFile && !mobileFile) || !altText
+                }
               >
                 {uploading
-                  ? 'Uploading…'
-                  : mobileFile
-                    ? 'Upload Desktop + Mobile'
-                    : 'Upload Desktop Banner'}
+                  ? "Uploading…"
+                  : desktopFile && mobileFile
+                    ? "Upload Desktop + Mobile"
+                    : desktopFile
+                      ? "Upload Desktop Banner"
+                      : "Upload Mobile Banner"}
               </button>
             </div>
           </form>

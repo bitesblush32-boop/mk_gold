@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import BlogEditor from '@/components/admin/BlogEditor';
+import BlogEditor from "@/components/admin/BlogEditor";
 
 export default function NewBlogPostPage() {
   return (
