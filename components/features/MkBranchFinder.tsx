@@ -69,7 +69,7 @@ function BranchCard({
         <MkButton
           variant="whatsapp"
           size="sm"
-          href={`https://wa.me/${branch.whatsapp.replace("+", "")}`}
+          href="https://wa.me/917019500600"
           external
         >
           WhatsApp

@@ -6,7 +6,6 @@ import {
   deleteLead,
 } from "@/lib/db/leads";
 import { getBranchBySlug } from "@/lib/branch-router";
-import { sendWhatsApp } from "@/lib/whatsapp";
 import { requireAdmin } from "@/lib/admin-auth";
 import type { Lead } from "@/db/schema";
 
@@ -288,15 +287,6 @@ export async function POST(req: NextRequest) {
 
     // Sync to Google Sheets (non-blocking)
     syncLeadToSheets(lead).catch(() => {});
-
-    // Notify branch manager via WhatsApp (non-blocking)
-    if (branch_slug) {
-      const branch = getBranchBySlug(String(branch_slug));
-      if (branch) {
-        const msg = `New lead at MK Gold ${branch.area}:\nName: ${name}\nPhone: ${phone}${gold_type ? `\nGold: ${gold_type}` : ""}\nSource: ${source}`;
-        sendWhatsApp(branch.whatsapp, msg).catch(() => {});
-      }
-    }
 
     return NextResponse.json({ success: true, id: lead.id }, { status: 201 });
   } catch (err) {

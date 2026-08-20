@@ -361,7 +361,7 @@ export default async function PledgedGoldPage() {
           >
             Don&apos;t see your lender?{" "}
             <a
-              href="https://wa.me/918000000001"
+              href="https://wa.me/917019500600"
               style={{
                 color: "var(--plum)",
                 fontWeight: 600,

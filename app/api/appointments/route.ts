@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAppointment, getSlotBookings } from "@/lib/db/appointments";
 import { getBranchBySlug } from "@/lib/branch-router";
-import { sendWhatsApp } from "@/lib/whatsapp";
 
 /* ─── Google Sheets sync ─────────────────────────────────────────── */
 
@@ -178,13 +177,6 @@ export async function POST(req: NextRequest) {
       slot_date,
       slot_time,
     }).catch(() => {});
-
-    // Notify customer and branch (non-blocking)
-    const customerMsg = `MK Gold appointment confirmed!\nDate: ${slot_date} at ${slot_time}\nBranch: ${branch?.name ?? branch_slug}\nAddress: ${branch?.address ?? ""}\nRef: ${confirmationCode}`;
-    const branchMsg = `New appointment:\nName: ${name} | Phone: ${phone}\nDate: ${slot_date} at ${slot_time}${gold_type ? `\nGold: ${gold_type}` : ""}\nRef: ${confirmationCode}`;
-
-    sendWhatsApp(phone, customerMsg).catch(() => {});
-    if (branch) sendWhatsApp(branch.whatsapp, branchMsg).catch(() => {});
 
     return NextResponse.json(
       { success: true, id: appt.id, confirmationCode },
