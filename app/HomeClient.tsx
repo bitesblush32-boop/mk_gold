@@ -537,7 +537,7 @@ function GoogleCityMap({
                   Call Now
                 </a>
                 <a
-                  href={`https://wa.me/${activeBranch.whatsapp.replace("+", "")}?text=${encodeURIComponent("Hi, I want to sell my gold. Can you help?")}`}
+                  href={`https://wa.me/917019500600?text=${encodeURIComponent("Hi, I want to sell my gold. Can you help?")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="sc-branch-action"

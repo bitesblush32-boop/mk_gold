@@ -201,7 +201,7 @@ export default function ContactPage() {
                         Get Directions
                       </a>
                       <a
-                        href={`https://wa.me/${branch.whatsapp.replace("+", "")}`}
+                        href="https://wa.me/917019500600"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-whatsapp mk-branch-card__whatsapp"
