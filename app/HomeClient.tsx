@@ -1619,6 +1619,22 @@ function LocalStepsSection() {
             </li>
           ))}
         </ol>
+
+        {/* ── Quick-nav CTA bar ──────────────────────────────────── */}
+        <nav className="sc-cta-bar" aria-label="Quick navigation">
+          <a href="#branches" className="sc-cta-bar__link">
+            Find Nearest Branch
+          </a>
+          <a href="#gold-rate" className="sc-cta-bar__link">
+            Live Gold Rate
+          </a>
+          <Link href="/contact" className="sc-cta-bar__link">
+            Contact Us
+          </Link>
+          <Link href="/sell-gold" className="sc-cta-bar__link">
+            Sell Gold
+          </Link>
+        </nav>
       </div>
     </section>
   );
@@ -2104,21 +2120,53 @@ export default function HomePage({
             </div>
           </div>
         </div>
-
-        {/* Slide dots */}
-        <div className="sc-hero__dots" role="tablist" aria-label="Hero slides">
-          {banners.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => goToSlide(i)}
-              className={`sc-hero__dot${slide === i ? ' sc-hero__dot--active' : ''}`}
-              role="tab"
-              aria-selected={slide === i}
-              aria-label={`Slide ${i + 1}`}
-            />
-          ))}
-        </div>
       </section>
+
+      {/* ── Tagline + how-it-works — single white block, no gap possible ── */}
+      <div style={{ position: "relative", zIndex: 4, backgroundColor: "#fff" }}>
+        <div className="sc-tagline-bridge" aria-hidden="true">
+          <div className="sc-tagline-card">
+            {/* Trapezoid with 7px bezier curves at both top corners — no sharp points */}
+            <svg
+              className="sc-tagline-card__bg"
+              viewBox="0 0 1000 100"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M 115 0 L 885 0 Q 900 0 910.6 10.6 L 1000 100 L 0 100 L 89.4 10.6 Q 100 0 115 0 Z"
+                fill="#fff"
+              />
+            </svg>
+            <span className="sc-tagline-card__text">
+              Instant Money. Lasting Trust.
+            </span>
+          </div>
+        </div>
+        <LocalStepsSection />
+      </div>
+
+      {/* ── Step divider: gallery cap left 35%, slant 35→37%, rounded corner ── */}
+      <svg
+        aria-hidden="true"
+        style={{
+          display: "block",
+          width: "100%",
+          height: "25px",
+          marginBottom: "-25px",
+          position: "relative",
+          zIndex: 2,
+          pointerEvents: "none",
+        }}
+        viewBox="0 0 1000 25"
+        preserveAspectRatio="none"
+      >
+        {/* Shape: gallery colour covers 0→37%, slants to 35% bottom, rounded corner, back to 0 */}
+        <path
+          d="M 0 0 L 370 0 L 354.4 19.5 Q 350 25 343 25 L 0 25 Z"
+          fill="#FFFFFF"
+        />
+      </svg>
 
       {/* ── Rate section — continuous dark bg ──────────────────── */}
       <div className="mk-bg-dark sc-no-gap">
@@ -2180,18 +2228,30 @@ export default function HomePage({
             )}
 
             {/* Unlocked state — pixel-perfect calculator with Gold.png */}
-            {rateUnlocked && (
-              <GoldCalculatorUnlocked />
-            )}
+            {rateUnlocked && <GoldCalculatorUnlocked />}
+
+            {/* ── Quick-nav CTA bar (repeated at bottom of rate section) ── */}
+            <nav
+              className="sc-cta-bar sc-cta-bar--dark"
+              aria-label="Quick navigation"
+            >
+              <a href="#branches" className="sc-cta-bar__link">
+                Find Nearest Branch
+              </a>
+              <a href="#gold-rate" className="sc-cta-bar__link">
+                Live Gold Rate
+              </a>
+              <Link href="/contact" className="sc-cta-bar__link">
+                Contact Us
+              </Link>
+              <Link href="/sell-gold" className="sc-cta-bar__link">
+                Sell Gold
+              </Link>
+            </nav>
           </div>
         </section>
-      </div>{/* end continuous dark: StatBand + Rate */}
-
-      {/* ── How it works ────────────────────────────────────────── */}
-      <LocalStepsSection />
-
-      {/* ── Emergency callout ───────────────────────────────────── */}
-      <MkEmergency />
+      </div>
+      {/* end continuous dark: StatBand + Rate */}
 
       {/* ── Trust architecture ──────────────────────────────────── */}
       <LocalTrustSection />
