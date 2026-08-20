@@ -22,7 +22,6 @@ import type { FaqItem } from "@/lib/db/faqs";
 const CITIES = ["Bangalore", "Mysore", "Mangalore", "Davangere"] as const;
 type City = (typeof CITIES)[number];
 
-
 /* ─── Callback form ────────────────────────────────────────────── */
 
 function CallbackForm({ onSuccess }: { onSuccess?: () => void }) {
@@ -1745,13 +1744,22 @@ function BottomNav() {
               }}
             >
               <svg viewBox="0 0 40 40" width="60" height="60">
-                <circle cx="20" cy="20" r="18" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
+                <circle
+                  cx="20"
+                  cy="20"
+                  r="18"
+                  fill="none"
+                  stroke="#FFFFFF"
+                  strokeWidth="1.5"
+                />
                 <circle cx="20" cy="20" r="2.5" fill="#FFFFFF" />
                 {BN_CHAKRA_SPOKES.map((s, i) => (
                   <line
                     key={i}
-                    x1={s.x1} y1={s.y1}
-                    x2={s.x2} y2={s.y2}
+                    x1={s.x1}
+                    y1={s.y1}
+                    x2={s.x2}
+                    y2={s.y2}
                     stroke="#FFFFFF"
                     strokeWidth="1"
                   />
@@ -2066,7 +2074,6 @@ export default function HomePage({
           <>
             {/* Subtle saffron → transparent → green diagonal wash over banners */}
             <div className="sc-hero__tiranga-wash" aria-hidden="true" />
-
           </>
         )}
 

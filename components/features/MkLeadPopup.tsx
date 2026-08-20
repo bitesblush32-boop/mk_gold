@@ -31,7 +31,6 @@ export function MkLeadPopup() {
   const [phoneError, setPhoneError] = useState("");
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     const t = setTimeout(() => setOpen(true), 2000);
     const onOpen = () => setOpen(true);
@@ -519,12 +518,16 @@ export function MkLeadPopup() {
                 zIndex: 0,
               }}
             >
-              <svg
-                viewBox="0 0 200 140"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+              <svg viewBox="0 0 200 140" xmlns="http://www.w3.org/2000/svg">
                 {/* Ground */}
-                <rect x="0" y="128" width="200" height="12" fill="#138808" rx="3" />
+                <rect
+                  x="0"
+                  y="128"
+                  width="200"
+                  height="12"
+                  fill="#138808"
+                  rx="3"
+                />
                 {/* Fort base wall */}
                 <rect x="15" y="78" width="170" height="50" fill="#CC6633" />
                 {/* Battlements */}

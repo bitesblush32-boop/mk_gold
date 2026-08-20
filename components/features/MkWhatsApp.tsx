@@ -18,7 +18,6 @@ export function MkWhatsApp({
   const [active, setActive] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsTouch(window.matchMedia("(hover: none)").matches);
   }, []);
 

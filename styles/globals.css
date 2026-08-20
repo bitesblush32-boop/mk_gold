@@ -59,10 +59,10 @@
   --border-dark: rgba(223, 193, 96, 0.18);
 
   /* ── Tiranga — Indian Independence Day Aug 1–31 ─────────────── */
-  --tiranga-saffron:    #FF9933;
-  --tiranga-saffron-dk: #E8891C;
-  --tiranga-green:      #138808;
-  --ashoka-blue:        #000080;
+  --tiranga-saffron: #ff9933;
+  --tiranga-saffron-dk: #e8891c;
+  --tiranga-green: #138808;
+  --ashoka-blue: #000080;
 
   /* ── Type Scale ────────────────────────────────────────────── */
   --t-display: clamp(3rem, 7vw, 6.5rem);

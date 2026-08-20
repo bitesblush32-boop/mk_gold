@@ -13,6 +13,21 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      // Async fetch-on-mount is a standard React pattern; this rule is too strict.
+      "react-hooks/set-state-in-effect": "off",
+      // Allow _-prefixed vars and rest-sibling destructuring (e.g. { foo: _foo, ...rest }).
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
 ]);
 
 export default eslintConfig;

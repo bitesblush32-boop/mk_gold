@@ -79,7 +79,6 @@ export function AppointmentForm() {
   // Recompute branch list whenever city changes
   useEffect(() => {
     if (form.city) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setBranches(BRANCHES.filter((b) => b.city === form.city));
     } else {
       setBranches([]);

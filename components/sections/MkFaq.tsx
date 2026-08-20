@@ -41,7 +41,6 @@ const FALLBACK_FAQS: FaqItem[] = [
 /* ─── Component ───────────────────────────────────────────────────── */
 
 export function MkFaq({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   variant: _variant = "home",
   faqs,
 }: {

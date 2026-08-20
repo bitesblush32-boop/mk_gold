@@ -5,7 +5,6 @@ import {
   updateLeadRemarks,
   deleteLead,
 } from "@/lib/db/leads";
-import { getBranchBySlug } from "@/lib/branch-router";
 import { requireAdmin } from "@/lib/admin-auth";
 import type { Lead } from "@/db/schema";
 

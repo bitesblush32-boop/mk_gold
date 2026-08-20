@@ -43,7 +43,6 @@ export default function BlogListPage() {
     }
   }
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
     fetchPosts();
   }, []);

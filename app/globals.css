@@ -92,20 +92,34 @@
 
 /* 1+6 — Left-edge tricolor bar (3px) + saffron dawn bleed from the left */
 [data-tiranga="true"] .mk-navbar::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, #FF9933 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #138808 66.66%)
+    linear-gradient(
+        180deg,
+        #ff9933 33.33%,
+        #ffffff 33.33%,
+        #ffffff 66.66%,
+        #138808 66.66%
+      )
       left / 3px 100% no-repeat,
-    radial-gradient(ellipse at -5% 50%, rgba(255, 153, 51, 0.13) 0%, transparent 55%);
+    radial-gradient(
+      ellipse at -5% 50%,
+      rgba(255, 153, 51, 0.13) 0%,
+      transparent 55%
+    );
   pointer-events: none;
   z-index: 0;
 }
 
 /* 2 — Saffron-tinted glass: warm the existing plum backdrop slightly */
 [data-tiranga="true"] .mk-navbar {
-  background-image: linear-gradient(135deg, rgba(255, 153, 51, 0.07) 0%, transparent 45%);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255, 153, 51, 0.07) 0%,
+    transparent 45%
+  );
   background-color: rgba(59, 24, 72, 0.96);
 }
 
@@ -124,8 +138,9 @@
 [data-tiranga="true"] .mk-navbar__link:hover::after {
   background: linear-gradient(
     90deg,
-    #FF9933 33.33%,
-    rgba(255, 255, 255, 0.85) 33.33%, rgba(255, 255, 255, 0.85) 66.66%,
+    #ff9933 33.33%,
+    rgba(255, 255, 255, 0.85) 33.33%,
+    rgba(255, 255, 255, 0.85) 66.66%,
     #138808 66.66%
   );
 }
@@ -139,7 +154,6 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.07),
     0 0 24px rgba(255, 153, 51, 0.12);
 }
-
 
 /* 2b — Hero: subtle diagonal saffron → transparent → green tint wash */
 .sc-hero__tiranga-wash {
@@ -169,7 +183,11 @@
 .sc-tiranga-flag__pole {
   width: 3px;
   height: 88px;
-  background: linear-gradient(180deg, var(--gold) 0%, rgba(223, 193, 96, 0.5) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--gold) 0%,
+    rgba(223, 193, 96, 0.5) 100%
+  );
   border-radius: 1.5px;
   flex-shrink: 0;
 }
@@ -183,9 +201,16 @@
 }
 
 @keyframes tirangaWave {
-  0%, 100% { transform: perspective(200px) rotateY(0deg); }
-  25%       { transform: perspective(200px) rotateY(14deg); }
-  75%       { transform: perspective(200px) rotateY(-7deg); }
+  0%,
+  100% {
+    transform: perspective(200px) rotateY(0deg);
+  }
+  25% {
+    transform: perspective(200px) rotateY(14deg);
+  }
+  75% {
+    transform: perspective(200px) rotateY(-7deg);
+  }
 }
 
 .sc-tiranga-flag__stripe {
@@ -195,9 +220,15 @@
   align-items: center;
   justify-content: center;
 }
-.sc-tiranga-flag__stripe--saffron { background: #FF9933; }
-.sc-tiranga-flag__stripe--white   { background: #FFFFFF; }
-.sc-tiranga-flag__stripe--green   { background: #138808; }
+.sc-tiranga-flag__stripe--saffron {
+  background: #ff9933;
+}
+.sc-tiranga-flag__stripe--white {
+  background: #ffffff;
+}
+.sc-tiranga-flag__stripe--green {
+  background: #138808;
+}
 
 .sc-ashoka-chakra {
   width: 14px;
@@ -224,7 +255,7 @@
 }
 
 .sc-independence-jai {
-  font-family: 'Tanker', serif;
+  font-family: "Tanker", serif;
   font-size: 0.9rem;
   color: var(--tiranga-saffron);
   letter-spacing: 0.04em;
@@ -238,7 +269,7 @@
 }
 
 .sc-independence-date {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 0.65rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.6);
@@ -248,20 +279,21 @@
 
 /* 2e — Footer: tricolor divider at top + "Jai Hind" note */
 .mk-footer--tiranga::before {
-  content: '';
+  content: "";
   display: block;
   height: 3px;
   background: linear-gradient(
     90deg,
-    #FF9933 33.33%,
-    #FFFFFF 33.33%, #FFFFFF 66.66%,
+    #ff9933 33.33%,
+    #ffffff 33.33%,
+    #ffffff 66.66%,
     #138808 66.66%
   );
   width: 100%;
 }
 
 .mk-footer__independence-note {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: var(--t-xs);
   font-weight: 500;
   color: rgba(255, 153, 51, 0.7);
@@ -297,20 +329,20 @@
     /* Full horizontal tricolor fill */
     background: linear-gradient(
       90deg,
-      #FF9933 33.33%,
-      #FFFFFF 33.33% 66.66%,
+      #ff9933 33.33%,
+      #ffffff 33.33% 66.66%,
       #138808 66.66%
     );
 
     min-width: 152px;
     padding: 6px 16px 13px;
     text-align: center;
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 0.71rem;
     font-weight: 700;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: #1C0A24;
+    color: #1c0a24;
     white-space: nowrap;
     pointer-events: none;
     z-index: 1;

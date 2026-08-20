@@ -68,7 +68,6 @@ export function MkNavbar() {
 
   // Close everything on route change
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMenuOpen(false);
     setServicesOpen(false);
     setMobileServicesOpen(false);
@@ -137,13 +136,22 @@ export function MkNavbar() {
             }}
           >
             <svg viewBox="0 0 40 40" width="88" height="88">
-              <circle cx="20" cy="20" r="18" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
+              <circle
+                cx="20"
+                cy="20"
+                r="18"
+                fill="none"
+                stroke="#FFFFFF"
+                strokeWidth="1.5"
+              />
               <circle cx="20" cy="20" r="2.5" fill="#FFFFFF" />
               {CHAKRA_SPOKES.map((s, i) => (
                 <line
                   key={i}
-                  x1={s.x1} y1={s.y1}
-                  x2={s.x2} y2={s.y2}
+                  x1={s.x1}
+                  y1={s.y1}
+                  x2={s.x2}
+                  y2={s.y2}
                   stroke="#FFFFFF"
                   strokeWidth="1"
                 />
@@ -183,9 +191,33 @@ export function MkNavbar() {
               marginLeft: "-8px",
             }}
           >
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#FF9933", display: "block" }} />
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "rgba(255,255,255,0.88)", display: "block" }} />
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#138808", display: "block" }} />
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#FF9933",
+                display: "block",
+              }}
+            />
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "rgba(255,255,255,0.88)",
+                display: "block",
+              }}
+            />
+            <span
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                background: "#138808",
+                display: "block",
+              }}
+            />
           </div>
         )}
 
@@ -331,10 +363,7 @@ export function MkNavbar() {
 
         {/* Mobile-only chip — sits below nav bar, centered, doesn't affect flex layout */}
         {isTiranga && (
-          <div
-            aria-hidden="true"
-            className="mk-navbar__tiranga-chip--mobile"
-          >
+          <div aria-hidden="true" className="mk-navbar__tiranga-chip--mobile">
             {independenceEdition}th Independence Day
           </div>
         )}
