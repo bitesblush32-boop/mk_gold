@@ -60,9 +60,14 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, url: src }, { status: 201 });
   } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
     console.error("[api/admin/blog-image] POST error:", err);
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Internal server error",
+        // detail is only included so you can see the blob SDK error in curl/logs
+        detail: message,
+      },
       { status: 500 },
     );
   }
