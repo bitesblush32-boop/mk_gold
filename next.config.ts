@@ -26,6 +26,16 @@ const nextConfig: NextConfig = {
         source: "/sw.js",
         headers: [{ key: "Cache-Control", value: "no-store, no-cache" }],
       },
+      // Public external API (v1) — CORS open to all origins
+      {
+        source: "/api/v1/(.*)",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "POST, OPTIONS" },
+          { key: "Access-Control-Allow-Headers", value: "Content-Type" },
+          { key: "Cache-Control", value: "no-store" },
+        ],
+      },
       // Admin pages — never cache in browser or CDN
       {
         source: "/admin(.*)",
